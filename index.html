@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoxWeb | Principal</title>
+    
+    <style>
+        /* ESTILOS GLOBALES Y DE FONDO */
+        body {
+            text-align: center;
+            font-family: Roboto, 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            padding-top: 50px;
+            background-color: #121212; 
+            color: #E0E0E0;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        /* ESTILOS DE LAS PESTAÑAS (TABS - Estilo Chrome) */
+        .tabs-container {
+            max-width: 900px;
+            margin: 50px auto;
+            border: 1px solid #444;
+            border-radius: 0px; 
+            background-color: #222;
+            padding: 0px;
+        }
+
+        .tab-buttons {
+            overflow: hidden;
+            border-bottom: none;
+            margin-bottom: 0px;
+            padding-top: 10px;
+            padding-left: 20px;
+        }
+
+        .tablink {
+            background-color: #333;
+            color: white;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 18px;
+            transition: 0.3s;
+            font-size: 16px;
+            border-radius: 4px 4px 0 0;
+            margin-right: 2px;
+        }
+
+        .tablink:hover:not(.active) {
+            background-color: #555;
+        }
+
+        .tablink.active {
+            background-color: #FF4500; 
+            border: 1px solid #444;
+            border-bottom: 1px solid #222; 
+            transform: translateY(1px);
+        }
+
+        .tab-content {
+            padding: 20px;
+            border-top: 1px solid #444;
+            text-align: left;
+        }
+
+        /* ESTILOS DE LOS ENLACES EN CUADRÍCULA (3 COLUMNAS) */
+        .enlaces-container {
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center;
+            margin: 20px auto;
+            padding: 0;
+        }
+
+        .enlace-item {
+            width: 30%;
+            padding: 15px 10px;
+            margin: 5px;
+            text-align: center;
+            text-decoration: none;
+            background-color: #FF4500; 
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-weight: 600;
+            /* Cursor de puntero para indicar que es un botón de acción */
+            cursor: pointer; 
+        }
+
+        .enlace-item:hover {
+            background-color: #CC3700; 
+        }
+    </style>
+</head>
+<body>
+
+    <h1>FoxWeb</h1>
+    <p>Enlaces a aplicaciones, sistemas y juegos.</p>
+    <p>Nuestro objetivo es ayudar a personas que necesiten Software sin problemas.</p>
+    
+    <div class="tabs-container">
+        
+        <div class="tab-buttons">
+            <button class="tablink active" onclick="openTab(event, 'Programas')">Programas</button>
+            <button class="tablink" onclick="openTab(event, 'Sistemas')">Sistemas Operativos</button>
+            <button class="tablink" onclick="openTab(event, 'Juegos')">Juegos</button>
+            <button class="tablink" onclick="openTab(event, 'Extras')">Extras</button>
+            <button class="tablink" onclick="openTab(event, 'Info')">Info</button>
+        </div>
+
+        <div id="Programas" class="tab-content">
+            <h3>Programas y Aplicaciones</h3>
+            <div class="enlaces-container">
+                <a href="https://www.mediafire.com/file/zc6ebqz8p7z0p4m/discord-xpedition-x86-32.zip/file" class="enlace-item" target="_blank">Discord XP Edition (Descargar por MediaFire)</a>
+                <a href="https://www.winrar.es/descargas" class="enlace-item" target="_blank">WinRAR (Descarga Oficial)</a>
+            </div>
+        </div>
+        
+        <div id="Sistemas" class="tab-content" style="display: none;">
+            <h3>No hay contenido aún...</h3>
+            <p></p>
+            <p>Prueba en actualizar la página, a ver si publicamos algo recientemente, sino, no va mostrar nada.</p>
+            <div class="enlaces-container">
+                <div class="enlace-item" onclick="recargarYMantener('Sistemas')">
+                    Actualizar Página
+                </div>
+            </div>
+        </div>
+        
+        <div id="Juegos" class="tab-content" style="display: none;">
+            <h3>Juegos</h3>
+            <h1>"Nada"</h1>
+            </div>
+
+        <div id="Extras" class="tab-content" style="display: none;">
+            <h3>Extras</h3>
+            <div class="enlaces-container">
+                <a href="https://www.mediafire.com/file/a0l5lnbd56jyady/Tema_de_Windows_10_para_Windows_7_por_FoxOrange224.zip/file" class="enlace-item" target="_blank">Tema de Windows 10 para Windows 7 (32 bits)</a>
+            </div>
+        </div>
+        
+        <div id="Info" class="tab-content" style="display: none;">
+            <h3>Información de la página</h3>
+            <p>Gracias por apoyar a esta página, este es el lugar donde se comparte algunas cosas interesantes.</p>
+            <p></p>
+            <p></p>
+            <div class="enlaces-container">
+                <a href="https://www.youtube.com/@FoxOrange224" class="enlace-item" target="_blank">Canal de YouTube</a>
+                <a href="https://www.discord.com/invite/(codigo)" class="enlace-item" target="_blank">Servidor de Discord</a>
+                <a href="https://www.github.com/foxorange224" class="enlace-item" target="_blank">Cuenta de GitHub</a>
+            </div>
+        </div>
+
+    </div> <script>
+        // FUNCIÓN PARA RECARGA TOTAL Y MANTENER LA PESTAÑA
+        function recargarYMantener(tabName) {
+            // Pone el hash en la URL (ej: #Sistemas)
+            window.location.hash = tabName; 
+            
+            // Fuerza la recarga total del navegador
+            window.location.reload(true); 
+        }
+
+        // FUNCIÓN PRINCIPAL PARA CAMBIAR PESTAÑAS
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            
+            // Oculta todos los contenidos
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Desactiva todos los botones
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Muestra el contenido actual y marca el botón como activo
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        
+        // Carga la pestaña correcta al iniciar (lee el hash)
+        document.addEventListener("DOMContentLoaded", function() {
+            var hash = window.location.hash; 
+            
+            if (hash) {
+                // Si hay un hash (#Sistemas), intenta abrir esa pestaña
+                var tabName = hash.substring(1); 
+                var targetElement = document.getElementById(tabName);
+                
+                var tabButton = document.querySelector('.tablink[onclick*="' + tabName + '"]');
+
+                if (targetElement && tabButton) {
+                    tabButton.click();
+                } else {
+                    document.querySelector(".tablink").click();
+                }
+            } else {
+                // Si no hay hash, abre la primera pestaña (Programas)
+                document.querySelector(".tablink").click();
+            }
+        });
+    </script>
+    
+    <p>Si no ves lo que buscas, Intenta actualizar la página.</p>
+    <p>©Copyright 2025 FoxOrange224</p>
+
+</body>
+</html>
