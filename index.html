@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoxWeb | Principal</title>
+    
+    <link rel="icon" href="https://i.imgur.com/h6S0iUY.png" type="image/png">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+/* ESTILOS GLOBALES Y DE FONDO */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding-top: 40px;
+    background-color: #0c0c0c; /* Negro profundo para contraste */
+    color: #E0E0E0;
+    line-height: 1.5;
+}
+
+/* ------------------------------------------------------ */
+/* ESTILOS DEL ENCABEZADO Y CONTENEDORES */
+/* ------------------------------------------------------ */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1000px;
+    margin: 0px auto;
+    padding: 0 20px;
+}
+
+.main-logo {
+    max-width: 200px;
+    height: auto;
+    display: block;
+    margin: 0;
+}
+
+/* Contenedor de Íconos Sociales (Derecha) */
+.social-icons-top {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons-top a {
+    color: #999;
+    font-size: 1.8em;
+    transition: color 0.2s;
+}
+
+.social-icons-top a:hover {
+    color: #FF4500;
+}
+
+/* ------------------------------------------------------ */
+/* ESTILOS DEL SLOGAN (CENTRADO DEBAJO DEL HEADER) */
+/* ------------------------------------------------------ */
+.slogan-container {
+    max-width: 800px;
+    margin: 20px auto 40px auto;
+    text-align: center;
+    border-bottom: 1px solid #222;
+    padding: 0 20px 20px 20px;
+}
+
+.slogan-container p {
+    margin: 5px 0;
+    font-size: 1em;
+    color: #aaa;
+}
+
+/* ------------------------------------------------------ */
+/* ESTILOS DE LAS PESTAÑAS (TABS) */
+/* ------------------------------------------------------ */
+.tabs-container {
+    max-width: 1000px;
+    margin: 0px auto;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.tab-buttons {
+    display: flex;
+    padding: 0 20px;
+    border-bottom: 2px solid #282828;
+}
+
+.tablink {
+    background-color: transparent;
+    color: #aaa;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 15px 20px;
+    transition: color 0.2s, border-bottom 0.2s;
+    font-size: 1em;
+    font-weight: 600;
+    margin-right: 1px;
+    
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tablink:hover:not(.active) {
+    color: #fff;
+}
+
+.tablink.active {
+    color: #FF4500;
+    border-bottom: 2px solid #FF4500;
+    background-color: #1a1a1a;
+}
+
+.tab-content {
+    padding: 30px 20px;
+    text-align: left;
+}
+
+h3 {
+    border-bottom: 1px solid #282828;
+    padding-bottom: 10px;
+    margin-top: 0;
+    color: #FF4500;
+    font-weight: 700;
+    font-size: 1.5em;
+}
+
+/* -------------------------------------------------------------------- */
+/* ESTILOS DE LISTA (Las Tarjetas de Descarga) - CORRECCIONES APLICADAS */
+/* -------------------------------------------------------------------- */
+.enlaces-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.enlace-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    padding: 15px 20px;
+    background-color: #222;
+    color: #E0E0E0;
+    border-radius: 8px;
+    border-left: 6px solid #FF4500;
+    transition: box-shadow 0.2s, transform 0.2s;
+    text-decoration: none;
+}
+
+.enlace-list-item:hover {
+    background-color: #282828;
+    box-shadow: 0 4px 10px rgba(255, 69, 0, 0.1);
+}
+
+.item-info {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    gap: 15px;
+    /* CORRECCIÓN 1: Asegura que el contenido deje espacio para el botón */
+    max-width: calc(100% - 180px);
+    overflow: hidden; 
+}
+
+.item-text h4 {
+    color: #FF4500;
+    font-size: 1.1em;
+    font-weight: 600;
+    border-bottom: none;
+    
+    /* CORRECCIÓN 2: Permite que el título se trunque si es muy largo */
+    display: block; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    
+    margin: 0;
+    padding-right: 10px;
+}
+
+/* Contenedor para Título y Tag */
+.title-line {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* Nuevo estilo para la Etiqueta (Tag) */
+.item-tag {
+    background-color: #333;
+    color: #FF4500;
+    font-size: 0.6em;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+.item-text p {
+    margin: 2px 0 0 0;
+    font-size: 0.9em;
+    color: #999;
+}
+
+.item-info i {
+    font-size: 1.8em;
+    color: #FF4500;
+    min-width: 25px;
+    text-align: center;
+}
+
+.item-descarga {
+    background-color: #FF4500;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: 700;
+    
+    /* Propiedades de Centrado Perfecto */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    
+    /* === CORRECCIÓN APLICADA PARA ESPACIADO === */
+    gap: 5px; /* Crea 5 píxeles de espacio entre el ícono y el texto */
+    /* ========================================= */
+    
+    white-space: nowrap;
+    margin-left: 20px;
+    min-width: 160px;
+    transition: background-color 0.2s;
+}
+
+.item-descarga:hover {
+    background-color: #CC3700;
+}
+
+/* ------------------------------------------------------ */
+/* MEDIA QUERY para Móviles (Correcciones aplicadas) */
+/* ------------------------------------------------------ */
+@media (max-width: 750px) {
+    /* Encabezado */
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+        padding: 0 10px;
+    }
+    .slogan-container {
+        padding: 0 10px 20px 10px;
+        margin-top: 15px;
+    }
+    .main-logo {
+        max-width: 180px;
+    }
+
+    /* Pestañas */
+    .tab-buttons {
+        padding: 0 10px;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .tablink {
+        font-size: 0.9em;
+        padding: 12px 15px;
+    }
+    .tabs-container {
+        margin: 0px auto 40px auto;
+    }
+
+    /* Lista de Enlaces */
+    .enlace-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 15px;
+    }
+    .item-info {
+        width: 100%;
+        padding-right: 0;
+        /* CORRECCIÓN 3: Revertimos el max-width para que ocupe todo el ancho */
+        max-width: 100%; 
+    }
+    .title-line {
+        flex-wrap: wrap;
+    }
+    .item-descarga {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+    </style>
+</head>
+<body>
+    
+    <div class="header-container">
+        <header>
+            <img src="https://i.imgur.com/84Ijcxb.png" alt="Logo de FoxWeb por FoxOrange224" class="main-logo">
+        </header>
+
+        <div class="social-icons-top">
+            <a href="https://www.youtube.com/@FoxOrange224" target="_blank" title="Canal de YouTube (@FoxOrange224)"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://www.discord.com/invite/r9v67gFRcp" target="_blank" title="Servidor de Discord (FoxOrange)"><i class="fa-brands fa-discord"></i></a>
+            <a href="https://www.github.com/foxorange224" target="_blank" title="Cuenta de GitHub"><i class="fa-brands fa-github"></i></a>
+        </div>
+    </div>
+    
+    <div class="slogan-container">
+        <p>Enlaces a aplicaciones, sistemas y juegos. Te ofrecemos lo mejor de la web y la informática.</p>
+        <p>Nuestro objetivo es ayudar a personas que necesiten Software sin problemas y de manera confiable.</p>
+    </div>
+    
+    <div class="tabs-container">
+        
+        <div class="tab-buttons">
+            <button class="tablink active" onclick="openTab(event, 'Programas')"><i class="fa-solid fa-cloud-arrow-down"></i> Programas</button>
+            <button class="tablink" onclick="openTab(event, 'Sistemas')"><i class="fa-solid fa-hard-drive"></i> Sistemas Operativos</button>
+            <button class="tablink" onclick="openTab(event, 'Juegos')"><i class="fa-solid fa-gamepad"></i> Juegos</button>
+            <button class="tablink" onclick="openTab(event, 'Extras')"><i class="fa-solid fa-screwdriver-wrench"></i> Extras</button>
+            <button class="tablink" onclick="openTab(event, 'APKs')"><i class="fa-solid fa-mobile-screen"></i> APKs</button>
+        </div>
+
+        <div id="Programas" class="tab-content">
+            <h3>Programas y Aplicaciones</h3>
+            <div class="enlaces-list-container">
+
+                <a href="https://www.ppsspp.org/files/1_19_3/PPSSPPSetup.exe" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-brands fa-windows"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>PPSSPP</h4> <span class="item-tag">EMULADOR</span>
+                            </div>
+                            <p>Es un emulador de Play Station Portable (PSP) para poder jugarlo casi en cualquier plataforma</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descarga Oficial
+                    </span>
+                </a>
+                
+                <a href="https://app.prntscr.com/build/setup-lightshot.exe" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-camera"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Lightshot</h4> <span class="item-tag">UTILIDAD</span>
+                            </div>
+                            <p>Programa esencial para capturar la pantalla y compartir imágenes rápidamente.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (2.7 MB)
+                    </span>
+                </a>
+                
+                <a href="https://www.mediafire.com/file/zc6ebqz8p7z0p4m/discord-xpedition-x86-32.zip/file" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-brands fa-discord"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Discord XP Edition</h4> <span class="item-tag">SOCIAL</span>
+                            </div>
+                            <p>Versión modificada y optimizada para uso en sistemas operativos antiguos.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (15 MB)
+                    </span>
+                </a>
+                
+                <a href="https://www.winrar.es/descargas" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>WinRAR</h4> <span class="item-tag">COMPRESOR</span>
+                            </div>
+                            <p>Herramienta líder para compresión y descompresión de archivos (ZIP, RAR, etc.).</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (~5 MB)
+                    </span>
+                </a>
+                
+                <a href="https://github.com/Feodor2/Mypal68/releases/download/74.1.4/mypal-74.1.4.en-US.win32.zip" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-earth-americas"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>MyPal (Navegador Ligero)</h4> <span class="item-tag">NAVEGADOR</span>
+                            </div>
+                            <p>Navegador moderno basado en Firefox, perfecto para PCs con bajos recursos.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (59.7 MB)
+                    </span>
+                </a>
+                
+            </div>
+        </div>
+        
+        <div id="Sistemas" class="tab-content" style="display: none;">
+            <h3>Herramientas de Rescate y Sistemas (ISO)</h3>
+            <div class="enlaces-list-container">
+
+                <a href="https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.2.0-amd64-netinst.iso" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-compact-disc"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Debian 13</h4> <span class="item-tag">ISO | LINUX</span>
+                            </div>
+                            <p>Instalador por red de la versión estable de Debian, para PCs de 64 bits (Oficial).</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (784 MB)
+                    </span>
+                </a>
+
+                <a href="https://www.mediafire.com/file/rd2plfxcwhocbd8/Hiren%2527s.BootCD.15.2.iso/file" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-compact-disc"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Hiren's BootCD (15.2)</h4> <span class="item-tag">ISO | RESCATE</span>
+                            </div>
+                            <p>Kit de rescate esencial con herramientas para reparación y diagnóstico de sistemas.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (594 MB)
+                    </span>
+                </a>
+
+                <a href="https://sourceforge.net/projects/loc-os/files/Loc-OS%2023/Loc-OS-23-LXDE-i686.iso/download" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-compact-disc"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Loc-OS Linux 23</h4> <span class="item-tag">ISO | LIGERO</span>
+                            </div>
+                            <p>Distribución Linux muy ligera, ideal para darle vida a hardware antiguo.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (1.5 GB)
+                    </span>
+                </a>
+
+                <a href="https://linuxmint.com/download.php" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-compact-disc"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Linux Mint 22.2</h4> <span class="item-tag">ISO | OFICIAL</span>
+                            </div>
+                            <p>Un sistema operativo de escritorio amigable y completamente equipado con apps.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Pagina Oficial
+                    </span>
+                </a>
+
+            </div>
+        </div>
+        
+        <div id="Juegos" class="tab-content" style="display: none;">
+            <h3>Juegos de la Infancia y Clásicos</h3>
+            <div class="enlaces-list-container">
+                
+                <a href="https://www.mediafire.com/file/cpcxasi9cbernjs" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-gamepad"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Papa's Pizzeria Colletion</h4> <span class="item-tag">JUEGO | CLASICO</span>
+                            </div>
+                            <p>Un Pack de Juegos de Papa's Pizzeria para hacer todo tipo de comidas, este juego marcó la infancia para muchos. ❤</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (128 MB)
+                    </span>
+                </a>
+
+                <a href="https://www.mediafire.com/file/be2cr8yfize0w73/CS1.6.zip/file" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-gamepad"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Counter Strike 1.6</h4> <span class="item-tag">JUEGO | FPS</span>
+                            </div>
+                            <p>El clásico juego de disparos en primera persona, esencial de la vieja escuela.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (227 MB)
+                    </span>
+                </a>
+
+                <a href="https://www.mediafire.com/file/jfpbza89296aoba/GD-2.2074-%252864-Bits%2529.zip/file" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-gamepad"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Geometry Dash 2.207</h4> <span class="item-tag">JUEGO | RITMO</span>
+                            </div>
+                            <p>Juego de ritmo y plataformas que te permite crear y compartir tus propios niveles.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (265 MB)
+                    </span>
+                </a>
+
+                <a href="https://www.mediafire.com/file/fpam0fdospuupxb/HL.zip/file" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-gamepad"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Half Life 1</h4> <span class="item-tag">JUEGO | CLASICO</span>
+                            </div>
+                            <p>El innovador videojuego de ciencia ficción y disparos que marcó una era.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (246 MB)
+                    </span>
+                </a>
+                
+                <p style="text-align: center; color: #FF4500;">Contraseña maestra para los archivos comprimidos: foxorange224</p>
+                
+            </div>
+        </div>
+
+        <div id="Extras" class="tab-content" style="display: none;">
+            <h3>Extras y Utilidades para tu PC</h3>
+            <div class="enlaces-list-container">
+
+                <a href="https://rufus.ie/downloads/" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-brands fa-usb"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Rufus (Última Versión)</h4> <span class="item-tag">UTILIDAD | BOOT</span>
+                            </div>
+                            <p>Herramienta esencial para crear unidades USB de arranque (booteables) de forma rápida.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descarga Oficial
+                    </span>
+                </a>
+                
+                <a href="https://www.mediafire.com/file/a0l5lnbd56jyady/Tema_de_Windows_10_para_Windows_7_por_FoxOrange224.zip/file" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-paint-roller"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Tema de Windows 10</h4> <span class="item-tag">PERSONALIZACION</span>
+                            </div>
+                            <p>Dale una apariencia moderna de Windows 10 a tu viejo Windows 7 (32 bits).</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (79 MB)
+                    </span>
+                </a>
+                
+                <a href="https://www.mediafire.com/file/65acrgovcx0ypkt/DriverPack_XP_%2528x86%2529.rar/file" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-microchip"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>DriverPack para WinXP</h4> <span class="item-tag">DRIVER | UTILITY</span>
+                            </div>
+                            <p>Paquete de controladores para hardware difícil de encontrar en sistemas XP.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (263 MB)
+                    </span>
+                </a>
+                
+                <a href="https://www.3dpchip.com/new/3DP_Chip_v2511.exe" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-gears"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>3DP Chip</h4> <span class="item-tag">DRIVER | UTILITY</span>
+                            </div>
+                            <p>Software para identificar y descargar controladores de forma rápida (Link oficial).</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (~5 MB)
+                    </span>
+                </a>
+                
+            </div>
+        </div>
+        
+        <div id="APKs" class="tab-content" style="display: none;">
+            <h3>Aplicaciones y Juegos para Android (APKs)</h3>
+            
+            <div class="enlaces-list-container">
+                
+                <a href="https://www.mediafire.com/file/xc2yuu97tbyclf7/mc-be-1.21.130.apk/file" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-brands fa-android"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Minecraft Bedrock</h4> <span class="item-tag">JUEGO | APK</span>
+                            </div>
+                            <p>La versión de Minecraft para móviles, con todas las características recientes.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (414 MB)
+                    </span>
+                </a>
+                
+                <a href="https://bruhzstudios.itch.io/free-gd-geode-breeze-apks-mobile-only" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-brands fa-android"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Geometry Dash (2.207)</h4> <span class="item-tag">JUEGO | MOD</span>
+                            </div>
+                            <p>Incluye Geode Mod Loader. Perfecto para personalizar tu experiencia de juego.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (150 MB)
+                    </span>
+                </a>
+
+                <a href="https://www.ppsspp.org/files/1_19_3/ppsspp.apk" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-brands fa-android"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>PPSSPP</h4> <span class="item-tag">EMULADOR | APK</span>
+                            </div>
+                            <p>Es un emulador de Play Station Portable (PSP) para poder jugarlo casi en cualquier plataforma</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (38 MB)
+                    </span>
+                </a>
+
+                <a href="https://f-droid.org/repo/com.termux_1002.apk" class="enlace-list-item" target="_blank">
+                    <div class="item-info">
+                        <i class="fa-solid fa-terminal"></i>
+                        <div class="item-text">
+                            <div class="title-line">
+                                <h4>Termux</h4> <span class="item-tag">TERMINAL | UTILITY</span>
+                            </div>
+                            <p>Emulador de terminal Linux, ideal para trabajos de informática y programación.</p>
+                        </div>
+                    </div>
+                    <span class="item-descarga">
+                        <i class="fa-solid fa-download"></i> Descargar (35 MB)
+                    </span>
+                </a>
+                
+            </div>
+        </div>
+        
+    </div>
+    
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            
+            // Oculta todo el contenido de las pestañas
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Elimina la clase 'active' de todos los botones
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Muestra el contenido de la pestaña actual y agrega la clase 'active' al botón
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        
+        // Carga la pestaña correcta al iniciar (lee el hash)
+        document.addEventListener("DOMContentLoaded", function() {
+            var hash = window.location.hash;
+            
+            if (hash) {
+                var tabName = hash.substring(1);
+                var tabButton = document.querySelector('.tablink[onclick*="' + tabName + '"]');
+
+                if (tabButton) {
+                    tabButton.click();
+                } else {
+                    document.querySelector(".tablink").click(); // Carga Programas si el hash es inválido
+                }
+            } else {
+                document.querySelector(".tablink").click(); // Carga Programas por defecto
+            }
+        });
+    </script>
+    
+    <p style="text-align: center; margin-top: 40px; color: #666;">Si no ves lo que buscas, Intenta actualizar la página. Si la PC vieja muere, no es mi culpa, ¡es la tecnología! xd</p>
+    <p style="text-align: center; margin-bottom: 20px; color: #666;">©Copyright 2025 FoxOrange224</p>
+
+</body>
+</html>
