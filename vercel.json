@@ -1,12 +1,12 @@
 {
   "rewrites": [
-    { 
-      "source": "/_next/static/:path*", 
-      "destination": "/_next/static/:path*" 
+    {
+      "source": "/404",
+      "destination": "/404.html"
     },
-    { 
-      "source": "/(.*)", 
-      "destination": "/main.html" 
+    {
+      "source": "/(.*)",
+      "destination": "/main.html"
     }
   ],
   "headers": [
@@ -19,5 +19,7 @@
         }
       ]
     }
-  ]
+  ],
+  "trailingSlash": false,
+  "cleanUrls": true
 }
