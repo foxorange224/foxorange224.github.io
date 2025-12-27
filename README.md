@@ -1,178 +1,103 @@
-# FoxWeb - Centro de Descargas Confiable
+# 🦊 FoxWeb - Centro de Descargas
 
 ![FoxWeb Logo](https://i.imgur.com/qfsMx7V.png)
 
-## 📋 Descripción
-**FoxWeb** es un centro de descargas web que ofrece acceso rápido y seguro a software esencial, sistemas operativos, juegos clásicos y utilidades. El sitio está diseñado para ser intuitivo, rápido y completamente responsivo.
+**FoxWeb** es un centro de descargas confiable que proporciona enlaces directos a software esencial, sistemas operativos, juegos clásicos y utilidades para tu PC.
 
-## ✨ Características Principales
+## 🌐 Sitio Web
 
-### 🎨 Interfaz Moderna
-- Diseño oscuro con acentos naranja (#FF4500)
-- Completamente responsivo (adaptado para móviles, tablets y escritorio)
-- Animaciones suaves y transiciones
-- Iconos Font Awesome para mejor visualización
+🔗 **Versión principal (Vercel):** [https://foxweb.vercel.app](https://foxweb.vercel.app)  
+📁 **GitHub Pages:** [https://foxorange224.github.io](https://foxorange224.github.io)
 
-### 🗂️ Organización por Categorías
-1. **Programas** - Software esencial (VLC, 7-Zip, Notepad++, etc.)
-2. **Sistemas** - Distribuciones Linux y herramientas de rescate
-3. **Juegos** - Títulos clásicos y ligeros
-4. **Extras** - Drivers, utilidades y personalización
-5. **APKs** - Aplicaciones útiles para Android
+> ⚠️ **Nota:** La página en GitHub Pages redirige automáticamente a la versión completa en Vercel.
 
-### 🔍 Funcionalidades Avanzadas
-- **Buscador en tiempo real** - Filtra contenido dentro de cada categoría
-- **Modales interactivos** - Para selección de versiones y más información
-- **Sistema de pestañas** - Navegación fluida entre categorías
-- **URL con hash** - Permite compartir enlaces directos a categorías específicas
+## 📦 Contenido Disponible
 
-### 📱 Compatibilidad
-- ✅ Windows (desde XP hasta 11)
-- ✅ Distribuciones Linux
-- ✅ Dispositivos Android
-- ✅ Hardware antiguo y moderno
+| Categoría | Descripción | Ejemplos |
+|-----------|-------------|----------|
+| **🛠️ Programas** | Software esencial y optimizado | VLC, 7-Zip, Notepad++, ShareX |
+| **💻 Sistemas** | Distribuciones Linux y herramientas | Debian, Hiren's BootCD, Loc-OS |
+| **🎮 Juegos** | Clásicos y títulos ligeros | Counter-Strike 1.6, Geometry Dash |
+| **🔧 Extras** | Drivers y utilidades de sistema | Java Runtime, Dependencias Windows |
+| **📱 APKs** | Aplicaciones útiles para Android | Minecraft, PPSSPP, Termux |
+
+## 🚀 Características Técnicas
+
+- **⚡ Despliegue automático** en Vercel desde GitHub
+- **🌍 CDN global** para carga ultrarrápida
+- **🔒 HTTPS** automático y gratuito
+- **📱 Diseño responsive** para móviles y escritorio
+- **🔍 Buscador en tiempo real** en cada categoría
+- **💬 Sistema de sugerencias** para nuevos contenidos
 
 ## 🛠️ Tecnologías Utilizadas
 
-### Frontend
-- **HTML5** - Estructura semántica
-- **CSS3** - Estilos personalizados con variables CSS
-- **JavaScript Vanilla** - Funcionalidades interactivas
-- **Font Awesome 6.5.1** - Iconos
-- **Google Fonts (Inter)** - Tipografía moderna
-
-### Hosting y Recursos
-- **Imgur** - Hosting de imágenes
-- **MediaFire** - Hosting de archivos
-- **GitHub** - Control de versiones
-- **CDN** - Para librerías externas
+- **Frontend:** HTML5, CSS3, JavaScript Vanilla
+- **Iconos:** Font Awesome 6
+- **Fuentes:** Google Fonts (Inter)
+- **Hosting:** Vercel + GitHub Pages
+- **CDN:** jsDelivr para recursos externos
 
 ## 📁 Estructura del Proyecto
 
 ```
-foxweb/
-├── index.html          # Archivo principal HTML/CSS/JS
-├── README.md           # Este archivo
-└── recursos/           # (Externo) Imágenes y assets
+foxorange224.github.io/
+├── main.html          # Página principal completa
+├── index.html         # Página de redirección a Vercel
+├── vercel.json        # Configuración de Vercel
+├── README.md          # Este archivo
+└── assets/           # Recursos estáticos (opcional)
 ```
 
-## 🚀 Instalación y Uso
+## 🔧 Configuración
 
-### Opción 1: Uso Directo
-1. Descarga el archivo `index.html`
-2. Ábrelo en cualquier navegador moderno
-3. ¡Listo! El sitio funciona completamente offline
+### Para Vercel:
+1. Conecta tu repositorio de GitHub a Vercel
+2. Vercel detectará automáticamente el archivo `vercel.json`
+3. La URL será: `https://foxweb.vercel.app` (o similar)
 
-### Opción 2: Personalización
-1. Clona o descarga el repositorio
-2. Modifica el contenido en `index.html`
-3. Actualiza los enlaces y textos según necesites
-4. Cambia los colores editando las variables CSS en `:root`
+### Para GitHub Pages:
+1. El archivo `index.html` redirige automáticamente a Vercel
+2. Configura GitHub Pages desde Settings → Pages
+3. Usa la rama `main` y carpeta `/ (root)`
 
-## 🔧 Personalización
+## 🤝 Contribuir
 
-### Cambiar Colores
-```css
-:root {
-    --primary: #FF4500;          /* Color principal */
-    --primary-hover: #CC3700;    /* Hover del color principal */
-    --bg-body: #0c0c0c;          /* Fondo principal */
-    --bg-card: #161616;          /* Fondo de tarjetas */
-    --text-main: #E0E0E0;        /* Texto principal */
-}
-```
-
-### Agregar Nuevo Contenido
-1. Encuentra la pestaña correspondiente en el HTML
-2. Copia la estructura de un `.content-item`
-3. Modifica:
-   - Título
-   - Descripción
-   - Etiquetas (badges)
+### Sugerir nuevo contenido:
+1. Haz clic en el botón **"+"** en la esquina superior derecha
+2. Completa el formulario con:
+   - Nombre del software/juego
+   - Descripción breve
+   - Categoría adecuada
    - Enlace de descarga
-   - Icono
+3. Envía la sugerencia a través de GitHub Issues
 
-### Actualizar Enlaces
-- Reemplaza las URLs en los atributos `href`
-- Para modales, actualiza las URLs en los botones `.modal-btn`
+### Reportar problemas:
+- Enlaces rotos → Abre un Issue en GitHub
+- Errores en el sitio → Describe el problema
+- Mejoras de diseño → Propón cambios
 
-## 📊 Estructura de un Item
+## 📞 Contacto
 
-```html
-<div class="content-item">
-    <div class="item-header">
-        <div class="item-icon"><i class="fa-solid fa-icono"></i></div>
-        <div><h3 class="item-title">Título del Programa</h3></div>
-    </div>
-    <p class="item-description">Descripción detallada del software.</p>
-    <div class="item-meta">
-        <span class="item-badge">CATEGORÍA 1</span>
-        <span class="item-badge">CATEGORÍA 2</span>
-    </div>
-    <a href="URL_DE_DESCARGA" class="download-btn" target="_blank">
-        <i class="fa-solid fa-download"></i> Descargar
-    </a>
-</div>
-```
+- **🎥 YouTube:** [@FoxOrange224](https://www.youtube.com/@FoxOrange224)
+- **💬 Discord:** [Servidor de Discord](https://discord.gg/r9v67gFRcp)
+- **🐙 GitHub:** [foxorange224](https://github.com/foxorange224)
+- **💖 Donaciones:** [PayPal](https://www.paypal.com/ncp/payment/QLFVSACHGMW5E)
 
-## 🌐 Enlaces y Contacto
+## ⚠️ Aviso Legal
 
-### Redes Sociales
-- **YouTube**: [@FoxOrange224](https://www.youtube.com/@FoxOrange224)
-- **Discord**: [Comunidad FoxWeb](https://discord.gg/r9v67gFRcp)
-- **GitHub**: [foxorange224](https://github.com/foxorange224)
-- **PayPal**: [Donaciones](https://www.paypal.com/ncp/payment/QLFVSACHGMW5E)
+FoxWeb solo proporciona enlaces a:
+- Software gratuito y de código abierto
+- Enlaces oficiales de descarga
+- Archivos públicos y legales
 
-### Recursos Externos
-- **Logo**: [Imgur](https://i.imgur.com/qfsMx7V.png)
-- **Favicon**: [Imgur](https://i.imgur.com/5JzgCvZ.png)
-- **Fonts**: [Google Fonts - Inter](https://fonts.google.com/specimen/Inter)
-
-## ⚠️ Avisos Importantes
-
-### Seguridad
-- Todos los enlaces son verificados
-- Software gratuito o de código abierto
-- Enlaces oficiales cuando es posible
-
-### Contraseñas
-- Algunos archivos comprimidos usan: `foxorange224`
-
-### Compatibilidad
-- Testeado en Chrome, Firefox y Edge
-- Responsive desde 320px hasta 4K
-- No requiere conexión después de cargar
-
-## 🔄 Mantenimiento
-
-### Tareas Regulares
-1. Verificar enlaces rotos
-2. Actualizar versiones de software
-3. Agregar nuevo contenido
-4. Optimizar rendimiento
-
-### Reportar Problemas
-- Usa GitHub Issues
-- Contacta por Discord
-- Reporta enlaces caídos
+**No almacenamos** archivos protegidos por derechos de autor. Todos los enlaces son proporcionados para fines educativos y de preservación.
 
 ## 📄 Licencia
-© Copyright 2025 FoxOrange224 - FoxWeb
 
-Este proyecto es de uso personal y educativo. Todos los derechos de software pertenecen a sus respectivos dueños.
-
-## 🤝 Contribuciones
-Las contribuciones son bienvenidas. Por favor:
-1. Haz fork del proyecto
-2. Crea una rama para tu función
-3. Realiza tus cambios
-4. Envía un Pull Request
-
-## 📞 Soporte
-- **Discord**: Para ayuda técnica y comunidad
-- **GitHub Issues**: Para reportar bugs
-- **YouTube**: Para tutoriales y novedades
+© 2025 FoxOrange224 - FoxWeb  
+Este proyecto es para uso personal y educativo.
 
 ---
 
-**✨ Creado con pasión por la comunidad de software libre y open source**
+*Última actualización: $(date)*
