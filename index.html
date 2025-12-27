@@ -3,135 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoxWeb | Redirigiendo...</title>
-    <!-- Redirección automática inmediata -->
-    <meta http-equiv="refresh" content="3; url=https://foxweb.vercel.app">
+    <title>Cargando...</title>
+    
+    <meta name="description" content="FoxWeb es tu centro de descargas confiable para software optimizado, sistemas operativos, juegos y utilidades.">
+    <meta property="og:title" content="FoxWeb | Centro de Descargas">
+    <meta property="og:description" content="Software optimizado, sistemas operativos, juegos y utilidades. Enlaces directos y duraderos.">
+    <meta property="og:image" content="https://i.imgur.com/qfsMx7V.png">
+    <meta property="og:url" content="https://foxweb.vercel.app">
+    <meta property="og:type" content="website">
+    <meta http-equiv="refresh" content="0; url=https://foxweb.vercel.app/main.html">
     
     <link rel="icon" href="https://i.imgur.com/5JzgCvZ.png" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #0c0c0c;
-            color: #E0E0E0;
-            margin: 0;
-            padding: 40px 20px;
-            text-align: center;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .logo {
-            max-width: 250px;
-            margin-bottom: 30px;
-            filter: drop-shadow(0 0 10px rgba(255, 69, 0, 0.3));
-        }
-        
-        .message {
-            background: #161616;
-            border-radius: 12px;
-            padding: 40px 30px;
-            border: 1px solid #222;
-            max-width: 500px;
-            width: 100%;
-        }
-        
-        h1 {
-            color: #FF4500;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-        }
-        
-        p {
-            color: #999;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        
-        .redirect-link {
-            display: inline-block;
-            background: #FF4500;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            margin: 15px 0;
-            transition: background 0.2s ease;
-        }
-        
-        .redirect-link:hover {
-            background: #CC3700;
-        }
-        
-        .redirect-link i {
-            margin-right: 8px;
-        }
-        
-        .note {
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 20px;
-            max-width: 400px;
-        }
-        
-        .spinner {
-            font-size: 2.5em;
-            color: #FF4500;
-            margin: 20px 0;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-    </style>
 </head>
 <body>
-    <img src="https://i.imgur.com/qfsMx7V.png" alt="FoxWeb Logo" class="logo">
-    
-    <div class="message">
-        <div class="spinner">
-            <i class="fa-solid fa-spinner"></i>
-        </div>
-        
-        <h1>Redirigiendo a FoxWeb...</h1>
-        
-        <p>Estás siendo redirigido automáticamente a la versión completa de FoxWeb en Vercel.</p>
-        
-        <p>Si no eres redirigido en unos segundos, haz clic en el enlace:</p>
-        
-        <a href="https://tu-app.vercel.app" class="redirect-link">
-            <i class="fa-solid fa-external-link-alt"></i>
-            Ir a FoxWeb Ahora
-        </a>
-        
-    </div>
-
     <script>
-        // Reemplazar con tu URL real de Vercel
-        const vercelUrl = "https://foxweb.vercel.app";
-        
-        // Redirección automática con fallback
-        setTimeout(function() {
-            window.location.href = vercelUrl;
-        }, 3000); // 3 segundos
-        
-        // Actualizar todos los enlaces con la URL correcta
-        document.addEventListener('DOMContentLoaded', function() {
-            // Enlace del botón
-            const link = document.querySelector('.redirect-link');
-            if (link) link.href = vercelUrl;
-            
-            // Meta tag de redirección
-            const metaTag = document.querySelector('meta[http-equiv="refresh"]');
-            if (metaTag) metaTag.content = `3; url=${vercelUrl}`;
-        });
+        window.location.replace("https://foxweb.vercel.app");
     </script>
 </body>
 </html>
