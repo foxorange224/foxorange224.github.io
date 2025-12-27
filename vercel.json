@@ -1,8 +1,12 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
+    { 
+      "source": "/_next/static/:path*", 
+      "destination": "/_next/static/:path*" 
+    },
+    { 
+      "source": "/(.*)", 
+      "destination": "/main.html" 
     }
   ],
   "headers": [
