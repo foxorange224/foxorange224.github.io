@@ -20,12 +20,116 @@
     <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoxWeb | Centro de Descargas</title>
-    <meta property="og:title" content="FoxWeb | Centro de Descargas">
-    <meta property="og:description" content="Software optimizado, sistemas operativos, juegos y utilidades. Enlaces directos y duraderos.">
-    <meta property="og:image" content="https://i.imgur.com/qfsMx7V.png">
-    <meta name="description" content="FoxWeb es tu centro de descargas confiable para software ligero, utilidades y clásicos.">
+     <!-- ==== TÍTULO Y DESCRIPCIÓN OPTIMIZADOS ==== -->
+    <title>FoxWeb | Descarga Software Gratis, Sistemas Operativos y Juegos</title>
     
+    <meta name="description" content="FoxWeb: Centro de descargas confiable. Software esencial, Linux, Windows, juegos clásicos y APKs. Descargas directas, seguras y actualizadas.">
+    
+    <!-- Open Graph mejorado -->
+    <meta property="og:title" content="FoxWeb | Descarga Gratis Software, Sistemas y Juegos">
+    <meta property="og:description" content="Centro de descargas con software esencial, sistemas operativos Linux, juegos retro y utilidades. Enlaces directos y verificados.">
+    <meta property="og:url" content="https://foxweb.vercel.app/main">
+    
+    <!-- Twitter Cards optimizadas -->
+    <meta name="twitter:title" content="FoxWeb | Tu Centro de Descargas Confiable">
+    <meta name="twitter:description" content="Descarga software gratis, sistemas Linux, juegos clásicos y APKs. Enlaces directos y duraderos para la comunidad.">
+    
+    <!-- ==== KEYWORDS Y SCHEMA MEJORADOS ==== -->
+    <meta name="keywords" content="descargas software, programas gratis, Linux descargar, juegos clásicos, APKs, utilidades PC, sistemas operativos, FoxWeb">
+    
+    <!-- Schema Markup completo -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "FoxWeb - Centro de Descargas",
+      "url": "https://foxweb.vercel.app/main",
+      "description": "Centro de descargas confiable con software esencial, sistemas operativos, juegos clásicos y utilidades para PC y móviles",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://foxweb.vercel.app/main#Programas?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "FoxWeb",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://i.imgur.com/qfsMx7V.png",
+          "width": 512,
+          "height": 512
+        }
+      }
+    }
+    </script>
+    
+    <!-- Para cada categoría también -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "SoftwareApplication",
+            "name": "Programas Esenciales",
+            "description": "Descarga programas básicos y esenciales para Windows y Linux",
+            "url": "https://foxweb.vercel.app/main#Programas",
+            "applicationCategory": "UtilitiesApplication"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "WebApplication",
+            "name": "Sistemas Operativos",
+            "description": "Distribuciones Linux, herramientas de rescate y sistemas para PC antiguas",
+            "url": "https://foxweb.vercel.app/main#Sistemas",
+            "applicationCategory": "DesktopApplication"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Juegos Clásicos",
+            "description": "Juegos retro, clásicos y ligeros para PC de bajos recursos",
+            "url": "https://foxweb.vercel.app/main#Juegos",
+            "applicationCategory": "GameApplication"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "item": {
+            "@type": "SoftwareApplication",
+            "name": "Extras y Utilidades",
+            "description": "Drivers, herramientas de mantenimiento y personalización para Windows",
+            "url": "https://foxweb.vercel.app/main#Extras",
+            "applicationCategory": "UtilitiesApplication"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "item": {
+            "@type": "MobileApplication",
+            "name": "APKs para Android",
+            "description": "Aplicaciones y juegos para dispositivos móviles Android",
+            "url": "https://foxweb.vercel.app/main#APKs",
+            "applicationCategory": "MobileApplication"
+          }
+        }
+      ]
+    }
+    </script>
     <link rel="icon" href="https://i.imgur.com/5JzgCvZ.png" type="image/png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
