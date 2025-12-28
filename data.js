@@ -317,7 +317,7 @@ const FoxWebDB = {
       name: "Smart Defrag (Versión 11)",
       icon: "fa-solid fa-gears",
       info: "Herramienta especial para optimizar y defragmentar el disco. Compatible con Windows XP hasta el actual.",
-      enlace: "#",
+      enlace: "https://www.mediafire.com/file/1su7mvz3z97s4bc/Smart+Defrag+11.1.0.466.zip/file",
       modal: null,
       badges: ["DISCOS", "DESFRAGMENTAR", "HDD"]
     },
