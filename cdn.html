@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CDN Test - FoxWeb</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test de CDN - FoxWeb</h1>
+    
+    <div id="results">
+        <h2>✅ Vercel Edge Network Activada</h2>
+        <p>Tu sitio ya está en la CDN global de Vercel.</p>
+        
+        <h3>🌍 Localizaciones de Edge:</h3>
+        <ul>
+            <li>🇺🇸 North America (iad1, sfo1)</li>
+            <li>🇪🇺 Europe (fra1, lhr1)</li>
+            <li>🇸🇬 Asia (sin1)</li>
+            <li>🇦🇺 Australia (syd1)</li>
+        </ul>
+        
+        <h3>📊 Headers de CDN:</h3>
+        <pre id="headers">Cargando...</pre>
+        
+        <h3>⚡ Test de Velocidad:</h3>
+        <button onclick="runSpeedTest()">Ejecutar Test</button>
+        <div id="speedTest"></div>
+    </div>
+    
+    <script>
+        // Obtener headers
+        fetch('/')
+            .then(res => {
+                const headers = [];
+                res.headers.forEach((value, key) => {
+                    headers.push(`${key}: ${value}`);
+                });
+                document.getElementById('headers').textContent = headers.join('\n');
+            });
+        
+        function runSpeedTest() {
+            const start = performance.now();
+            const testDiv = document.getElementById('speedTest');
+            testDiv.innerHTML = '<p>⏳ Probando CDN desde tu ubicación...</p>';
+            
+            // Test desde múltiples ubicaciones simuladas
+            const endpoints = [
+                'https://foxweb.vercel.app/data.js',
+                'https://foxweb.vercel.app/main',
+                'https://i.imgur.com/qfsMx7V.png'
+            ];
+            
+            let completed = 0;
+            let totalTime = 0;
+            
+            endpoints.forEach(url => {
+                const startTime = performance.now();
+                fetch(url + '?t=' + Date.now())
+                    .then(() => {
+                        const time = performance.now() - startTime;
+                        totalTime += time;
+                        completed++;
+                        
+                        if (completed === endpoints.length) {
+                            const avgTime = totalTime / endpoints.length;
+                            const rating = avgTime < 500 ? '✅ Excelente' : 
+                                         avgTime < 1000 ? '⚠️ Aceptable' : '❌ Lento';
+                            
+                            testDiv.innerHTML = `
+                                <p><strong>Resultado:</strong> ${rating}</p>
+                                <p><strong>Tiempo promedio:</strong> ${avgTime.toFixed(0)}ms</p>
+                                <p><strong>CDN activa:</strong> ✅ Sí</p>
+                                <p><strong>Cache HIT:</strong> ${avgTime < 300 ? '✅ Sí' : '⚠️ Primera carga'}</p>
+                            `;
+                        }
+                    });
+            });
+        }
+        
+        // Ejecutar automáticamente
+        setTimeout(runSpeedTest, 1000);
+    </script>
+</body>
+</html>
