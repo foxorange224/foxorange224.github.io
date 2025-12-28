@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="theme-color" content="#FF4500">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FoxWeb">
+    <link rel="apple-touch-icon" href="https://i.imgur.com/5JzgCvZ.png">
+    <link rel="apple-touch-startup-image" href="https://i.imgur.com/qfsMx7V.png">
+    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FoxWeb</title>
@@ -1114,6 +1121,46 @@
     </div>
 
     <!-- ==================== MODALES EXISTENTES ==================== -->
+     <!-- MODAL INFO PWA -->
+<div id="pwaInfoModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <span class="close" onclick="closeModal('pwaInfoModal')">&times;</span>
+        <div style="text-align: center; margin-bottom: 25px;">
+            <i class="fa-solid fa-mobile-alt" style="font-size: 3em; color: var(--primary);"></i>
+            <h3 style="color: var(--primary); margin: 10px 0;">Instalar FoxWeb como App</h3>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <h4><i class="fa-solid fa-star" style="color: gold;"></i> Ventajas:</h4>
+            <ul style="text-align: left; color: var(--text-dim);">
+                <li>Acceso rápido desde tu escritorio o pantalla de inicio</li>
+                <li>Funciona offline (modo limitado)</li>
+                <li>Sin necesidad de descargar desde tiendas de aplicaciones</li>
+                <li>Experiencia similar a una app nativa</li>
+            </ul>
+        </div>
+        
+        <div style="margin-bottom: 25px;">
+            <h4><i class="fa-solid fa-mobile-screen-button"></i> Cómo instalar:</h4>
+            <div style="background: rgba(255, 69, 0, 0.05); border-radius: 8px; padding: 15px;">
+                <p style="margin: 5px 0; color: var(--text-dim);">
+                    <strong>Chrome/Edge:</strong> Haz clic en el icono <i class="fa-solid fa-download"></i> en la barra de direcciones
+                </p>
+                <p style="margin: 5px 0; color: var(--text-dim);">
+                    <strong>Firefox:</strong> Menú → "Instalar FoxWeb"
+                </p>
+                <p style="margin: 5px 0; color: var(--text-dim);">
+                    <strong>Safari:</strong> Compartir → "Añadir a pantalla de inicio"
+                </p>
+            </div>
+        </div>
+        
+        <button onclick="closeModal('pwaInfoModal')" 
+                style="width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+            <i class="fa-solid fa-check"></i> Entendido
+        </button>
+    </div>
+</div>
     <!-- MODAL DE INFORMACIÓN -->
     <div id="infoModal" class="modal">
         <div class="info-modal-content">
@@ -1912,5 +1959,151 @@
             mostrarPanelAdmin();
         }
     </script>
+    <!-- SCRIPT PARA INSTALAR PWA -->
+<script>
+    function showPWAInfo() {
+    openModal('pwaInfoModal');
+}
+// Detectar si el navegador soporta PWA
+let deferredPrompt;
+const installButton = document.createElement('button');
+
+// Crear botón de instalación
+function createInstallButton() {
+    installButton.innerHTML = '<i class="fa-solid fa-download"></i> Instalar FoxWeb';
+    installButton.style.cssText = `
+        position: fixed;
+        bottom: 90px;
+        right: 25px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        z-index: 1001;
+        box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    `;
+    
+    installButton.addEventListener('mouseover', () => {
+        installButton.style.transform = 'scale(1.05)';
+        installButton.style.boxShadow = '0 6px 20px rgba(255, 69, 0, 0.4)';
+    });
+    
+    installButton.addEventListener('mouseout', () => {
+        installButton.style.transform = 'scale(1)';
+        installButton.style.boxShadow = '0 4px 15px rgba(255, 69, 0, 0.3)';
+    });
+    
+    document.body.appendChild(installButton);
+    installButton.style.display = 'none';
+}
+
+// Evento para detectar cuando se puede instalar
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevenir que Chrome muestre el prompt automático
+    e.preventDefault();
+    // Guardar el evento para usarlo después
+    deferredPrompt = e;
+    
+    // Mostrar nuestro botón de instalación
+    if (!installButton.parentNode) {
+        createInstallButton();
+    }
+    
+    installButton.style.display = 'flex';
+    
+    // Cuando se haga clic en nuestro botón
+    installButton.addEventListener('click', () => {
+        // Mostrar el prompt de instalación
+        deferredPrompt.prompt();
+        
+        // Esperar a que el usuario responda
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('Usuario aceptó la instalación');
+                installButton.style.display = 'none';
+                
+                // Mostrar mensaje de éxito
+                showInstallMessage('¡FoxWeb instalado! 🎉');
+            } else {
+                console.log('Usuario rechazó la instalación');
+            }
+            deferredPrompt = null;
+        });
+    });
+});
+
+// Verificar si ya está instalado
+window.addEventListener('appinstalled', () => {
+    console.log('PWA instalada');
+    if (installButton.parentNode) {
+        installButton.style.display = 'none';
+    }
+    
+    // Mostrar mensaje de bienvenida
+    showInstallMessage('¡Gracias por instalar FoxWeb! 🦊');
+});
+
+// Mostrar mensaje de instalación
+function showInstallMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2ea44f;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            z-index: 1002;
+            box-shadow: 0 5px 20px rgba(46, 164, 79, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.5s ease;
+        ">
+            <i class="fa-solid fa-check-circle"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(messageDiv);
+    
+    // Remover después de 3 segundos
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 3000);
+}
+
+// Registrar Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('Service Worker registrado con éxito:', registration.scope);
+            })
+            .catch(error => {
+                console.log('Error al registrar Service Worker:', error);
+            });
+    });
+}
+
+// Detectar modo standalone (ya instalado)
+if (window.matchMedia('(display-mode: standalone)').matches) {
+    console.log('Running in standalone mode');
+    
+    // Ocultar botón de instalación si ya está instalado
+    if (installButton.parentNode) {
+        installButton.style.display = 'none';
+    }
+}
+</script>
 </body>
 </html>
