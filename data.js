@@ -1,6 +1,14 @@
 const FoxWebDB = {
 programas: [
 {
+name: "Office Professional 2016",
+icon: "fa-brands fa-windows",
+info: "Microsoft Office o conocido actualmente como Microsoft 365, es una suite ofimática de aplicaciones para computadoras de escritorio",
+enlace: "https://www.mediafire.com/file/jcqeb11nhj4hs31",
+modal: null,
+badges: ["OFIMÁTICA","ESTUDIO","SUITE"]
+},
+{
 name: "Krita",
 icon: "fa-solid fa-paintbrush",
 info: "Software de pintura digital y animación de código abierto. Alternativa gratuita a Photoshop para artistas digitales.",
