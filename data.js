@@ -313,6 +313,14 @@ const FoxWebDB = {
       modal: "driverBoosterModal",
       badges: ["DRIVERS", "WINDOWS XP", "COMPATIBILIDAD"]
     }
+    {
+      name: "Smart Defrag (Versión 11)",
+      icon: "fa-solid fa-gears",
+      info: "Herramienta especial para optimizar y defragmentar el disco. Compatible con Windows XP hasta el actual.",
+      enlace: "#",
+      modal: null,
+      badges: ["DISCOS", "DESFRAGMENTAR", "HDD"]
+    }
   ],
   
   // ==================== APKs ====================
