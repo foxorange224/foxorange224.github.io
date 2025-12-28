@@ -2,6 +2,9 @@
   "version": 2,
   "name": "foxweb",
   "public": true,
+  "speedInsights": {
+    "enabled": true
+  },
   "builds": [
     {
       "src": "*.html",
@@ -25,6 +28,10 @@
     }
   ],
   "routes": [
+    {
+      "src": "/_vercel/insights/script.js",
+      "continue": true
+    },
     {
       "src": "/",
       "dest": "/main.html",
