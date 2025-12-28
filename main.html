@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoxWeb</title>
+    <title>FoxWeb | Tu Centro de Descargas Confiable</title>
     <meta property="og:title" content="FoxWeb | Centro de Descargas">
     <meta property="og:description" content="Software optimizado, sistemas operativos, juegos y utilidades. Enlaces directos y duraderos.">
     <meta property="og:image" content="https://i.imgur.com/qfsMx7V.png">
@@ -35,11 +35,28 @@
             color: var(--text-main);
             line-height: 1.6;
         }
+        /* IMAGEN DE FONDO FIJA CON OVERLAY MÁS OPACO */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 12, 12, 0.85); /* Aumentado a 0.85 para más opacidad */
+            z-index: -1;
+            background-image: url('https://i.imgur.com/qJpo1hb.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: scroll;
+            /* backdrop-filter: blur(1px); */ /* Efecto de desenfoque sutil */
+        }
         .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1000px;
+            max-width: 1200px; /* Aumentado para 3 columnas */
             margin: 0 auto 30px auto;
             padding: 0 20px;
         }
@@ -47,8 +64,9 @@
             max-width: 250px;
             filter: drop-shadow(0 0 10px rgba(255, 69, 0, 0.2));
         }
+        /* ICONOS SOCIALES EN BLANCO */
         .social-icons-top a {
-            color: var(--text-dim);
+            color: white; /* Cambiado a blanco */
             font-size: 1.6em;
             margin-left: 15px;
             text-decoration: none;
@@ -60,7 +78,7 @@
             transform: translateY(-2px);
         }
         .search-section {
-            max-width: 1000px;
+            max-width: 1200px; /* Aumentado para 3 columnas */
             margin: 0 auto 20px auto;
             padding: 0 20px;
         }
@@ -102,7 +120,7 @@
             display: block;
         }
         .tabs-container {
-            max-width: 1000px;
+            max-width: 1200px; /* Aumentado para 3 columnas */
             margin: 0 auto 50px auto;
             background-color: var(--bg-tab);
             border-radius: 12px;
@@ -175,9 +193,11 @@
             margin-top: 10px;
             font-size: 0.95em;
         }
+        /* CAMBIO PRINCIPAL: 3 COLUMNAS FIJAS */
         .content-grid {
+			will-change: transform; /* Ayuda al navegador a optimizar */
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(3, 1fr); /* 3 columnas fijas */
             gap: 25px;
             margin-bottom: 40px;
         }
@@ -346,11 +366,13 @@
             color: #666; font-size: 28px; cursor: pointer;
         }
         .close:hover { color: var(--primary); }
+        /* FOOTER EN BLANCO */
         .footer-text {
             text-align: center;
-            color: #444;
+            color: white; /* Cambiado a blanco */
             margin: 40px 0;
             font-size: 0.9em;
+            font-weight: 500;
         }
         
         .modal-content div[style*="display: flex"] {
@@ -671,6 +693,13 @@
             margin-bottom: 20px;
         }
         
+        /* RESPONSIVE PARA 3 COLUMNAS */
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columnas en pantallas medianas */
+            }
+        }
+        
         @media (max-width: 768px) {
             .header-container { flex-direction: column; text-align: center; }
             .social-icons-top { margin-top: 20px; }
@@ -699,7 +728,11 @@
                 min-height: 400px;
             }
             
-            .content-grid { grid-template-columns: 1fr; gap: 20px; }
+            /* En móviles, mostrar 1 columna */
+            .content-grid { 
+                grid-template-columns: 1fr; 
+                gap: 20px; 
+            }
             .content-item { padding: 20px; }
             .item-header { flex-direction: column; text-align: center; gap: 12px; }
             .item-icon { width: 50px; height: 50px; font-size: 1.5em; }
@@ -841,7 +874,33 @@
             max-width: 100%;
             word-wrap: break-word;
         }
+        
+        /* Estilos para carga de datos */
+        .loading-data {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .loading-spinner {
+            font-size: 3em;
+            color: var(--primary);
+            margin-bottom: 20px;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: var(--text-dim);
+            font-size: 1.1em;
+        }
     </style>
+    
+    <!-- Cargar base de datos -->
+    <script src="data.js"></script>
 </head>
 <body>
     <div class="header-container">
@@ -880,391 +939,56 @@
 
         <!-- ==================== PESTAÑA PROGRAMAS ==================== -->
         <div id="Programas" class="tab-content active">
-            <div class="content-container">
-                <div class="content-header">
-                    <h2><i class="fa-solid fa-cloud-arrow-down"></i> Programas Esenciales</h2>
-                    <p>Software fundamental, optimizado y con enlaces de larga duración</p>
+            <div class="loading-data">
+                <div class="loading-spinner">
+                    <i class="fa-solid fa-spinner"></i>
                 </div>
-                <div class="content-grid">
-                    <!-- VLC -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-compact-disc"></i></div><div><h3 class="item-title">VLC Media Player</h3></div></div>
-                        <p class="item-description">El reproductor multimedia universal. Reproduce cualquier formato de video o audio sin necesidad de instalar códecs adicionales.</p>
-                        <div class="item-meta"><span class="item-badge">MULTIMEDIA</span><span class="item-badge">UNIVERSAL</span></div>
-                        <button onclick="openModal('vlcModal')" class="download-btn"><i class="fa-solid fa-download"></i> Descargar</button>
-                    </div>
-                    <!-- 7-Zip -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-file-zipper"></i></div><div><h3 class="item-title">7-Zip</h3></div></div>
-                        <p class="item-description">Compresor de archivos de alto rendimiento y código abierto. Soporta formatos como 7z, ZIP, RAR, TAR y GZIP.</p>
-                        <div class="item-meta"><span class="item-badge">COMPRESIÓN</span><span class="item-badge">OPEN SOURCE</span></div>
-                        <a href="https://www.7-zip.org/download.html" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Página de Descarga</a>
-                    </div>
-                    <!-- Notepad++ -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-file-code"></i></div><div><h3 class="item-title">Notepad++</h3></div></div>
-                        <p class="item-description">Editor de texto y código fuente potente y ligero. Ideal para programadores, con soporte para múltiples lenguajes y plugins.</p>
-                        <div class="item-meta"><span class="item-badge">EDITOR</span><span class="item-badge">PROGRAMACIÓN</span></div>
-                        <a href="https://github.com/notepad-plus-plus/notepad-plus-plus/releases/latest" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Última Versión</a>
-                    </div>
-                    <!-- BalenaEtcher -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-hard-drive"></i></div><div><h3 class="item-title">BalenaEtcher</h3></div></div>
-                        <p class="item-description">Herramienta confiable para grabar imágenes de sistema (ISO, IMG) en unidades USB o tarjetas SD de forma segura y sencilla.</p>
-                        <div class="item-meta"><span class="item-badge">USB</span><span class="item-badge">HERRAMIENTA</span></div>
-                        <a href="https://etcher.balena.io/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Sitio Oficial</a>
-                    </div>
-                    <!-- ShareX -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-camera"></i></div><div><h3 class="item-title">ShareX</h3></div></div>
-                        <p class="item-description">Suite de captura de pantalla y grabación avanzada. Captura, anota, graba GIFs y sube automáticamente a la nube.</p>
-                        <div class="item-meta"><span class="item-badge">CAPTURA</span><span class="item-badge">PRODUCTIVIDAD</span></div>
-                        <a href="https://getsharex.com/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- Java -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-brands fa-java"></i></div><div><h3 class="item-title">Java Runtime</h3></div></div>
-                        <p class="item-description">Entorno de ejecución necesario para usar aplicaciones y juegos desarrollados en Java. Selecciona tu versión.</p>
-                        <div class="item-meta"><span class="item-badge">RUNTIME</span><span class="item-badge">ESENCIAL</span></div>
-                        <button onclick="openModal('javaModal')" class="download-btn"><i class="fa-solid fa-download"></i> Descargar</button>
-                    </div>
-                    <!-- LibreOffice -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-file-word"></i></div><div><h3 class="item-title">LibreOffice</h3></div></div>
-                        <p class="item-description">Suite ofimática completa y gratuita. Incluye procesador de texto, hojas de cálculo, presentaciones y más.</p>
-                        <div class="item-meta"><span class="item-badge">OFIMÁTICA</span><span class="item-badge">PRODUCTIVIDAD</span><span class="item-badge">GRATUITO</span></div>
-                        <a href="https://www.libreoffice.org/download/download-libreoffice/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- CCleaner -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-broom"></i></div><div><h3 class="item-title">CCleaner</h3></div></div>
-                        <p class="item-description">Herramienta de limpieza y optimización del sistema. Elimina archivos temporales y entradas de registro innecesarias.</p>
-                        <div class="item-meta"><span class="item-badge">LIMPIEZA</span><span class="item-badge">OPTIMIZACIÓN</span></div>
-                        <a href="https://www.ccleaner.com/ccleaner/download" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- Audacity -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-wave-square"></i></div><div><h3 class="item-title">Audacity</h3></div></div>
-                        <p class="item-description">Editor de audio gratuito y de código abierto. Graba, edita y mezcla pistas de audio de forma profesional.</p>
-                        <div class="item-meta"><span class="item-badge">AUDIO</span><span class="item-badge">EDITOR</span><span class="item-badge">OPEN SOURCE</span></div>
-                        <a href="https://www.audacityteam.org/download/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- FileZilla -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-server"></i></div><div><h3 class="item-title">FileZilla</h3></div></div>
-                        <p class="item-description">Cliente FTP, SFTP y FTPS gratuitos. Transfiere archivos de forma rápida y segura entre tu PC y servidores web.</p>
-                        <div class="item-meta"><span class="item-badge">FTP</span><span class="item-badge">TRANSFERENCIA</span></div>
-                        <a href="https://filezilla-project.org/download.php" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- MALWAREBYTES (NUEVO) -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-shield-alt"></i></div><div><h3 class="item-title">Malwarebytes</h3></div></div>
-                        <p class="item-description">Potente antivirus y anti-malware que protege contra amenazas avanzadas, ransomware y sitios web maliciosos. Ligero y efectivo.</p>
-                        <div class="item-meta"><span class="item-badge">ANTIVIRUS</span><span class="item-badge">SEGURIDAD</span><span class="item-badge">PROTECCIÓN</span></div>
-                        <a href="https://es.malwarebytes.com/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Sitio Oficial</a>
-                    </div>
-                    <!-- QBITTORRENT (NUEVO) -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-download"></i></div><div><h3 class="item-title">qBittorrent</h3></div></div>
-                        <p class="item-description">Cliente de BitTorrent gratuitos, de código abierto y sin anuncios. Interfaz clara, bajo consumo de recursos y con todas las funciones necesarias.</p>
-                        <div class="item-meta"><span class="item-badge">TORRENT</span><span class="item-badge">DESCARGAS</span><span class="item-badge">OPEN SOURCE</span></div>
-                        <a href="https://www.qbittorrent.org/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                </div>
+                <p class="loading-text">Cargando programas...</p>
             </div>
         </div>
 
         <!-- ==================== PESTAÑA SISTEMAS ==================== -->
         <div id="Sistemas" class="tab-content">
-            <div class="content-container">
-                <div class="content-header">
-                    <h2><i class="fa-solid fa-hard-drive"></i> Sistemas y Recuperación</h2>
-                    <p>Distribuciones Linux, herramientas de rescate y utilidades de sistema para mantenimiento</p>
+            <div class="loading-data">
+                <div class="loading-spinner">
+                    <i class="fa-solid fa-spinner"></i>
                 </div>
-                <div class="content-grid">
-                    <!-- Debian 13 -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-brands fa-linux"></i></div><div><h3 class="item-title">Debian 13</h3></div></div>
-                        <p class="item-description">Instalador por red de la versión estable de Debian para PCs de 64 bits. Sistema Linux robusto y confiable para servidores y escritorio.</p>
-                        <div class="item-meta"><span class="item-badge">LINUX</span><span class="item-badge">ESTABLE</span><span class="item-badge">OFICIAL</span></div>
-                        <a href="https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.2.0-amd64-netinst.iso" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar ISO</a>
-                    </div>
-                    <!-- Hiren's BootCD -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-toolbox"></i></div><div><h3 class="item-title">Hiren's BootCD 15.2</h3></div></div>
-                        <p class="item-description">Kit de rescate esencial con más de 100 herramientas para reparación, diagnóstico y recuperación de sistemas Windows.</p>
-                        <div class="item-meta"><span class="item-badge">RESCATE</span><span class="item-badge">HERRAMIENTAS</span><span class="item-badge">DIAGNÓSTICO</span></div>
-                        <a href="https://www.mediafire.com/file/rd2plfxcwhocbd8/Hiren%2527s.BootCD.15.2.iso/file" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar ISO</a>
-                    </div>
-                    <!-- Loc-OS Linux -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-brands fa-linux"></i></div><div><h3 class="item-title">Loc-OS Linux 23</h3></div></div>
-                        <p class="item-description">Distribución Linux muy ligera, ideal para darle vida a hardware antiguo. Incluye las aplicaciones básicas necesarias.</p>
-                        <div class="item-meta"><span class="item-badge">LINUX</span><span class="item-badge">LIGERO</span><span class="item-badge">HARDWARE ANTIGUO</span></div>
-                        <button onclick="openModal('locosModal')" class="download-btn"><i class="fa-solid fa-download"></i> Descargar</button>
-                    </div>
-                    <!-- Linux Mint -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-brands fa-linux"></i></div><div><h3 class="item-title">Linux Mint 22.2</h3></div></div>
-                        <p class="item-description">Sistema operativo de escritorio amigable y completamente equipado. Perfecto para usuarios que vienen de Windows.</p>
-                        <div class="item-meta"><span class="item-badge">LINUX</span><span class="item-badge">ESCRITORIO</span><span class="item-badge">AMIGABLE</span></div>
-                        <a href="https://linuxmint.com/download.php" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Página Oficial</a>
-                    </div>
-                    <!-- ReactOS -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-brands fa-windows"></i></div><div><h3 class="item-title">ReactOS</h3></div></div>
-                        <p class="item-description">Sistema operativo de código abierto compatible con programas y controladores de Windows. Alternativa libre a Windows.</p>
-                        <div class="item-meta"><span class="item-badge">OPEN SOURCE</span><span class="item-badge">COMPATIBLE WINDOWS</span></div>
-                        <a href="https://reactos.org/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Página Oficial</a>
-                    </div>
-                    <!-- Ubuntu MATE -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-brands fa-ubuntu"></i></div><div><h3 class="item-title">Ubuntu MATE</h3></div></div>
-                        <p class="item-description">Distribución Linux estable y eficiente con escritorio MATE. Perfecta para revivir PCs antiguos con buen soporte.</p>
-                        <div class="item-meta"><span class="item-badge">LINUX</span><span class="item-badge">ESTABLE</span><span class="item-badge">LIGERO</span></div>
-                        <a href="https://ubuntu-mate.org/download/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Página de Descarga</a>
-                    </div>
-                    <!-- GParted Live -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-hard-drive"></i></div><div><h3 class="item-title">GParted Live</h3></div></div>
-                        <p class="item-description">ISO live para gestionar particiones de disco. Redimensiona, copia, formatea y recupera particiones sin instalar sistema.</p>
-                        <div class="item-meta"><span class="item-badge">PARTICIONES</span><span class="item-badge">RESCATE</span><span class="item-badge">HERRAMIENTA</span></div>
-                        <a href="https://gparted.org/download.php" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar ISO</a>
-                    </div>
-                    <!-- Ventoy -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-layer-group"></i></div><div><h3 class="item-title">Ventoy</h3></div></div>
-                        <p class="item-description">Crea un USB booteable y copia múltiples archivos ISO a la vez. Arranca cualquier sistema desde un solo dispositivo USB.</p>
-                        <div class="item-meta"><span class="item-badge">USB</span><span class="item-badge">MULTI-ISO</span><span class="item-badge">HERRAMIENTA</span></div>
-                        <a href="https://www.ventoy.net/en/download.html" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                </div>
-                <div style="text-align: center; margin-top: 40px; color: var(--text-dim); font-size: 0.9em;">
-                    <i class="fa-solid fa-circle-info"></i> Algunas ISOs requieren crear un USB booteable con herramientas como <strong>Rufus</strong> o <strong>BalenaEtcher</strong>.
-                </div>
+                <p class="loading-text">Cargando sistemas operativos...</p>
             </div>
         </div>
 
         <!-- ==================== PESTAÑA JUEGOS ==================== -->
         <div id="Juegos" class="tab-content">
-            <div class="content-container">
-                <div class="content-header">
-                    <h2><i class="fa-solid fa-gamepad"></i> Juegos Clásicos y Ligeros</h2>
-                    <p>Títulos atemporales que funcionan en cualquier equipo, sin requerimientos excesivos</p>
+            <div class="loading-data">
+                <div class="loading-spinner">
+                    <i class="fa-solid fa-spinner"></i>
                 </div>
-                <div class="content-grid">
-                    <!-- Papa's Pizzeria -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-pizza-slice"></i></div><div><h3 class="item-title">Papa's Pizzeria Collection</h3></div></div>
-                        <p class="item-description">Un pack de juegos de cocina que marcó la infancia. Gestiona tu propio restaurante de pizzas con muchos ingredientes.</p>
-                        <div class="item-meta"><span class="item-badge">COCINA</span><span class="item-badge">CLÁSICO</span><span class="item-badge">GESTIÓN</span></div>
-                        <a href="https://www.mediafire.com/file/cpcxasi9cbernjs" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- Counter Strike 1.6 -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-crosshairs"></i></div><div><h3 class="item-title">Counter Strike 1.6</h3></div></div>
-                        <p class="item-description">El clásico de disparos tácticos que definió un género. Multijugador competitivo y miles de servidores activos.</p>
-                        <div class="item-meta"><span class="item-badge">FPS</span><span class="item-badge">MULTIJUGADOR</span><span class="item-badge">CLÁSICO</span></div>
-                        <a href="https://www.mediafire.com/file/be2cr8yfize0w73/CS1.6.zip/file" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- Geometry Dash -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-gear"></i></div><div><h3 class="item-title">Geometry Dash 2.207</h3></div></div>
-                        <p class="item-description">Juego de ritmo y plataformas desafiante. Supera obstáculos al compás de la música y crea tus propios niveles.</p>
-                        <div class="item-meta"><span class="item-badge">RITMO</span><span class="item-badge">PLATAFORMAS</span><span class="item-badge">DESAFÍO</span></div>
-                        <a href="https://www.mediafire.com/file/jfpbza89296aoba/GD-2.2074-%252864-Bits%2529.zip/file" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- Half Life 1 -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-radiation"></i></div><div><h3 class="item-title">Half Life 1</h3></div></div>
-                        <p class="item-description">El revolucionario shooter en primera persona que cambió los videojuegos. Una aventura de ciencia ficción épica.</p>
-                        <div class="item-meta"><span class="item-badge">FPS</span><span class="item-badge">CIENCIA FICCIÓN</span><span class="item-badge">CLÁSICO</span></div>
-                        <a href="https://www.mediafire.com/file/fpam0fdospuupxb/HL.zip/file" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- Assault Cube -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-cube"></i></div><div><h3 class="item-title">Assault Cube</h3></div></div>
-                        <p class="item-description">Shooter FPS gratuitos, de código abierto, estilo Counter-Strike. Multijugador online y offline con bots, muy ligero.</p>
-                        <div class="item-meta"><span class="item-badge">FPS</span><span class="item-badge">OPEN SOURCE</span><span class="item-badge">MULTIJUGADOR</span></div>
-                        <a href="https://assault.cubers.net/download.html" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Página Oficial</a>
-                    </div>
-                    <!-- OpenTTD -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-train"></i></div><div><h3 class="item-title">OpenTTD</h3></div></div>
-                        <p class="item-description">Simulador de transporte de código abierto. Construye y gestiona tu imperio de trenes, barcos y aviones. Muy adictivo.</p>
-                        <div class="item-meta"><span class="item-badge">SIMULACIÓN</span><span class="item-badge">OPEN SOURCE</span><span class="item-badge">GESTIÓN</span></div>
-                        <a href="https://www.openttd.org/downloads/openttd-releases/latest.html" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- SuperTuxKart -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-trophy"></i></div><div><h3 class="item-title">SuperTuxKart</h3></div></div>
-                        <p class="item-description">Juego de carreras de karts en 3D, gratis y de código abierto. Divertido, con varios personajes y pistas.</p>
-                        <div class="item-meta"><span class="item-badge">CARRERAS</span><span class="item-badge">MULTIJUGADOR</span><span class="item-badge">OPEN SOURCE</span></div>
-                        <a href="https://supertuxkart.net/Download" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- Legacy Launcher -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-cubes"></i></div><div><h3 class="item-title">Legacy Launcher</h3></div></div>
-                        <p class="item-description">Lanzador alternativo para Minecraft Java Edition. Estable, rápido y con soporte para versiones antiguas del juego.</p>
-                        <div class="item-meta"><span class="item-badge">LAUNCHER</span><span class="item-badge">MINECRAFT</span></div>
-                        <a href="https://llaun.ch/es" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                </div>
-                <p class="password-notice"><i class="fa-solid fa-key"></i> Contraseña para archivos comprimidos en esta sección: <strong>foxorange224</strong></p>
+                <p class="loading-text">Cargando juegos...</p>
             </div>
         </div>
 
         <!-- ==================== PESTAÑA EXTRAS ==================== -->
         <div id="Extras" class="tab-content">
-            <div class="content-container">
-                <div class="content-header">
-                    <h2><i class="fa-solid fa-screwdriver-wrench"></i> Extras y Utilidades</h2>
-                    <p>Drivers, personalización, mantenimiento y herramientas especializadas para tu PC</p>
+            <div class="loading-data">
+                <div class="loading-spinner">
+                    <i class="fa-solid fa-spinner"></i>
                 </div>
-                <div class="content-grid">
-                    <!-- Java para Windows -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-brands fa-java"></i></div><div><h3 class="item-title">Java para Windows</h3></div></div>
-                        <p class="item-description">Entorno de ejecución necesario para aplicaciones y juegos desarrollados en Java. Selecciona tu versión (32-bit o 64-bit).</p>
-                        <div class="item-meta"><span class="item-badge">RUNTIME</span><span class="item-badge">ESENCIAL</span><span class="item-badge">WINDOWS</span></div>
-                        <button onclick="openModal('javaModal')" class="download-btn"><i class="fa-solid fa-download"></i> Descargar</button>
-                    </div>
-                    <!-- DEPENDENCIAS -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-puzzle-piece"></i></div><div><h3 class="item-title">Instalador de Dependecias</h3></div></div>
-                        <p class="item-description">Instala automáticamente todos los requisitos (.NET, Visual C++, XNA, DirectX) para que juegos y programas antiguos y nuevos funcionen sin problemas en tu Windows.</p>
-                        <div class="item-meta"><span class="item-badge">RUNTIME</span><span class="item-badge">ESENCIAL</span><span class="item-badge">WINDOWS</span></div>
-                        <a href="https://www.mediafire.com/file/nii3ncqlxe1mezx/Instalador+de+Dependecias.7z/file" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar Pack</a>
-                    </div>
-                    <!-- Rufus -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-brands fa-usb"></i></div><div><h3 class="item-title">Rufus (Portable)</h3></div></div>
-                        <p class="item-description">Herramienta ligera y rápida para crear unidades USB de arranque desde imágenes ISO. No requiere instalación.</p>
-                        <div class="item-meta"><span class="item-badge">USB</span><span class="item-badge">HERRAMIENTA</span><span class="item-badge">PORTABLE</span></div>
-                        <a href="https://rufus.ie/downloads/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar Portable</a>
-                    </div>
-                    <!-- Tema Windows 10 para Win7 -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-paint-roller"></i></div><div><h3 class="item-title">Tema Windows 10 para 7</h3></div></div>
-                        <p class="item-description">Transforma la apariencia de tu Windows 7 para que se vea como Windows 10. Incluye iconos, colores y efectos visuales.</p>
-                        <div class="item-meta"><span class="item-badge">PERSONALIZACIÓN</span><span class="item-badge">TEMAS</span><span class="item-badge">WINDOWS 7</span></div>
-                        <a href="https://www.mediafire.com/file/a0l5lnbd56jyady/Tema_de_Windows_10_para_Windows_7_por_FoxOrange224.zip/file" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar Tema</a>
-                    </div>
-                    <!-- DriverPack para WinXP -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-microchip"></i></div><div><h3 class="item-title">DriverPack para Windows XP</h3></div></div>
-                        <p class="item-description">Paquete completo de controladores para hardware difícil de encontrar en sistemas Windows XP de 32 bits (x86).</p>
-                        <div class="item-meta"><span class="item-badge">DRIVERS</span><span class="item-badge">WINDOWS XP</span><span class="item-badge">COMPATIBILIDAD</span></div>
-                        <a href="https://www.mediafire.com/file/65acrgovcx0ypkt/DriverPack_XP_%2528x86%2529.rar/file" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar Pack</a>
-                    </div>
-                    <!-- 3DP Chip -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-gears"></i></div><div><h3 class="item-title">3DP Chip</h3></div></div>
-                        <p class="item-description">Identifica automáticamente el hardware de tu PC y descarga los controladores necesarios de forma rápida y sencilla.</p>
-                        <div class="item-meta"><span class="item-badge">DRIVERS</span><span class="item-badge">DETECCIÓN</span><span class="item-badge">AUTOMÁTICO</span></div>
-                        <a href="https://www.3dpchip.com/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Sitio Oficial</a>
-                    </div>
-                    <!-- CPU-Z -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-microchip"></i></div><div><h3 class="item-title">CPU-Z</h3></div></div>
-                        <p class="item-description">Muestra información detallada sobre los componentes de tu sistema: procesador, placa base, memoria RAM y gráficos.</p>
-                        <div class="item-meta"><span class="item-badge">DIAGNÓSTICO</span><span class="item-badge">HARDWARE</span><span class="item-badge">INFORMACIÓN</span></div>
-                        <a href="https://www.cpuid.com/softwares/cpu-z.html" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- CrystalDiskInfo -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-hard-drive"></i></div><div><h3 class="item-title">CrystalDiskInfo</h3></div></div>
-                        <p class="item-description">Monitoriza la salud de tus discos duros y SSD. Muestra temperatura, horas de uso y alerta de posibles fallos (S.M.A.R.T.).</p>
-                        <div class="item-meta"><span class="item-badge">MONITOREO</span><span class="item-badge">DISCO</span><span class="item-badge">SALUD</span></div>
-                        <a href="https://crystalmark.info/en/software/crystaldiskinfo/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- DRIVER BOOSTER 10.3 (NUEVO) -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-gears"></i></div><div><h3 class="item-title">Driver Booster (Versión 10.3)</h3></div></div>
-                        <p class="item-description">Herramienta especial para actualizar controladores en sistemas antiguos. Esta versión 10.3 es muy compatible con Windows XP y hardware difícil.</p>
-                        <div class="item-meta"><span class="item-badge">DRIVERS</span><span class="item-badge">WINDOWS XP</span><span class="item-badge">COMPATIBILIDAD</span></div>
-                        <button onclick="openModal('driverBoosterModal')" class="download-btn"><i class="fa-solid fa-download"></i> Descargar Versión</button>
-                    </div>
-                </div>
-                <div style="text-align: center; margin-top: 40px; color: var(--text-dim); font-size: 0.9em;">
-                    <i class="fa-solid fa-lightbulb"></i> <strong>Consejo:</strong> Los drivers son específicos para cada sistema operativo. Asegúrate de descargar la versión correcta (32-bit o 64-bit).
-                </div>
+                <p class="loading-text">Cargando utilidades...</p>
             </div>
         </div>
 
         <!-- ==================== PESTAÑA APKs ==================== -->
         <div id="APKs" class="tab-content">
-            <div class="content-container">
-                <div class="content-header">
-                    <h2><i class="fa-solid fa-mobile-screen"></i> APKs para Android</h2>
-                    <p>Aplicaciones útiles, juegos y alternativas ligeras para tu dispositivo móvil</p>
+            <div class="loading-data">
+                <div class="loading-spinner">
+                    <i class="fa-solid fa-spinner"></i>
                 </div>
-                <div class="content-grid">
-                    <!-- Minecraft Bedrock -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-cube"></i></div><div><h3 class="item-title">Minecraft Bedrock</h3></div></div>
-                        <p class="item-description">La versión oficial de Minecraft para móviles. Construye, explora y sobrevive en mundos infinitos con todas las características recientes.</p>
-                        <div class="item-meta"><span class="item-badge">JUEGO</span><span class="item-badge">SANDBOX</span><span class="item-badge">OFICIAL</span></div>
-                        <a href="https://www.mediafire.com/file/xc2yuu97tbyclf7/mc-be-1.21.130.apk/file" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar APK</a>
-                    </div>
-                    <!-- Geometry Dash -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-gear"></i></div><div><h3 class="item-title">Geometry Dash (2.207)</h3></div></div>
-                        <p class="item-description">Versión modificada con Geode Mod Loader. Salta y vuela al ritmo de la música en este desafío de plataformas y ritmo.</p>
-                        <div class="item-meta"><span class="item-badge">JUEGO</span><span class="item-badge">RITMO</span><span class="item-badge">MOD</span></div>
-                        <a href="https://bruhzstudios.itch.io/free-gd-geode-breeze-apks-mobile-only" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar APK</a>
-                    </div>
-                    <!-- PPSSPP -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-gamepad"></i></div><div><h3 class="item-title">PPSSPP</h3></div></div>
-                        <p class="item-description">Emulador de PSP (PlayStation Portable) para Android. Juega tus títulos favoritos de PSP en tu móvil con alta compatibilidad.</p>
-                        <div class="item-meta"><span class="item-badge">EMULADOR</span><span class="item-badge">JUEGOS</span><span class="item-badge">PSP</span></div>
-                        <a href="https://www.ppsspp.org/files/1_19_3/ppsspp.apk" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar APK</a>
-                    </div>
-                    <!-- Termux -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-terminal"></i></div><div><h3 class="item-title">Termux</h3></div></div>
-                        <p class="item-description">Emulador de terminal y entorno Linux para Android. Ejecuta comandos, instala paquetes y realiza tareas de desarrollo.</p>
-                        <div class="item-meta"><span class="item-badge">TERMINAL</span><span class="item-badge">LINUX</span><span class="item-badge">DESARROLLO</span></div>
-                        <a href="https://f-droid.org/repo/com.termux_1002.apk" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar APK</a>
-                    </div>
-                    <!-- F-Droid -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-store"></i></div><div><h3 class="item-title">F-Droid</h3></div></div>
-                        <p class="item-description">Tienda de aplicaciones de código abierto para Android. Encuentra apps gratuitas, libres y sin anuncios ni rastreo.</p>
-                        <div class="item-meta"><span class="item-badge">TIENDA</span><span class="item-badge">OPEN SOURCE</span><span class="item-badge">PRIVACIDAD</span></div>
-                        <a href="https://f-droid.org/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar APK</a>
-                    </div>
-                    <!-- NewPipe -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-brands fa-youtube"></i></div><div><h3 class="item-title">NewPipe</h3></div></div>
-                        <p class="item-description">Cliente alternativo de YouTube. Sin anuncios, reproduce en segundo plano, descarga videos y no requiere cuenta de Google.</p>
-                        <div class="item-meta"><span class="item-badge">VIDEO</span><span class="item-badge">PRIVACIDAD</span><span class="item-badge">ALTERNATIVA</span></div>
-                        <a href="https://newpipe.net/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Sitio Oficial</a>
-                    </div>
-                    <!-- Kiwi Browser -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-globe"></i></div><div><h3 class="item-title">Kiwi Browser</h3></div></div>
-                        <p class="item-description">Navegador web basado en Chromium que permite instalar extensiones de Chrome de escritorio. Rápido y personalizable.</p>
-                        <div class="item-meta"><span class="item-badge">NAVEGADOR</span><span class="item-badge">EXTENSIONES</span><span class="item-badge">RÁPIDO</span></div>
-                        <a href="https://kiwibrowser.com/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>
-                    </div>
-                    <!-- Simple Mobile Tools -->
-                    <div class="content-item">
-                        <div class="item-header"><div class="item-icon"><i class="fa-solid fa-mobile-alt"></i></div><div><h3 class="item-title">Simple Mobile Tools</h3></div></div>
-                        <p class="item-description">Suite de aplicaciones simples, limpias y sin anuncios. Incluye calendario, galería, contactos, notas y más.</p>
-                        <div class="item-meta"><span class="item-badge">SUITE</span><span class="item-badge">LIGERO</span><span class="item-badge">SIN ANUNCIOS</span></div>
-                        <a href="https://www.simplemobiletools.com/" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Sitio Oficial</a>
-                    </div>
-                </div>
-                <div style="text-align: center; margin-top: 40px; color: var(--text-dim); font-size: 0.9em;">
-                    <i class="fa-solid fa-shield-alt"></i> Recuerda activar la opción <strong>"Instalar aplicaciones desconocidas"</strong> en los ajustes de tu Android para instalar APKs.
-                </div>
+                <p class="loading-text">Cargando aplicaciones Android...</p>
             </div>
         </div>
     </div>
 
-    <!-- ==================== MODAL DE SUGERENCIAS (VERSIÓN SIMPLIFICADA) ==================== -->
+    <!-- ==================== MODAL DE SUGERENCIAS ==================== -->
     <div id="sugerenciaModal" class="modal">
         <div class="modal-content" style="max-width: 500px; padding: 30px;">
             <span class="close" onclick="closeModal('sugerenciaModal'); resetSugerenciaForm();">&times;</span>
@@ -1484,12 +1208,16 @@
         </div>
     </div>
 
+    <!-- MODALES DINÁMICOS (se generan desde data.js) -->
+    <div id="modales-container"></div>
+
+    <!-- MODALES EXISTENTES (para compatibilidad) -->
     <!-- Modal Driver Booster 10.3 -->
     <div id="driverBoosterModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('driverBoosterModal')">&times;</span>
             <i class="fa-solid fa-gears" style="font-size: 3em; color: var(--primary); margin-bottom: 15px;"></i>
-            <h2>Driver Booster 10.3</h2>
+            <h2>Driver Booster (Versión 10.3)</h2>
             <p>Versión especial compatible con Windows XP, tambien compatible con 64 bits</p>
             <div class="modal-buttons-container">
                 <a href="https://www.mediafire.com/file/o547i07igt8wcy1" class="modal-btn bit-64" target="_blank"><i class="fa-solid fa-desktop"></i>Descargar</a>
@@ -1556,12 +1284,22 @@
     <!-- PANEL DE ADMINISTRACIÓN (OCULTO) -->
     <div id="adminPanel" class="admin-panel"></div>
 
+    <!-- BOTÓN FLOTANTE PARA SUGERENCIAS -->
+    <a onclick="openModal('sugerenciaModal')" class="floating-suggest-btn" title="Sugerir contenido">
+        <i class="fa-solid fa-plus"></i>
+    </a>
+
     <p class="footer-text">©Copyright 2025 FoxOrange224 | FoxWeb - Tu centro de descargas confiable</p>
 
+    <!-- SCRIPT PRINCIPAL -->
     <script>
-        // ==================== FUNCIONES EXISTENTES ====================
-        // FUNCIONES PARA PESTAÑAS
+        // ==================== VARIABLES GLOBALES ====================
+        let foxWebData = null;
+        let currentTab = 'Programas';
+        
+        // ==================== FUNCIONES PARA PESTAÑAS ====================
         function openTab(tabName) {
+            currentTab = tabName;
             const tabContents = document.getElementsByClassName("tab-content");
             for (let i = 0; i < tabContents.length; i++) tabContents[i].classList.remove("active");
             const tablinks = document.getElementsByClassName("tablink");
@@ -1570,13 +1308,226 @@
             const activeBtn = Array.from(tablinks).find(btn => btn.getAttribute('onclick') === `openTab('${tabName}')`);
             if (activeBtn) activeBtn.classList.add("active");
             
-            // ACTUALIZAR URL CON HASH
+            // Actualizar URL con hash
             history.pushState(null, null, `#${tabName}`);
             
+            // Realizar búsqueda si hay término
             setTimeout(performSearch, 50);
         }
         
-        // BUSCADOR CON BOTÓN DE BORRAR
+        // ==================== FUNCIÓN PARA CARGAR DATOS ====================
+        function cargarDatos() {
+            // Verificar si los datos están disponibles
+            if (typeof FoxWebDB === 'undefined') {
+                console.error('FoxWebDB no está definido');
+                mostrarErrorCarga();
+                return;
+            }
+            
+            foxWebData = FoxWebDB;
+            console.log('Datos cargados:', foxWebData);
+            
+            // Cargar todas las pestañas
+            cargarPestana('Programas', foxWebData.programas);
+            cargarPestana('Sistemas', foxWebData.sistemas);
+            cargarPestana('Juegos', foxWebData.juegos);
+            cargarPestana('Extras', foxWebData.extras);
+            cargarPestana('APKs', foxWebData.apks);
+            
+            // Generar modales dinámicos
+            generarModalesDinamicos();
+        }
+        
+        // ==================== FUNCIÓN PARA CARGAR UNA PESTAÑA ====================
+        function cargarPestana(pestanaId, items) {
+            const tab = document.getElementById(pestanaId);
+            if (!tab) return;
+            
+            // Si no hay items, mostrar mensaje
+            if (!items || items.length === 0) {
+                tab.innerHTML = `
+                    <div class="content-container">
+                        <div class="content-header">
+                            <h2><i class="fa-solid fa-folder"></i> ${obtenerTituloPestana(pestanaId)}</h2>
+                            <p>${obtenerDescripcionPestana(pestanaId)}</p>
+                        </div>
+                        <div style="text-align: center; padding: 50px; color: var(--text-dim);">
+                            <i class="fa-solid fa-box-open" style="font-size: 3em;"></i>
+                            <p style="margin-top: 15px;">No hay contenido disponible en esta categoría.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <div class="content-container">
+                    <div class="content-header">
+                        <h2><i class="fa-solid fa-folder"></i> ${obtenerTituloPestana(pestanaId)}</h2>
+                        <p>${obtenerDescripcionPestana(pestanaId)}</p>
+                    </div>
+                    <div class="content-grid" id="grid-${pestanaId}">
+            `;
+            
+            // Generar cada item
+            items.forEach((item, index) => {
+                const itemId = `${pestanaId.toLowerCase()}_${index}`;
+                html += generarItemHTML(item, pestanaId, itemId);
+            });
+            
+            html += `
+                    </div>
+                    ${agregarNotaPiePestana(pestanaId)}
+                </div>
+            `;
+            
+            tab.innerHTML = html;
+        }
+        
+        // ==================== FUNCIÓN PARA GENERAR UN ITEM ====================
+        function generarItemHTML(item, categoria, itemId) {
+            // Determinar el tipo de botón
+            let botonHTML = '';
+            let badgesHTML = '';
+            
+            if (item.badges && item.badges.length > 0) {
+                badgesHTML = item.badges.map(badge => 
+                    `<span class="item-badge">${badge}</span>`
+                ).join('');
+            }
+            
+            // Verificar si tiene modal
+            if (item.modal && item.modal !== 'null' && item.modal !== '') {
+                botonHTML = `<button onclick="openModal('${item.modal}')" class="download-btn"><i class="fa-solid fa-download"></i> Descargar</button>`;
+            } else if (item.enlace && item.enlace !== '#' && item.enlace !== '') {
+                botonHTML = `<a href="${item.enlace}" class="download-btn" target="_blank"><i class="fa-solid fa-download"></i> Descargar</a>`;
+            } else {
+                botonHTML = `<button class="download-btn" disabled><i class="fa-solid fa-ban"></i> No disponible</button>`;
+            }
+            
+            // Texto para búsqueda
+            const searchText = `${item.name.toLowerCase()} ${item.info.toLowerCase()} ${item.badges ? item.badges.join(' ').toLowerCase() : ''}`;
+            
+            return `
+                <div class="content-item" data-search="${searchText}" data-id="${itemId}">
+                    <div class="item-header">
+                        <div class="item-icon"><i class="${item.icon}"></i></div>
+                        <div><h3 class="item-title">${item.name}</h3></div>
+                    </div>
+                    <p class="item-description">${item.info}</p>
+                    ${badgesHTML ? `<div class="item-meta">${badgesHTML}</div>` : ''}
+                    ${botonHTML}
+                </div>
+            `;
+        }
+        
+        // ==================== FUNCIONES AUXILIARES ====================
+        function obtenerTituloPestana(tabId) {
+            const titulos = {
+                'Programas': 'Programas Esenciales',
+                'Sistemas': 'Sistemas y Recuperación',
+                'Juegos': 'Juegos Clásicos y Ligeros',
+                'Extras': 'Extras y Utilidades',
+                'APKs': 'APKs para Android'
+            };
+            return titulos[tabId] || tabId;
+        }
+        
+        function obtenerDescripcionPestana(tabId) {
+            const descripciones = {
+                'Programas': 'Software fundamental, optimizado y con enlaces de larga duración',
+                'Sistemas': 'Distribuciones Linux, herramientas de rescate y utilidades de sistema para mantenimiento',
+                'Juegos': 'Títulos atemporales que funcionan en cualquier equipo, sin requerimientos excesivos',
+                'Extras': 'Drivers, personalización, mantenimiento y herramientas especializadas para tu PC',
+                'APKs': 'Aplicaciones útiles, juegos y alternativas ligeras para tu dispositivo móvil'
+            };
+            return descripciones[tabId] || '';
+        }
+        
+        function agregarNotaPiePestana(tabId) {
+            if (tabId === 'Juegos') {
+                return '<p class="password-notice"><i class="fa-solid fa-key"></i> Contraseña para archivos comprimidos en esta sección: <strong>foxorange224</strong></p>';
+            } else if (tabId === 'Sistemas') {
+                return '<div style="text-align: center; margin-top: 40px; color: var(--text-dim); font-size: 0.9em;"><i class="fa-solid fa-circle-info"></i> Algunas ISOs requieren crear un USB booteable con herramientas como <strong>Rufus</strong> o <strong>BalenaEtcher</strong>.</div>';
+            } else if (tabId === 'APKs') {
+                return '<div style="text-align: center; margin-top: 40px; color: var(--text-dim); font-size: 0.9em;"><i class="fa-solid fa-shield-alt"></i> Recuerda activar la opción <strong>"Instalar aplicaciones desconocidas"</strong> en los ajustes de tu Android para instalar APKs.</div>';
+            } else if (tabId === 'Extras') {
+                return '<div style="text-align: center; margin-top: 40px; color: var(--text-dim); font-size: 0.9em;"><i class="fa-solid fa-lightbulb"></i> <strong>Consejo:</strong> Los drivers son específicos para cada sistema operativo. Asegúrate de descargar la versión correcta (32-bit o 64-bit).</div>';
+            }
+            return '';
+        }
+        
+        // ==================== GENERAR MODALES DINÁMICOS ====================
+        function generarModalesDinamicos() {
+            const container = document.getElementById('modales-container');
+            if (!container) return;
+            
+            // Solo generar modales si hay datos de modales
+            if (foxWebData && foxWebData.modales) {
+                Object.keys(foxWebData.modales).forEach(modalId => {
+                    const modal = foxWebData.modales[modalId];
+                    
+                    let botonesHTML = '';
+                    if (modal.botones && modal.botones.length > 0) {
+                        modal.botones.forEach(boton => {
+                            const color = boton.color || 'bit-64';
+                            botonesHTML += `
+                                <a href="${boton.enlace}" class="modal-btn ${color}" target="_blank">
+                                    <i class="${boton.icono}"></i>${boton.texto}
+                                </a>
+                            `;
+                        });
+                    }
+                    
+                    const modalHTML = `
+                        <div id="${modalId}" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="closeModal('${modalId}')">&times;</span>
+                                <i class="${modal.icono || 'fa-solid fa-download'}" style="font-size: 3em; color: var(--primary); margin-bottom: 15px;"></i>
+                                <h2>${modal.titulo}</h2>
+                                <p>${modal.descripcion}</p>
+                                <div class="modal-buttons-container">
+                                    ${botonesHTML}
+                                </div>
+                                ${modal.nota ? `
+                                <div style="margin-top: 25px; padding: 15px; background: rgba(255, 69, 0, 0.05); border-radius: 8px; border-left: 3px solid var(--primary);">
+                                    <p style="margin: 0; font-size: 0.85em; color: var(--text-dim);">
+                                        <i class="fa-solid fa-circle-info"></i> ${modal.nota}
+                                    </p>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.innerHTML += modalHTML;
+                });
+            }
+        }
+        
+        // ==================== MANEJO DE ERRORES ====================
+        function mostrarErrorCarga() {
+            const tabs = ['Programas', 'Sistemas', 'Juegos', 'Extras', 'APKs'];
+            tabs.forEach(tabId => {
+                const tab = document.getElementById(tabId);
+                if (tab) {
+                    tab.innerHTML = `
+                        <div class="content-container">
+                            <div style="text-align: center; padding: 50px; color: #ff6b6b;">
+                                <i class="fa-solid fa-exclamation-triangle" style="font-size: 3em;"></i>
+                                <h3>Error al cargar los datos</h3>
+                                <p>No se pudo cargar la base de datos. Por favor, recarga la página.</p>
+                                <button onclick="location.reload()" class="download-btn" style="margin-top: 20px;">
+                                    <i class="fa-solid fa-rotate"></i> Recargar página
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+        
+        // ==================== SISTEMA DE BÚSQUEDA ====================
         const searchInput = document.getElementById('mainSearch');
         const clearSearchBtn = document.getElementById('clearSearch');
         
@@ -1596,19 +1547,22 @@
         }
         
         function performSearch() {
-            if (!searchInput) return;
+            if (!searchInput || !foxWebData) return;
             const searchTerm = searchInput.value.toLowerCase().trim();
             updateClearButton();
             
             const activeTab = document.querySelector('.tab-content.active');
             if (!activeTab) return;
-            const items = activeTab.querySelectorAll('.content-item');
+            
+            const gridId = `grid-${currentTab}`;
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+            
+            const items = grid.querySelectorAll('.content-item');
             let visibleCount = 0;
+            
             items.forEach(item => {
-                const title = item.querySelector('.item-title')?.textContent.toLowerCase() || '';
-                const description = item.querySelector('.item-description')?.textContent.toLowerCase() || '';
-                const badges = Array.from(item.querySelectorAll('.item-badge')).map(badge => badge.textContent.toLowerCase()).join(' ');
-                const searchableText = `${title} ${description} ${badges}`;
+                const searchableText = item.getAttribute('data-search') || '';
                 if (searchTerm === '' || searchableText.includes(searchTerm)) {
                     item.style.display = "flex";
                     visibleCount++;
@@ -1616,53 +1570,47 @@
                     item.style.display = "none";
                 }
             });
-            let noResults = activeTab.querySelector('.no-results');
-            if (!noResults && visibleCount === 0 && searchTerm !== '') {
+            
+            // Manejar "no resultados"
+            let noResults = grid.nextElementSibling;
+            if (!noResults || !noResults.classList.contains('no-results')) {
                 noResults = document.createElement('div');
                 noResults.className = 'no-results';
-                noResults.innerHTML = `<i class="fa-solid fa-search"></i><h3>No se encontraron resultados</h3><p>Intenta con otros términos de búsqueda</p>`;
-                const contentContainer = activeTab.querySelector('.content-container');
-                if (contentContainer) contentContainer.appendChild(noResults);
-            } else if (noResults) {
-                noResults.style.display = visibleCount === 0 && searchTerm !== '' ? "block" : "none";
+                noResults.innerHTML = `
+                    <i class="fa-solid fa-search" style="font-size: 3em; margin-bottom: 15px; color: var(--text-dim);"></i>
+                    <h3>No se encontraron resultados</h3>
+                    <p>Intenta con otros términos de búsqueda</p>
+                `;
+                grid.parentNode.insertBefore(noResults, grid.nextSibling);
             }
+            
+            noResults.style.display = visibleCount === 0 && searchTerm !== '' ? "block" : "none";
         }
         
-        if (searchInput) {
-            searchInput.addEventListener('input', performSearch);
-            searchInput.addEventListener('input', updateClearButton);
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && searchInput.value) {
-                    clearSearch();
-                }
-            });
-        }
-        
-        if (clearSearchBtn) {
-            clearSearchBtn.addEventListener('click', clearSearch);
-        }
-        
-        // MODALES
+        // ==================== MODALES ====================
         function openModal(modalId) { 
-            document.getElementById(modalId).style.display = "flex"; 
-            setTimeout(() => {
-                const modal = document.getElementById(modalId);
-                if (modal) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = "flex"; 
+                setTimeout(() => {
                     const modalContent = modal.querySelector('.modal-content, .info-modal-content, .donate-modal-content');
                     if (modalContent) {
                         modalContent.scrollTop = 0;
                     }
+                }, 10);
+                
+                // Resetear formulario de sugerencias al abrir
+                if (modalId === 'sugerenciaModal') {
+                    resetSugerenciaForm();
                 }
-            }, 10);
-            
-            // RESETEAR FORMULARIO DE SUGERENCIAS AL ABRIR
-            if (modalId === 'sugerenciaModal') {
-                resetSugerenciaForm();
+            } else {
+                console.warn(`Modal ${modalId} no encontrado`);
             }
         }
         
         function closeModal(modalId) { 
-            document.getElementById(modalId).style.display = "none"; 
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "none"; 
         }
         
         window.onclick = function(event) { 
@@ -1681,9 +1629,7 @@
             }
         });
         
-        // ==================== FUNCIONES PARA SUGERENCIAS (VERSIÓN SIMPLIFICADA) ====================
-        
-        // Validar enlaces permitidos
+        // ==================== SUGERENCIAS ====================
         function validarEnlace(url) {
             const dominiosPermitidos = [
                 'mediafire.com',
@@ -1693,16 +1639,11 @@
                 'github.com',
                 'sourceforge.net',
                 'gitlab.com',
-                'onedrive.live.com',
-                'pixeldrain.com',
-                'anonfiles.com',
-                'file.io',
-                'wetransfer.com'
+                'onedrive.live.com'
             ];
             
             try {
                 const urlObj = new URL(url);
-                // Verificar si es un dominio permitido o si es HTTPS directo
                 return dominiosPermitidos.some(dominio => urlObj.hostname.includes(dominio)) || 
                        urlObj.protocol === 'https:';
             } catch {
@@ -1710,11 +1651,9 @@
             }
         }
         
-        // Enviar sugerencia a GitHub (VERSIÓN SIMPLIFICADA)
         function enviarSugerenciaGitHub(event) {
             event.preventDefault();
             
-            // Obtener valores del formulario
             const nombre = document.getElementById('nombreSugerencia').value.trim();
             const descripcion = document.getElementById('descripcionSugerencia').value.trim();
             const categoria = document.getElementById('categoriaSugerencia').value;
@@ -1722,25 +1661,21 @@
             const web = document.getElementById('webSugerencia').value.trim();
             const email = document.getElementById('emailSugerencia').value.trim();
             
-            // Validar campos requeridos
             if (!nombre || !descripcion || !categoria || !enlace) {
                 alert('Por favor, completa todos los campos requeridos.');
                 return;
             }
             
-            // Validar enlace
             if (!validarEnlace(enlace)) {
                 alert('⚠️ Enlace no válido. Usa MediaFire, Google Drive, MEGA, Dropbox, GitHub o enlaces HTTPS directos.');
                 return;
             }
             
-            // Cambiar estado del botón
             const submitBtn = document.getElementById('submitSugerencia');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Preparando...';
             submitBtn.disabled = true;
             
-            // Crear el cuerpo del issue para GitHub
             const body = `## 🆕 Sugerencia para FoxWeb\n\n` +
                         `**Nombre:** ${nombre}\n\n` +
                         `**Descripción:** ${descripcion}\n\n` +
@@ -1749,34 +1684,28 @@
                         (web ? `**Sitio web oficial:** ${web}\n\n` : '') +
                         (email ? `**Email del sugerente:** ${email}\n\n` : '') +
                         `**Fecha de sugerencia:** ${new Date().toLocaleString('es-ES')}\n\n` +
-                        `---\n*Sugerencia enviada desde [FoxWeb](https://foxorange224.github.io)*`;
+                        `---\n*Sugerencia enviada desde [FoxWeb](https://foxweb.vercel.app)*`;
             
-            // Codificar para URL
             const tituloCodificado = encodeURIComponent(`[SUGERENCIA] ${nombre}`);
             const cuerpoCodificado = encodeURIComponent(body);
             
-            // URL para crear issue en TU repositorio específico
             const issueUrl = `https://github.com/foxorange224/foxorange224.github.io/issues/new?` +
                             `title=${tituloCodificado}&` +
                             `body=${cuerpoCodificado}&` +
                             `labels=sugerencia`;
             
-            // OCULTAR FORMULARIO Y MOSTRAR CONFIRMACIÓN
             document.getElementById('formularioSugerencia').style.display = 'none';
             document.getElementById('confirmacionSugerencia').style.display = 'block';
             
-            // Abrir GitHub en nueva pestaña después de un breve retraso
             setTimeout(() => {
                 window.open(issueUrl, '_blank');
                 
-                // Restaurar botón después de 3 segundos
                 setTimeout(() => {
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 }, 3000);
             }, 800);
             
-            // También guardar en localStorage como backup
             guardarSugerenciaLocal({
                 nombre,
                 descripcion,
@@ -1791,17 +1720,12 @@
             return false;
         }
         
-        // Guardar sugerencia en localStorage (backup)
         function guardarSugerenciaLocal(sugerencia) {
             try {
-                // Obtener sugerencias existentes
                 let sugerencias = JSON.parse(localStorage.getItem('foxweb_sugerencias')) || [];
-                
-                // Agregar ID único
                 sugerencia.id = Date.now();
                 sugerencias.push(sugerencia);
                 
-                // Limitar a 100 sugerencias máximo
                 if (sugerencias.length > 100) {
                     sugerencias = sugerencias.slice(-100);
                 }
@@ -1813,21 +1737,71 @@
             }
         }
         
-        // Resetear formulario de sugerencias
         function resetSugerenciaForm() {
-            // Resetear valores del formulario
-            document.getElementById('sugerenciaForm').reset();
+            const form = document.getElementById('sugerenciaForm');
+            if (form) form.reset();
             
-            // Mostrar formulario, ocultar confirmación
             document.getElementById('formularioSugerencia').style.display = 'block';
             document.getElementById('confirmacionSugerencia').style.display = 'none';
         }
         
-        // Panel de administración (acceso secreto: Ctrl+Shift+A)
+        // ==================== INICIALIZACIÓN ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos
+            setTimeout(cargarDatos, 500);
+            
+            // Configurar búsqueda
+            if (searchInput) {
+                searchInput.addEventListener('input', performSearch);
+                searchInput.addEventListener('input', updateClearButton);
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && searchInput.value) {
+                        clearSearch();
+                    }
+                });
+            }
+            
+            if (clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', clearSearch);
+            }
+            
+            // Configurar sugerencias
+            const form = document.getElementById('sugerenciaForm');
+            if (form) {
+                form.addEventListener('submit', enviarSugerenciaGitHub);
+            }
+            
+            // Inicializar pestaña desde hash
+            const hash = window.location.hash.substring(1);
+            const validTabs = ['Programas', 'Sistemas', 'Juegos', 'Extras', 'APKs'];
+            const defaultTab = validTabs.includes(hash) ? hash : 'Programas';
+            openTab(defaultTab);
+            
+            if (searchInput && searchInput.value) {
+                updateClearButton();
+            }
+            
+            // Panel admin (Ctrl+Shift+A)
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                    e.preventDefault();
+                    mostrarPanelAdmin();
+                }
+            });
+        });
+        
+        // Manejar navegación con botones atrás/adelante
+        window.addEventListener('popstate', function(event) {
+            const hash = window.location.hash.substring(1);
+            const validTabs = ['Programas', 'Sistemas', 'Juegos', 'Extras', 'APKs'];
+            if (validTabs.includes(hash)) {
+                openTab(hash);
+            }
+        });
+        
+        // Función para mostrar panel admin
         function mostrarPanelAdmin() {
             const password = prompt('Contraseña de administración:');
-            
-            // Contraseña simple (cámbiala por una más segura)
             if (password === 'foxadmin224') {
                 const panel = document.getElementById('adminPanel');
                 panel.style.display = 'block';
@@ -1936,90 +1910,6 @@
             alert('❌ Sugerencia rechazada.');
             mostrarPanelAdmin();
         }
-        
-        // Exportar sugerencias a CSV
-        function exportarSugerencias() {
-            const sugerencias = JSON.parse(localStorage.getItem('foxweb_sugerencias')) || [];
-            
-            if (sugerencias.length === 0) {
-                alert('No hay sugerencias para exportar');
-                return;
-            }
-            
-            // Crear CSV
-            let csv = 'ID,Nombre,Descripción,Categoría,Enlace,Sitio Web,Email,Fecha,Estado\n';
-            
-            sugerencias.forEach(s => {
-                csv += `${s.id || ''},"${(s.nombre || '').replace(/"/g, '""')}","${(s.descripcion || '').replace(/"/g, '""')}",` +
-                       `${s.categoria || ''},"${s.enlace || ''}","${s.web || ''}","${s.email || ''}",` +
-                       `${s.fecha || ''},${s.estado || 'pendiente'}\n`;
-            });
-            
-            // Crear y descargar archivo
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `foxweb_sugerencias_${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-        
-        // Limpiar sugerencias antiguas
-        function limpiarSugerencias() {
-            if (confirm('¿Eliminar sugerencias con más de 30 días (excepto pendientes)?')) {
-                const umbral = Date.now() - (30 * 24 * 60 * 60 * 1000); // 30 días
-                
-                let sugerencias = JSON.parse(localStorage.getItem('foxweb_sugerencias')) || [];
-                const originalLength = sugerencias.length;
-                
-                sugerencias = sugerencias.filter(s => {
-                    const fecha = new Date(s.fecha).getTime();
-                    // Mantener pendientes o recientes
-                    return s.estado === 'pendiente' || fecha > umbral;
-                });
-                
-                localStorage.setItem('foxweb_sugerencias', JSON.stringify(sugerencias));
-                alert(`Eliminadas ${originalLength - sugerencias.length} sugerencias antiguas`);
-                mostrarPanelAdmin();
-            }
-        }
-        
-        // Asignar el evento submit al formulario
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('sugerenciaForm');
-            if (form) {
-                form.addEventListener('submit', enviarSugerenciaGitHub);
-            }
-            
-            // Acceso secreto al panel admin (Ctrl+Shift+A)
-            document.addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-                    e.preventDefault();
-                    mostrarPanelAdmin();
-                }
-            });
-            
-            // INICIALIZACIÓN - RESPETA EL HASH EN LA URL AL CARGAR
-            const hash = window.location.hash.substring(1);
-            const validTabs = ['Programas', 'Sistemas', 'Juegos', 'Extras', 'APKs'];
-            const defaultTab = validTabs.includes(hash) ? hash : 'Programas';
-            openTab(defaultTab);
-            if (searchInput && searchInput.value) {
-                updateClearButton();
-                performSearch();
-            }
-        });
-        
-        // MANEJAR EL BOTÓN ATRÁS/ADELANTE DEL NAVEGADOR
-        window.addEventListener('popstate', function(event) {
-            const hash = window.location.hash.substring(1);
-            const validTabs = ['Programas', 'Sistemas', 'Juegos', 'Extras', 'APKs'];
-            if (validTabs.includes(hash)) {
-                openTab(hash);
-            }
-        });
     </script>
 </body>
 </html>
