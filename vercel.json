@@ -191,18 +191,6 @@
     {
       "source": "/apks",
       "destination": "/main.html#APKs"
-    },
-    {
-      "source": "/informacion",
-      "destination": "/main.html#informacion"
-    },
-    {
-      "source": "/donaciones",
-      "destination": "/main.html#donaciones"
-    },
-    {
-      "source": "/sugerencias",
-      "destination": "/main.html#sugerencias"
     }
   ],
   "redirects": [
