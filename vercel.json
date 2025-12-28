@@ -5,7 +5,6 @@
     "enabled": true
   },
   "cleanUrls": true,
-  "trailingSlash": false,
   "headers": [
     {
       "source": "/(.*)",
@@ -13,20 +12,13 @@
         {
           "key": "Content-Security-Policy",
           "value": "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * data: blob:; font-src * data:;"
-        },
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
         }
       ]
     }
   ],
   "rewrites": [
-    { "source": "/", "destination": "/main.html" },
     { "source": "/descargas", "destination": "/main.html" },
-    { "source": "/juegos", "destination": "/main.html" }
-  ],
-  "redirects": [
-    { "source": "/index.html", "destination": "/", "permanent": true }
+    { "source": "/juegos", "destination": "/main.html" },
+    { "source": "/(.*)", "destination": "/main.html" }
   ]
 }
