@@ -158,7 +158,6 @@
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: scroll;
-            /* backdrop-filter: blur(1px); */ /* Efecto de desenfoque sutil */
         }
         .header-container {
             display: flex;
@@ -303,7 +302,6 @@
         }
         /* CAMBIO PRINCIPAL: 3 COLUMNAS FIJAS */
         .content-grid {
-			will-change: transform; /* Ayuda al navegador a optimizar */
             display: grid;
             grid-template-columns: repeat(3, 1fr); /* 3 columnas fijas */
             gap: 25px;
@@ -1220,48 +1218,9 @@
         </div>
     </div>
 
-    <!-- ==================== MODALES EXISTENTES ==================== -->
-     <!-- MODAL INFO PWA -->
-<div id="pwaInfoModal" class="modal">
-    <div class="modal-content" style="max-width: 500px;">
-        <span class="close" onclick="closeModal('pwaInfoModal')">&times;</span>
-        <div style="text-align: center; margin-bottom: 25px;">
-            <i class="fa-solid fa-mobile-alt" style="font-size: 3em; color: var(--primary);"></i>
-            <h3 style="color: var(--primary); margin: 10px 0;">Instalar FoxWeb como App</h3>
-        </div>
-        
-        <div style="margin-bottom: 20px;">
-            <h4><i class="fa-solid fa-star" style="color: gold;"></i> Ventajas:</h4>
-            <ul style="text-align: left; color: var(--text-dim);">
-                <li>Acceso rápido desde tu escritorio o pantalla de inicio</li>
-                <li>Funciona offline (modo limitado)</li>
-                <li>Sin necesidad de descargar desde tiendas de aplicaciones</li>
-                <li>Experiencia similar a una app nativa</li>
-            </ul>
-        </div>
-        
-        <div style="margin-bottom: 25px;">
-            <h4><i class="fa-solid fa-mobile-screen-button"></i> Cómo instalar:</h4>
-            <div style="background: rgba(255, 69, 0, 0.05); border-radius: 8px; padding: 15px;">
-                <p style="margin: 5px 0; color: var(--text-dim);">
-                    <strong>Chrome/Edge:</strong> Haz clic en el icono <i class="fa-solid fa-download"></i> en la barra de direcciones
-                </p>
-                <p style="margin: 5px 0; color: var(--text-dim);">
-                    <strong>Firefox:</strong> Menú → "Instalar FoxWeb"
-                </p>
-                <p style="margin: 5px 0; color: var(--text-dim);">
-                    <strong>Safari:</strong> Compartir → "Añadir a pantalla de inicio"
-                </p>
-            </div>
-        </div>
-        
-        <button onclick="closeModal('pwaInfoModal')" 
-                style="width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
-            <i class="fa-solid fa-check"></i> Entendido
-        </button>
-    </div>
-</div>
-    <!-- MODAL DE INFORMACIÓN -->
+    <!-- ==================== MODAL INFO PWA (ELIMINADO - NO SE USA) ==================== -->
+
+    <!-- ==================== MODAL DE INFORMACIÓN ==================== -->
     <div id="infoModal" class="modal">
         <div class="info-modal-content">
             <span class="close" onclick="closeModal('infoModal')">&times;</span>
@@ -1334,7 +1293,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE DONACIONES PAYPAL -->
+    <!-- ==================== MODAL DE DONACIONES PAYPAL ==================== -->
     <div id="donateModal" class="modal">
         <div class="donate-modal-content">
             <span class="close" onclick="closeModal('donateModal')">&times;</span>
@@ -1356,10 +1315,10 @@
         </div>
     </div>
 
-    <!-- MODALES DINÁMICOS (se generan desde data.js) -->
+    <!-- ==================== MODALES DINÁMICOS (se generan desde data.js) ==================== -->
     <div id="modales-container"></div>
 
-    <!-- MODALES EXISTENTES (para compatibilidad) -->
+    <!-- ==================== MODALES EXISTENTES (para compatibilidad) ==================== -->
     <!-- Modal Driver Booster 10.3 -->
     <div id="driverBoosterModal" class="modal">
         <div class="modal-content">
@@ -1429,212 +1388,19 @@
         </div>
     </div>
 
-    <!-- PANEL DE ADMINISTRACIÓN (OCULTO) -->
+    <!-- ==================== PANEL DE ADMINISTRACIÓN (OCULTO) ==================== -->
     <div id="adminPanel" class="admin-panel"></div>
 
-    <!-- BOTÓN FLOTANTE PARA SUGERENCIAS -->
+    <!-- ==================== BOTÓN FLOTANTE PARA SUGERENCIAS ==================== -->
     <a onclick="openModal('sugerenciaModal')" class="floating-suggest-btn" title="Sugerir contenido">
         <i class="fa-solid fa-plus"></i>
     </a>
 
+    <!-- ==================== FOOTER ==================== -->
     <p class="footer-text">©Copyright 2025 FoxOrange224 | FoxWeb - Tu centro de descargas confiable</p>
 
-    <!-- SCRIPT PRINCIPAL -->
+    <!-- ==================== SCRIPT PRINCIPAL ==================== -->
     <script>
-        // ==================== SISTEMA DE ROUTING ====================
-function parseHash() {
-    const hash = window.location.hash.substring(1);
-    
-    // Formato esperado: Programas/vlc-media-player
-    // O: Sistemas/debian
-    // O solo: Programas
-    
-    if (!hash) {
-        // Hash vacío, abrir pestaña por defecto
-        openTab('Programas');
-        return;
-    }
-    
-    // Separar por /
-    const parts = hash.split('/');
-    const mainSection = parts[0];
-    const itemSlug = parts[1];
-    
-    // Pestañas válidas
-    const validTabs = ['Programas', 'Sistemas', 'Juegos', 'Extras', 'APKs'];
-    
-    if (validTabs.includes(mainSection)) {
-        // Primero abrir la pestaña
-        openTab(mainSection);
-        
-        // Si hay un item específico, buscar y resaltarlo
-        if (itemSlug) {
-            setTimeout(() => {
-                highlightItem(mainSection, itemSlug);
-                updatePageMeta(mainSection, itemSlug);
-            }, 300); // Esperar a que cargue la pestaña
-        } else {
-            updatePageMeta(mainSection);
-        }
-    } else if (mainSection === 'informacion') {
-        openModal('infoModal');
-    } else if (mainSection === 'donaciones') {
-        openModal('donateModal');
-    } else if (mainSection === 'sugerencias') {
-        openModal('sugerenciaModal');
-    } else {
-        // Hash no reconocido, abrir pestaña por defecto
-        openTab('Programas');
-    }
-}
-
-function highlightItem(category, itemSlug) {
-    const itemId = `${category.toLowerCase()}_${itemSlug}`;
-    const itemElement = document.querySelector(`[data-id="${itemId}"]`);
-    
-    if (itemElement) {
-        // Remover highlight anterior
-        document.querySelectorAll('.content-item.highlighted').forEach(el => {
-            el.classList.remove('highlighted');
-        });
-        
-        // Agregar highlight
-        itemElement.classList.add('highlighted');
-        itemElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        // Agregar estilo CSS para highlight
-        if (!document.querySelector('#highlightStyle')) {
-            const style = document.createElement('style');
-            style.id = 'highlightStyle';
-            style.textContent = `
-                .content-item.highlighted {
-                    border: 2px solid var(--primary) !important;
-                    box-shadow: 0 0 20px rgba(255, 69, 0, 0.3) !important;
-                    transform: translateY(-5px);
-                    transition: all 0.3s ease;
-                }
-                
-                .content-item.highlighted .item-title {
-                    color: var(--primary) !important;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }
-}
-
-function updatePageMeta(category, itemSlug = null) {
-    let title = 'FoxWeb | ';
-    let description = '';
-    
-    if (itemSlug) {
-        // Buscar item en los datos
-        const items = FoxWebDB[category.toLowerCase()];
-        if (items) {
-            const item = items.find(i => 
-                createSlug(i.name) === itemSlug || 
-                createSlug(i.name).includes(itemSlug)
-            );
-            
-            if (item) {
-                title += item.name;
-                description = item.info;
-            } else {
-                title += category;
-                description = `Descarga ${category.toLowerCase()} en FoxWeb`;
-            }
-        }
-    } else {
-        title += category;
-        description = `Descarga ${category.toLowerCase()} en FoxWeb`;
-    }
-    
-    // Actualizar título y meta description
-    document.title = title;
-    
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-        metaDesc.setAttribute('content', description);
-    }
-    
-    // Actualizar Open Graph
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) {
-        ogTitle.setAttribute('content', title);
-    }
-    
-    const ogDesc = document.querySelector('meta[property="og:description"]');
-    if (ogDesc) {
-        ogDesc.setAttribute('content', description);
-    }
-}
-
-function createSlug(text) {
-    return text.toLowerCase()
-        .replace(/[áàäâ]/g, 'a')
-        .replace(/[éèëê]/g, 'e')
-        .replace(/[íìïî]/g, 'i')
-        .replace(/[óòöô]/g, 'o')
-        .replace(/[úùüû]/g, 'u')
-        .replace(/ñ/g, 'n')
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-');
-}
-
-// Modificar openTab para generar URLs amigables
-function openTab(tabName, itemName = null) {
-    currentTab = tabName;
-    const tabContents = document.getElementsByClassName("tab-content");
-    for (let i = 0; i < tabContents.length; i++) tabContents[i].classList.remove("active");
-    const tablinks = document.getElementsByClassName("tablink");
-    for (let i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
-    document.getElementById(tabName).classList.add("active");
-    const activeBtn = Array.from(tablinks).find(btn => btn.getAttribute('onclick') === `openTab('${tabName}')`);
-    if (activeBtn) activeBtn.classList.add("active");
-    
-    // Generar URL
-    let hash = tabName;
-    if (itemName) {
-        const slug = createSlug(itemName);
-        hash += '/' + slug;
-    }
-    
-    history.pushState(null, null, `/main#${hash}`);
-    
-    setTimeout(performSearch, 50);
-}
-
-// Modificar la función generarItemHTML para incluir enlace directo
-function generarItemHTML(item, categoria, itemId) {
-    const slug = createSlug(item.name);
-    
-    // ... resto de tu código existente ...
-    
-    // Modificar el botón o agregar enlace al título
-    return `
-        <div class="content-item" data-search="${searchText}" data-id="${itemId}" data-slug="${slug}">
-            <div class="item-header">
-                <div class="item-icon"><i class="${item.icon}"></i></div>
-                <div>
-                    <h3 class="item-title">
-                        <a href="/main#${categoria}/${slug}" style="color: inherit; text-decoration: none;">
-                            ${item.name}
-                        </a>
-                    </h3>
-                </div>
-            </div>
-            <p class="item-description">${item.info}</p>
-            ${badgesHTML ? `<div class="item-meta">${badgesHTML}</div>` : ''}
-            ${botonHTML}
-            <div style="margin-top: 10px; text-align: center;">
-                <a href="/main#${categoria}/${slug}" style="color: var(--primary); font-size: 0.85em; text-decoration: none;">
-                    <i class="fa-solid fa-link"></i> Enlace directo
-                </a>
-            </div>
-        </div>
-    `;
-}
         // ==================== VARIABLES GLOBALES ====================
         let foxWebData = null;
         let currentTab = 'Programas';
@@ -2130,7 +1896,48 @@ function generarItemHTML(item, categoria, itemId) {
                     mostrarPanelAdmin();
                 }
             });
+            
+            // Limpiar Service Workers antiguos al cargar
+            limpiarServiceWorkersAntiguos();
         });
+        
+        // ==================== LIMPIAR SERVICE WORKERS ANTIGUOS ====================
+        function limpiarServiceWorkersAntiguos() {
+            if ('serviceWorker' in navigator) {
+                console.log('🔍 Buscando Service Workers antiguos...');
+                
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    if (registrations.length > 0) {
+                        console.log(`⚠️ Encontrados ${registrations.length} Service Workers antiguos`);
+                        
+                        const promises = registrations.map(registration => {
+                            console.log(`🗑️ Eliminando: ${registration.scope}`);
+                            return registration.unregister();
+                        });
+                        
+                        Promise.all(promises).then(function() {
+                            console.log('✅ Todos los Service Workers eliminados');
+                            
+                            // Limpiar cachés si existen
+                            if ('caches' in window) {
+                                caches.keys().then(function(cacheNames) {
+                                    if (cacheNames.length > 0) {
+                                        console.log(`🗑️ Limpiando ${cacheNames.length} cachés`);
+                                        cacheNames.forEach(function(cacheName) {
+                                            caches.delete(cacheName);
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        console.log('✅ No hay Service Workers registrados');
+                    }
+                }).catch(function(error) {
+                    console.log('❌ Error al eliminar Service Workers:', error);
+                });
+            }
+        }
         
         // Manejar navegación con botones atrás/adelante
         window.addEventListener('popstate', function(event) {
@@ -2253,152 +2060,7 @@ function generarItemHTML(item, categoria, itemId) {
             mostrarPanelAdmin();
         }
     </script>
-    <!-- SCRIPT PARA INSTALAR PWA -->
-<script>
-    function showPWAInfo() {
-    openModal('pwaInfoModal');
-}
-// Detectar si el navegador soporta PWA
-let deferredPrompt;
-const installButton = document.createElement('button');
-
-// Crear botón de instalación
-function createInstallButton() {
-    installButton.innerHTML = '<i class="fa-solid fa-download"></i> Instalar FoxWeb';
-    installButton.style.cssText = `
-        position: fixed;
-        bottom: 90px;
-        right: 25px;
-        background: var(--primary);
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 50px;
-        cursor: pointer;
-        font-weight: 600;
-        z-index: 1001;
-        box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s ease;
-    `;
-    
-    installButton.addEventListener('mouseover', () => {
-        installButton.style.transform = 'scale(1.05)';
-        installButton.style.boxShadow = '0 6px 20px rgba(255, 69, 0, 0.4)';
-    });
-    
-    installButton.addEventListener('mouseout', () => {
-        installButton.style.transform = 'scale(1)';
-        installButton.style.boxShadow = '0 4px 15px rgba(255, 69, 0, 0.3)';
-    });
-    
-    document.body.appendChild(installButton);
-    installButton.style.display = 'none';
-}
-
-// Evento para detectar cuando se puede instalar
-window.addEventListener('beforeinstallprompt', (e) => {
-    // Prevenir que Chrome muestre el prompt automático
-    e.preventDefault();
-    // Guardar el evento para usarlo después
-    deferredPrompt = e;
-    
-    // Mostrar nuestro botón de instalación
-    if (!installButton.parentNode) {
-        createInstallButton();
-    }
-    
-    installButton.style.display = 'flex';
-    
-    // Cuando se haga clic en nuestro botón
-    installButton.addEventListener('click', () => {
-        // Mostrar el prompt de instalación
-        deferredPrompt.prompt();
-        
-        // Esperar a que el usuario responda
-        deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                console.log('Usuario aceptó la instalación');
-                installButton.style.display = 'none';
-                
-                // Mostrar mensaje de éxito
-                showInstallMessage('¡FoxWeb instalado!');
-            } else {
-                console.log('Usuario rechazó la instalación');
-            }
-            deferredPrompt = null;
-        });
-    });
-});
-
-// Verificar si ya está instalado
-window.addEventListener('appinstalled', () => {
-    console.log('PWA instalada');
-    if (installButton.parentNode) {
-        installButton.style.display = 'none';
-    }
-    
-    // Mostrar mensaje de bienvenida
-    showInstallMessage('¡Gracias por instalar FoxWeb!');
-});
-
-// Mostrar mensaje de instalación
-function showInstallMessage(message) {
-    const messageDiv = document.createElement('div');
-    messageDiv.innerHTML = `
-        <div style="
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #2ea44f;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 1002;
-            box-shadow: 0 5px 20px rgba(46, 164, 79, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: slideIn 0.5s ease;
-        ">
-            <i class="fa-solid fa-check-circle"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    document.body.appendChild(messageDiv);
-    
-    // Remover después de 3 segundos
-    setTimeout(() => {
-        messageDiv.remove();
-    }, 3000);
-}
-
-// Registrar Service Worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-            .then(registration => {
-                console.log('Service Worker registrado con éxito:', registration.scope);
-            })
-            .catch(error => {
-                console.log('Error al registrar Service Worker:', error);
-            });
-    });
-}
-
-// Detectar modo standalone (ya instalado)
-if (window.matchMedia('(display-mode: standalone)').matches) {
-    console.log('Running in standalone mode');
-    
-    // Ocultar botón de instalación si ya está instalado
-    if (installButton.parentNode) {
-        installButton.style.display = 'none';
-    }
-}
-</script>
+    <!-- ==================== SCRIPT PARA ANALYTICS DE VERCEL ==================== -->
     <script defer src="https://va.vercel-scripts.com/v1/speed-insights/script.js"></script>
 </body>
 </html>
