@@ -391,7 +391,7 @@ const FoxWebDB = {
   
 };
 
-// 🚀 EXPORTAR BASE DE DATOS
+// EXPORTAR BASE DE DATOS
 console.log('Base de datos FoxWeb cargada correctamente');
 console.log(`Estadísticas:`);
 console.log(`   Programas: ${FoxWebDB.programas.length} items`);
