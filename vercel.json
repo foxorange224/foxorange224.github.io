@@ -1,11 +1,8 @@
 {
   "version": 2,
   "public": true,
-  "speedInsights": {
-    "enabled": true
-  },
-  "cleanUrls": true,
-  "trailingSlash": false,
+  "speedInsights": { "enabled": true },
+  "cleanUrls": false,
   "headers": [
     {
       "source": "/(.*)",
@@ -18,14 +15,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/", "destination": "/main.html" },
-    { "source": "/descargas", "destination": "/main.html#Programas" },
-    { "source": "/programas", "destination": "/main.html#Programas" },
-    { "source": "/juegos", "destination": "/main.html#Juegos" }
-  ],
-  "redirects": [
-    { "source": "/index.html", "destination": "/", "permanent": true },
-    { "source": "/github", "destination": "https://github.com/foxorange224", "permanent": true },
-    { "source": "/paypal", "destination": "https://www.paypal.com/ncp/payment/QLFVSACHGMW5E", "permanent": true }
+    { "source": "/", "destination": "/main.html" }
   ]
 }
