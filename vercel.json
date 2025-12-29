@@ -11,6 +11,10 @@
     {
       "src": "/.*",
       "dest": "/index.html"
+    },
+    {
+      "src": "/data.js",
+      "dest": "/data.js"
     }
   ]
 }
