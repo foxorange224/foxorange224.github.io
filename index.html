@@ -249,7 +249,7 @@ select.sugerencia-input{-webkit-appearance:none;appearance:none;background-image
 select.sugerencia-input{background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right 10px center;background-size:20px;padding-right:35px;}
 }
 </style>
-<script src="data.js"></script>
+<script src="data.js?v=1"></script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9082337258272819" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -499,6 +499,78 @@ select.sugerencia-input{background-image:url("data:image/svg+xml;charset=UTF-8,%
 <button onclick="openModal('sugerenciaModal')" class="floating-suggest-btn" title="Sugerir contenido"><i class="fa-solid fa-plus"></i></button>
 <p class="footer-text">©Copyright 2025 FoxOrange224 | FoxWeb - Tu centro de descargas confiable</p>
 <script>
+// Esperar a que data.js cargue
+function waitForFoxWebDB(maxAttempts = 50, interval = 100) {
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    
+    const check = () => {
+      attempts++;
+      
+      if (typeof FoxWebDB !== 'undefined') {
+        console.log('✅ FoxWebDB cargado después de', attempts, 'intentos');
+        resolve(FoxWebDB);
+      } else if (attempts >= maxAttempts) {
+        reject(new Error('FoxWebDB no se cargó después de ' + maxAttempts + ' intentos'));
+      } else {
+        setTimeout(check, interval);
+      }
+    };
+    
+    check();
+  });
+}
+
+// Iniciar la app cuando todo esté listo
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM cargado, esperando FoxWebDB...');
+  
+  waitForFoxWebDB()
+    .then(foxWebData => {
+      console.log('🎉 App iniciada con datos:', foxWebData);
+      
+      // Aquí pones TODO tu código que usa FoxWebDB
+      // Reemplaza "foxWebData" por la variable que ya tienes
+      
+      // Ejemplo - tu código actual:
+      let currentTab = 'Programas';
+      
+      function cargarDatos() {
+        if (!foxWebData) {
+          console.error('No hay datos');
+          return;
+        }
+        console.log('Datos cargados:', foxWebData);
+        cargarPestana('Programas', foxWebData.programas);
+        cargarPestana('Sistemas', foxWebData.sistemas);
+        cargarPestana('Juegos', foxWebData.juegos);
+        cargarPestana('Extras', foxWebData.extras);
+        cargarPestana('APKs', foxWebData.apks);
+        generarModalesDinamicos();
+      }
+      
+      cargarDatos();
+      
+      // El resto de tus funciones...
+    })
+    .catch(error => {
+      console.error('❌ Error crítico:', error);
+      // Mostrar error en pantalla
+      document.body.innerHTML = `
+        <div style="text-align:center;padding:50px;color:#ff6b6b;">
+          <i class="fa-solid fa-exclamation-triangle" style="font-size:3em;"></i>
+          <h2>Error crítico</h2>
+          <p>No se pudo cargar la base de datos.</p>
+          <p><strong>Error:</strong> ${error.message}</p>
+          <button onclick="location.reload()" style="padding:10px 20px;background:#FF4500;color:white;border:none;border-radius:6px;cursor:pointer;margin-top:15px;">
+            <i class="fa-solid fa-rotate"></i> Recargar página
+          </button>
+        </div>
+      `;
+    });
+});
+</script>
+<script>
 let foxWebData=null;let currentTab='Programas';
 function openTab(tabName){currentTab=tabName;const tabContents=document.getElementsByClassName("tab-content");for(let i=0;i<tabContents.length;i++)tabContents[i].classList.remove("active");const tablinks=document.getElementsByClassName("tablink");for(let i=0;i<tablinks.length;i++)tablinks[i].classList.remove("active");document.getElementById(tabName).classList.add("active");const activeBtn=Array.from(tablinks).find(btn=>btn.getAttribute('onclick')===`openTab('${tabName}')`);if(activeBtn)activeBtn.classList.add("active");history.pushState(null,null,`#${tabName}`);setTimeout(performSearch,50);}
 function cargarDatos(){if(typeof FoxWebDB==='undefined'){console.error('FoxWebDB no está definido');mostrarErrorCarga();return;}
@@ -544,6 +616,7 @@ html+=`<div style="margin-top:20px;text-align:center;"><button onclick="exportar
 function aprobarSugerencia(id){let sugerencias=JSON.parse(localStorage.getItem('foxweb_sugerencias'))||[];sugerencias=sugerencias.map(s=>{if(s.id===id){s.estado='aprobado';s.aprobadoEn=new Date().toISOString();}return s;});localStorage.setItem('foxweb_sugerencias',JSON.stringify(sugerencias));alert('✅Sugerencia aprobada. Ahora agrégala manualmente a FoxWeb.');mostrarPanelAdmin();}
 function rechazarSugerencia(id){let sugerencias=JSON.parse(localStorage.getItem('foxweb_sugerencias'))||[];sugerencias=sugerencias.map(s=>{if(s.id===id){s.estado='rechazado';s.rechazadoEn=new Date().toISOString();}return s;});localStorage.setItem('foxweb_sugerencias',JSON.stringify(sugerencias));alert('❌Sugerencia rechazada.');mostrarPanelAdmin();}
 </script>
+
 <script defer src="https://va.vercel-scripts.com/v1/speed-insights/script.js"></script>
 </body>
 </html>

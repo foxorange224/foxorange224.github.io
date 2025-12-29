@@ -514,14 +514,9 @@ badges: ["SUITE","LIGERO","SIN ANUNCIOS"]
 }
 ],
 modales: {}
-};
+}; // <-- PUNTO Y COMA AQUÍ
 
-// EXPORTAR BASE DE DATOS
-console.log('Base de datos FoxWeb cargada correctamente');
-console.log(`Estadísticas:`);
-console.log(`Programas: ${FoxWebDB.programas.length} items`);
-console.log(`Sistemas: ${FoxWebDB.sistemas.length} items`);
-console.log(`Juegos: ${FoxWebDB.juegos.length} items`);
-console.log(`Extras: ${FoxWebDB.extras.length} items`);
-console.log(`APKs: ${FoxWebDB.apks.length} items`);
-console.log(`Total: ${FoxWebDB.programas.length + FoxWebDB.sistemas.length + FoxWebDB.juegos.length + FoxWebDB.extras.length + FoxWebDB.apks.length} items`);
+// Exportar a window para asegurar acceso global
+if (typeof window !== 'undefined') {
+  window.FoxWebDB = FoxWebDB;
+}
