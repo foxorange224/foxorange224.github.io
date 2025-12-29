@@ -6,50 +6,181 @@
       "use": "@vercel/static"
     },
     {
+      "src": "*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.css",
+      "use": "@vercel/static"
+    },
+    {
       "src": "*.json",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.txt",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.md",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.xml",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.ico",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.jpg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.jpeg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.gif",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.webp",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.avif",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.bmp",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.webmanifest",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/_next/static/(?:[^/]+/pages|chunks|runtime|css|media)/.+",
+      "src": "/(.*)\\.(ico|png|jpg|jpeg|gif|svg|webp|avif|bmp|tiff)$",
       "headers": {
-        "cache-control": "public,max-age=31536000,immutable"
+        "cache-control": "public, max-age=31536000, immutable",
+        "access-control-allow-origin": "*"
       },
-      "continue": true
+      "dest": "/$1.$2"
     },
     {
-      "src": "/(.*)\\.(ico|png|jpg|jpeg|gif|svg|webp|avif|bmp)$",
+      "src": "/(.*)\\.(css|js|mjs|ts)$",
       "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
+        "cache-control": "public, max-age=31536000, immutable",
+        "access-control-allow-origin": "*"
       },
-      "continue": true
+      "dest": "/$1.$2"
     },
     {
-      "src": "/(.*)\\.(css|js|mjs)$",
+      "src": "/(.*)\\.(woff|woff2|ttf|eot|otf)$",
       "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
+        "cache-control": "public, max-age=31536000, immutable",
+        "access-control-allow-origin": "*"
       },
-      "continue": true
+      "dest": "/$1.$2"
     },
     {
-      "src": "/manifest\\.json$",
+      "src": "/(manifest\\.json|browserconfig\\.xml|site\\.webmanifest)$",
       "headers": {
         "cache-control": "public, max-age=86400",
-        "content-type": "application/manifest+json"
+        "content-type": "application/manifest+json",
+        "access-control-allow-origin": "*"
       },
-      "continue": true
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)\\.(txt|md|log|env|config)$",
+      "headers": {
+        "cache-control": "public, max-age=3600",
+        "content-type": "text/plain; charset=utf-8",
+        "access-control-allow-origin": "*"
+      },
+      "dest": "/$1.$2"
+    },
+    {
+      "src": "/(.*)\\.(xml|rss|atom)$",
+      "headers": {
+        "cache-control": "public, max-age=3600",
+        "content-type": "application/xml; charset=utf-8",
+        "access-control-allow-origin": "*"
+      },
+      "dest": "/$1.$2"
+    },
+    {
+      "src": "/(.*)\\.(pdf|doc|docx|xls|xlsx|ppt|pptx)$",
+      "headers": {
+        "cache-control": "public, max-age=86400",
+        "access-control-allow-origin": "*"
+      },
+      "dest": "/$1.$2"
+    },
+    {
+      "src": "/(.*)\\.(zip|rar|7z|tar|gz|bz2)$",
+      "headers": {
+        "cache-control": "public, max-age=86400",
+        "access-control-allow-origin": "*"
+      },
+      "dest": "/$1.$2"
+    },
+    {
+      "src": "/(robots\\.txt|sitemap\\.xml|humans\\.txt)$",
+      "headers": {
+        "cache-control": "public, max-age=3600",
+        "access-control-allow-origin": "*"
+      },
+      "dest": "/$1"
+    },
+    {
+      "src": "/favicon\\.ico",
+      "dest": "/favicon.ico",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable",
+        "access-control-allow-origin": "*"
+      }
+    },
+    {
+      "src": "/apple-touch-icon(?:\\.png)?",
+      "dest": "/apple-touch-icon.png",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable",
+        "access-control-allow-origin": "*"
+      }
     },
     {
       "src": "/sw\\.js$",
-      "dest": "/404",
-      "status": 404
+      "status": 404,
+      "dest": "/404"
     },
     {
-      "src": "/(.*)",
+      "src": "/service-worker\\.js$",
+      "status": 404,
+      "dest": "/404"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/.*",
       "dest": "/index.html",
       "headers": {
-        "cache-control": "public, max-age=0, s-maxage=7200, stale-while-revalidate=86400"
+        "cache-control": "public, max-age=0, s-maxage=7200, stale-while-revalidate=86400",
+        "access-control-allow-origin": "*"
       }
     }
   ],
@@ -75,14 +206,104 @@
         },
         {
           "key": "Permissions-Policy",
-          "value": "geolocation=(), microphone=(), camera=()"
+          "value": "geolocation=(), microphone=(), camera=(), payment=()"
         },
         {
           "key": "Strict-Transport-Security",
           "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, HEAD, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Accept, Range"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "cross-origin"
+        },
+        {
+          "key": "Cross-Origin-Embedder-Policy",
+          "value": "require-corp"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(html|htm)$",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.json$",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json; charset=utf-8"
         }
       ]
     }
   ],
-  "regions": ["gru1", "iad1", "sfo1", "cdg1", "sin1"]
+  "rewrites": [
+    {
+      "source": "/main",
+      "destination": "/"
+    },
+    {
+      "source": "/home",
+      "destination": "/"
+    },
+    {
+      "source": "/index",
+      "destination": "/"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/index\\.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/default\\.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
+  "regions": ["gru1", "iad1", "sfo1", "cdg1", "sin1", "hnd1", "bom1", "syd1"],
+  "github": {
+    "silent": true,
+    "enabled": true
+  },
+  "env": {
+    "NODE_VERSION": "18"
+  },
+  "functions": {
+    "api/**/*.js": {
+      "maxDuration": 10
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/keepalive",
+      "schedule": "*/10 * * * *"
+    }
+  ]
 }
