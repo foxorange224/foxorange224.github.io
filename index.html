@@ -2092,6 +2092,325 @@ function cleanOldServiceWorkers() {
 cleanOldServiceWorkers();
 </script>
 
+<!-- CHAT HTML - AGREGAR ANTES DEL </body> -->
+<div class="chat-widget" onclick="toggleChat()" title="Chat FoxWeb">
+  <i class="fa-solid fa-comments"></i>
+</div>
+
+<div id="chatContainer" class="chat-container">
+  <div class="chat-header">
+    <h3><i class="fa-solid fa-comments"></i> Chat FoxWeb</h3>
+    <span id="onlineCount" class="online-count">1 usuario</span>
+  </div>
+  
+  <div id="chatMessages" class="chat-messages">
+    <div class="message-system">
+      <i class="fa-solid fa-door-open"></i> Bienvenido al chat de FoxWeb
+    </div>
+    <div class="message-system">
+      Habla con otros usuarios sobre software, juegos y más
+    </div>
+  </div>
+  
+  <div id="typingIndicator" class="typing-indicator">
+    <span id="typingText"></span>
+  </div>
+  
+  <div class="chat-input">
+    <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." maxlength="200">
+    <button id="sendButton" onclick="sendChatMessage()">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Socket.io CDN -->
+<script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+
+<!-- CHAT JAVASCRIPT - AGREGAR DESPUÉS DE TODO EL CÓDIGO JS EXISTENTE -->
+<script>
+// ===== CHAT FOXWEB =====
+// IMPORTANTE: Cambia esta URL por la de TU servidor
+const CHAT_SERVER_URL = 'https://foxweb-chat-server.onrender.com';
+
+let chatSocket = null;
+let chatUsername = null;
+let isChatOpen = false;
+let chatTypingTimeout = null;
+
+// Inicializar chat cuando la página carga
+function initFoxWebChat() {
+  // Cargar nombre de usuario
+  loadUsername();
+  
+  // Conectar al servidor de chat
+  connectChatServer();
+  
+  // Configurar eventos
+  setupChatEvents();
+}
+
+// Cargar nombre de usuario
+function loadUsername() {
+  chatUsername = localStorage.getItem('foxweb_chat_username');
+  
+  if (!chatUsername) {
+    // Pedir nombre la primera vez
+    setTimeout(() => {
+      const defaultName = 'Usuario' + Math.floor(Math.random() * 10000);
+      const name = prompt('👤 ¿Cuál es tu nombre para el chat FoxWeb?\n\n(Se guardará para la próxima vez)', defaultName);
+      
+      if (name && name.trim()) {
+        chatUsername = name.trim().substring(0, 20);
+        localStorage.setItem('foxweb_chat_username', chatUsername);
+      } else {
+        chatUsername = defaultName;
+        localStorage.setItem('foxweb_chat_username', chatUsername);
+      }
+    }, 1000);
+  }
+}
+
+// Conectar al servidor
+function connectChatServer() {
+  try {
+    chatSocket = io(CHAT_SERVER_URL, {
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000
+    });
+    
+    // Evento: Conexión exitosa
+    chatSocket.on('connect', () => {
+      console.log('✅ Conectado al chat FoxWeb');
+      addChatSystemMessage('Conectado al chat');
+      
+      // Unirse al chat con nombre
+      if (chatUsername) {
+        setTimeout(() => {
+          chatSocket.emit('join', chatUsername);
+        }, 500);
+      }
+    });
+    
+    // Evento: Cantidad de usuarios
+    chatSocket.on('userCount', (count) => {
+      document.getElementById('onlineCount').textContent = count + ' usuario' + (count !== 1 ? 's' : '');
+    });
+    
+    // Evento: Nuevo mensaje
+    chatSocket.on('message', (data) => {
+      if (data.username !== chatUsername) {
+        addChatMessage(data.username, data.message, data.time, false);
+      }
+    });
+    
+    // Evento: Usuario se unió
+    chatSocket.on('userJoined', (data) => {
+      addChatSystemMessage(`👋 ${data.username} se unió al chat`);
+    });
+    
+    // Evento: Usuario se fue
+    chatSocket.on('userLeft', (data) => {
+      addChatSystemMessage(`👋 ${data.username} abandonó el chat`);
+    });
+    
+    // Evento: Alguien está escribiendo
+    chatSocket.on('typing', (data) => {
+      showChatTyping(data.username);
+    });
+    
+    // Evento: Dejó de escribir
+    chatSocket.on('stopTyping', () => {
+      hideChatTyping();
+    });
+    
+    // Evento: Error de conexión
+    chatSocket.on('connect_error', (error) => {
+      console.error('Error de conexión al chat:', error);
+      addChatSystemMessage('⚠️ Error de conexión. Reintentando...');
+    });
+    
+    // Reconectar automáticamente
+    chatSocket.on('reconnect', (attemptNumber) => {
+      console.log(`Reconectado al chat (intento ${attemptNumber})`);
+      addChatSystemMessage('✅ Reconectado al chat');
+    });
+    
+  } catch (error) {
+    console.error('Error al inicializar el chat:', error);
+    addChatSystemMessage('❌ Chat no disponible temporalmente');
+  }
+}
+
+// Configurar eventos del chat
+function setupChatEvents() {
+  // Enviar mensaje con Enter
+  document.getElementById('chatInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      sendChatMessage();
+    }
+  });
+  
+  // Detectar cuando el usuario está escribiendo
+  document.getElementById('chatInput').addEventListener('input', () => {
+    if (chatSocket && chatSocket.connected) {
+      chatSocket.emit('typing');
+      
+      clearTimeout(chatTypingTimeout);
+      chatTypingTimeout = setTimeout(() => {
+        if (chatSocket) chatSocket.emit('stopTyping');
+      }, 1000);
+    }
+  });
+  
+  // Cerrar chat al hacer clic fuera
+  document.addEventListener('click', (event) => {
+    const chatContainer = document.getElementById('chatContainer');
+    const chatWidget = document.querySelector('.chat-widget');
+    
+    if (isChatOpen && 
+        !chatContainer.contains(event.target) && 
+        !chatWidget.contains(event.target)) {
+      toggleChat();
+    }
+  });
+}
+
+// Alternar visibilidad del chat
+function toggleChat() {
+  const chatContainer = document.getElementById('chatContainer');
+  const chatWidget = document.querySelector('.chat-widget');
+  
+  isChatOpen = !isChatOpen;
+  
+  if (isChatOpen) {
+    // Abrir chat
+    chatContainer.style.display = 'flex';
+    chatWidget.innerHTML = '<i class="fa-solid fa-times"></i>';
+    chatWidget.title = 'Cerrar chat';
+    
+    // Enfocar el input
+    setTimeout(() => {
+      document.getElementById('chatInput').focus();
+    }, 100);
+    
+    // Scroll al final
+    const messagesDiv = document.getElementById('chatMessages');
+    setTimeout(() => {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 200);
+  } else {
+    // Cerrar chat
+    chatContainer.style.display = 'none';
+    chatWidget.innerHTML = '<i class="fa-solid fa-comments"></i>';
+    chatWidget.title = 'Chat FoxWeb';
+  }
+}
+
+// Enviar mensaje
+function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  
+  if (message && chatSocket && chatSocket.connected) {
+    // Enviar al servidor
+    chatSocket.emit('message', message);
+    
+    // Mostrar localmente
+    const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    addChatMessage('Tú', message, time, true);
+    
+    // Limpiar input
+    input.value = '';
+    
+    // Notificar que dejó de escribir
+    if (chatSocket) chatSocket.emit('stopTyping');
+    
+    // Scroll al final
+    const messagesDiv = document.getElementById('chatMessages');
+    setTimeout(() => {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 100);
+  } else if (!chatSocket || !chatSocket.connected) {
+    addChatSystemMessage('⚠️ No estás conectado al chat');
+  }
+}
+
+// Añadir mensaje al chat
+function addChatMessage(sender, text, time, isOwn = false) {
+  const messagesDiv = document.getElementById('chatMessages');
+  const messageDiv = document.createElement('div');
+  
+  messageDiv.className = `message ${isOwn ? 'own' : 'other'}`;
+  messageDiv.innerHTML = `
+    <span class="sender">${sender}</span>
+    ${text}
+    <span class="time">${time}</span>
+  `;
+  
+  messagesDiv.appendChild(messageDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// Añadir mensaje del sistema
+function addChatSystemMessage(text) {
+  const messagesDiv = document.getElementById('chatMessages');
+  const messageDiv = document.createElement('div');
+  
+  messageDiv.className = 'message-system';
+  messageDiv.innerHTML = `<i class="fa-solid fa-info-circle"></i> ${text}`;
+  
+  messagesDiv.appendChild(messageDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// Mostrar indicador de "escribiendo"
+function showChatTyping(username) {
+  const typingDiv = document.getElementById('typingIndicator');
+  const typingText = document.getElementById('typingText');
+  
+  typingText.textContent = `${username} está escribiendo...`;
+  typingDiv.style.display = 'block';
+  
+  // Auto-ocultar después de 3 segundos
+  clearTimeout(window.chatTypingTimeout);
+  window.chatTypingTimeout = setTimeout(hideChatTyping, 3000);
+}
+
+// Ocultar indicador de "escribiendo"
+function hideChatTyping() {
+  const typingDiv = document.getElementById('typingIndicator');
+  typingDiv.style.display = 'none';
+}
+
+// Cambiar nombre de usuario
+function changeChatUsername() {
+  const newName = prompt('Nuevo nombre para el chat:', chatUsername || '');
+  
+  if (newName && newName.trim()) {
+    const oldName = chatUsername;
+    chatUsername = newName.trim().substring(0, 20);
+    localStorage.setItem('foxweb_chat_username', chatUsername);
+    
+    addChatSystemMessage(`📝 Cambiaste tu nombre de ${oldName} a ${chatUsername}`);
+    
+    // Reconectar con nuevo nombre
+    if (chatSocket) {
+      chatSocket.disconnect();
+      setTimeout(connectChatServer, 500);
+    }
+  }
+}
+
+// Inicializar cuando se cargue la página
+window.addEventListener('load', () => {
+  // Esperar a que cargue todo
+  setTimeout(initFoxWebChat, 1000);
+});
+</script>
+
 <!-- Vercel Analytics -->
 <script defer src="https://va.vercel-scripts.com/v1/speed-insights/script.js"></script>
 </body>
