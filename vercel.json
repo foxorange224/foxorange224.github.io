@@ -84,5 +84,5 @@
       ]
     }
   ],
-  "regions": ["iad1"]
+  "regions": ["gru1", "iad1", "sfo1", "cdg1", "sin1"]
 }
