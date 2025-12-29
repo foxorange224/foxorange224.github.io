@@ -1,20 +1,181 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.json",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.txt",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.xml",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.ico",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.jpg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.jpeg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.webp",
+      "use": "@vercel/static"
+    }
+  ],
   "routes": [
     {
-      "src": "/ads.txt",
-      "dest": "/ads.txt",
+      "src": "/(ads\\.txt|robots\\.txt|humans\\.txt)",
+      "dest": "/$1",
       "headers": {
-        "Content-Type": "text/plain"
+        "cache-control": "public, max-age=86400",
+        "content-type": "text/plain; charset=utf-8"
       }
     },
     {
-      "src": "/.*",
-      "dest": "/index.html"
+      "src": "/sitemap\\.xml",
+      "dest": "/sitemap.xml",
+      "headers": {
+        "cache-control": "public, max-age=86400",
+        "content-type": "application/xml; charset=utf-8"
+      }
     },
     {
-      "src": "/",
-      "dest": "/"
+      "src": "/manifest\\.json",
+      "dest": "/manifest.json",
+      "headers": {
+        "cache-control": "public, max-age=86400",
+        "content-type": "application/manifest+json"
+      }
+    },
+    {
+      "src": "/data\\.js",
+      "dest": "/data.js",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable",
+        "content-type": "application/javascript; charset=utf-8"
+      }
+    },
+    {
+      "src": "/favicon\\.ico",
+      "dest": "/favicon.ico",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/apple-touch-icon(?:\\.png)?",
+      "dest": "/apple-touch-icon.png",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*)\\.(ico|png|jpg|jpeg|gif|svg|webp|avif|bmp)$",
+      "dest": "/$1.$2",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*)\\.(css|js)$",
+      "dest": "/$1.$2",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*)\\.(json|xml|webmanifest)$",
+      "dest": "/$1.$2",
+      "headers": {
+        "cache-control": "public, max-age=86400"
+      }
+    },
+    {
+      "src": "/(.*)\\.(txt|md)$",
+      "dest": "/$1.$2",
+      "headers": {
+        "cache-control": "public, max-age=3600",
+        "content-type": "text/plain; charset=utf-8"
+      }
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html",
+      "headers": {
+        "cache-control": "public, max-age=0, s-maxage=3600"
+      }
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), microphone=(), camera=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/main",
+      "destination": "/"
     }
   ]
 }
