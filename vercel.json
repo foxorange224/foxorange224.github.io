@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "**/*",
+      "src": "**/*.html",
       "use": "@vercel/static"
     }
   ],
@@ -51,8 +51,8 @@
       "status": 404
     },
     {
-      "src": "/(.*)",
-      "dest": "/main.html",
+      "src": "/",
+      "dest": "/index.html",
       "headers": {
         "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
         "CDN-Cache-Control": "public, max-age=604800",
@@ -62,6 +62,11 @@
         "Referrer-Policy": "strict-origin-when-cross-origin",
         "Permissions-Policy": "geolocation=(), microphone=(), camera=()"
       }
+    },
+    {
+      "src": "/(.+)",
+      "status": 404,
+      "dest": "/404.html"
     }
   ],
   "trailingSlash": false,
@@ -77,12 +82,46 @@
         {
           "key": "Strict-Transport-Security",
           "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
         }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/main",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/index",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/app/:path*",
+      "destination": "/"
     }
   ],
   "regions": ["gru1", "iad1"],
   "github": {
     "silent": true
+  },
+  "env": {
+    "NODE_ENV": "production"
   }
 }
