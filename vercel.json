@@ -1,14 +1,8 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "**/*",
-      "use": "@vercel/static"
-    }
-  ],
   "routes": [
     {
-      "src": "/(.*)\\.(ico|png|jpg|jpeg|gif|svg|webp|avif|css|js|woff|woff2|ttf|eot|json|xml)$",
+      "src": "/(.*)\\.(ico|png|jpg|jpeg|gif|svg|webp|avif|css|js|woff|woff2|ttf|eot|json)$",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable",
         "CDN-Cache-Control": "public, max-age=31536000"
@@ -35,8 +29,5 @@
   ],
   "trailingSlash": false,
   "cleanUrls": true,
-  "regions": ["gru1", "sfo1", "iad1", "fra1", "sin1"],
-  "features": {
-    "edge": true
-  }
+  "regions": ["gru1"]
 }
