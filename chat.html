@@ -3,616 +3,1317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoxWeb Chat</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>FoxWeb Chat - Chat oficial de la comunidad</title>
+    <meta name="description" content="Chat público de FoxWeb. Conéctate con otros usuarios para hablar sobre software, sistemas operativos, juegos y más.">
+    <link rel="icon" href="https://i.imgur.com/qfsMx7V.png" type="image/png">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
+        /* ===== VARIABLES ===== */
         :root {
-            --primary-color: #5865F2;
-            --primary-dark: #4752C4;
-            --background-dark: #36393F;
-            --background-darker: #2F3136;
-            --background-light: #40444B;
-            --text-color: #FFFFFF;
-            --text-muted: #B9BBBE;
-            --success-color: #3BA55C;
-            --border-color: #202225;
-            --message-hover: #32353B;
+            --primary: #FF4500;
+            --primary-hover: #CC3700;
+            --primary-light: rgba(255, 69, 0, 0.1);
+            --bg-body: #0c0c0c;
+            --bg-card: #161616;
+            --bg-card-light: #1e1e1e;
+            --bg-input: #222222;
+            --text-main: #E0E0E0;
+            --text-dim: #999;
+            --text-light: #FFFFFF;
+            --border: #222;
+            --border-light: #333;
+            --success: #2ea44f;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
+            --radius: 10px;
+            --radius-sm: 6px;
         }
 
         .light-theme {
-            --primary-color: #5865F2;
-            --primary-dark: #4752C4;
-            --background-dark: #FFFFFF;
-            --background-darker: #F2F3F5;
-            --background-light: #EBEDEF;
-            --text-color: #060607;
-            --text-muted: #4F5660;
-            --success-color: #3BA55C;
-            --border-color: #E3E5E8;
-            --message-hover: #F8F9F9;
+            --primary: #FF4500;
+            --primary-hover: #CC3700;
+            --primary-light: rgba(255, 69, 0, 0.08);
+            --bg-body: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-card-light: #f5f5f5;
+            --bg-input: #f0f0f0;
+            --text-main: #333333;
+            --text-dim: #666666;
+            --text-light: #000000;
+            --border: #e0e0e0;
+            --border-light: #dddddd;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
         }
 
+        /* ===== RESET & BASE ===== */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            height: 100%;
         }
 
         body {
-            background-color: var(--background-dark);
-            color: var(--text-color);
-            height: 100vh;
-            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
             transition: background-color 0.3s, color 0.3s;
+            background-image: url('https://i.imgur.com/qJpo1hb.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 12, 12, 0.85);
+            z-index: -1;
+        }
+
+        .light-theme body::before {
+            background: rgba(248, 249, 250, 0.9);
+        }
+
+        /* ===== APP CONTAINER ===== */
         .app-container {
             display: flex;
-            height: 100vh;
+            flex-direction: column;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
         }
 
-        /* Sidebar izquierda - Canales */
-        .channels-sidebar {
-            width: 240px;
-            background-color: var(--background-darker);
+        /* ===== HEADER ===== */
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            padding: 3px;
+            background: white;
+        }
+
+        .logo-text {
             display: flex;
             flex-direction: column;
-            border-right: 1px solid var(--border-color);
         }
 
-        .server-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .logo-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--text-light);
+            line-height: 1;
         }
 
-        .server-title {
-            font-size: 16px;
+        .logo-subtitle {
+            font-size: 0.9em;
+            color: var(--primary);
             font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .header-right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 15px;
         }
 
-        .server-title i {
-            color: var(--primary-color);
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 18px;
-            padding: 4px;
-            border-radius: 4px;
-        }
-
-        .theme-toggle:hover {
-            color: var(--text-color);
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .light-theme .theme-toggle:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        .channels-list {
-            padding: 16px 8px;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        .channel-category {
-            margin-bottom: 16px;
-        }
-
-        .category-title {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            padding: 0 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .channel-item {
-            padding: 8px;
-            margin: 2px 0;
-            border-radius: 4px;
+        /* ===== USER INFO ===== */
+        .user-info-container {
             display: flex;
             align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            color: var(--text-muted);
-        }
-
-        .channel-item:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-            color: var(--text-color);
-        }
-
-        .light-theme .channel-item:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        .channel-item.active {
-            background-color: rgba(88, 101, 242, 0.1);
-            color: var(--text-color);
-        }
-
-        .channel-item i {
-            font-size: 14px;
-        }
-
-        .user-panel {
-            padding: 12px;
-            background-color: var(--background-light);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            gap: 10px;
+            padding: 8px 15px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
         }
 
         .user-avatar {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background-color: var(--primary-color);
+            background: var(--primary);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 1.1em;
         }
 
-        .user-info {
-            flex-grow: 1;
+        .user-details {
+            display: flex;
+            flex-direction: column;
         }
 
         .username {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 0.95em;
         }
 
         .user-status {
-            font-size: 12px;
-            color: var(--text-muted);
+            font-size: 0.8em;
+            color: var(--text-dim);
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }
 
-        .status-indicator {
+        .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background-color: var(--success-color);
+            background-color: var(--success);
         }
 
-        /* Área principal del chat */
-        .chat-area {
-            flex-grow: 1;
+        .status-dot.offline {
+            background-color: var(--text-dim);
+        }
+
+        /* ===== HEADER BUTTONS ===== */
+        .header-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.1em;
+        }
+
+        .header-btn:hover {
+            background: var(--bg-card-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* ===== MAIN CHAT AREA ===== */
+        .chat-main {
+            display: flex;
+            flex: 1;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chat-container {
+            flex: 1;
             display: flex;
             flex-direction: column;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow);
         }
 
-        .chat-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
+        /* ===== CHAT INFO BAR ===== */
+        .chat-info-bar {
+            padding: 15px 25px;
+            background: var(--bg-card-light);
+            border-bottom: 1px solid var(--border);
             display: flex;
-            align-items: center;
             justify-content: space-between;
-        }
-
-        .chat-channel-info {
-            display: flex;
             align-items: center;
-            gap: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .chat-channel-name {
+        .chat-title {
+            font-size: 1.3em;
             font-weight: 600;
-            font-size: 16px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .chat-channel-description {
-            font-size: 12px;
-            color: var(--text-muted);
+        .chat-title i {
+            color: var(--primary);
         }
 
-        .online-users {
+        .online-counter {
             display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--text-muted);
-            font-size: 14px;
+            font-size: 0.9em;
+            color: var(--text-dim);
+            background: var(--bg-input);
+            padding: 6px 15px;
+            border-radius: 20px;
         }
 
         .online-count {
-            color: var(--success-color);
+            color: var(--success);
             font-weight: 600;
         }
 
+        /* ===== MESSAGES CONTAINER ===== */
         .messages-container {
-            flex-grow: 1;
-            padding: 16px;
+            flex: 1;
+            padding: 25px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 20px;
         }
 
+        /* ===== MESSAGE STYLES ===== */
         .message {
             display: flex;
-            gap: 16px;
-            padding: 8px;
-            border-radius: 4px;
+            gap: 15px;
+            max-width: 85%;
+            animation: messageAppear 0.3s ease;
         }
 
-        .message:hover {
-            background-color: var(--message-hover);
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.own {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .message.own .message-content {
+            background: linear-gradient(135deg, var(--primary), #ff6b35);
+            color: white;
+            border-radius: 18px 18px 5px 18px;
+        }
+
+        .message.own .message-time {
+            text-align: right;
         }
 
         .message-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: #7289DA;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.1em;
+            color: white;
             flex-shrink: 0;
+            margin-top: 5px;
         }
 
         .message-content {
-            flex-grow: 1;
+            background: var(--bg-card-light);
+            padding: 15px;
+            border-radius: 18px 18px 18px 5px;
+            border: 1px solid var(--border-light);
+            max-width: 100%;
+            word-break: break-word;
+            box-shadow: var(--shadow);
         }
 
         .message-header {
             display: flex;
-            align-items: baseline;
-            gap: 8px;
-            margin-bottom: 4px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .message-username {
             font-weight: 600;
-            font-size: 16px;
+            font-size: 0.95em;
+            color: var(--text-light);
+        }
+
+        .message.own .message-username {
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .message-time {
-            font-size: 12px;
-            color: var(--text-muted);
+            font-size: 0.8em;
+            color: var(--text-dim);
         }
 
         .message-text {
-            line-height: 1.4;
-            word-break: break-word;
+            line-height: 1.5;
+            font-size: 0.95em;
         }
 
+        .message.own .message-text {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        /* ===== SYSTEM MESSAGE ===== */
         .system-message {
             text-align: center;
-            color: var(--text-muted);
-            font-size: 14px;
-            padding: 8px;
+            margin: 15px 0;
+            color: var(--text-dim);
+            font-size: 0.9em;
             font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
         }
 
-        /* Área de entrada de mensajes */
+        .system-message i {
+            color: var(--primary);
+        }
+
+        /* ===== TYPING INDICATOR ===== */
+        .typing-indicator {
+            padding: 15px 25px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-dim);
+            font-style: italic;
+            font-size: 0.9em;
+            background: var(--bg-card-light);
+            border-top: 1px solid var(--border);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: typingDot 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingDot {
+            0%, 60%, 100% { 
+                opacity: 0.4;
+                transform: translateY(0);
+            }
+            30% { 
+                opacity: 1;
+                transform: translateY(-4px);
+            }
+        }
+
+        /* ===== MESSAGE INPUT ===== */
         .message-input-container {
-            padding: 16px;
-            border-top: 1px solid var(--border-color);
+            padding: 20px 25px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-card-light);
         }
 
         .message-input-box {
-            background-color: var(--background-light);
-            border-radius: 8px;
-            padding: 8px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 15px 20px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 1em;
+            resize: none;
+            min-height: 50px;
+            max-height: 150px;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .message-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .send-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .send-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .send-button:disabled {
+            background: var(--text-dim);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== SIDEBAR (PREFERENCES) ===== */
+        .preferences-sidebar {
+            width: 320px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-title i {
+            color: var(--primary);
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .close-sidebar:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .preferences-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-light);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .message-input {
-            flex-grow: 1;
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 16px;
-            padding: 8px;
-            outline: none;
-            resize: none;
-            max-height: 100px;
-            min-height: 24px;
+        .section-title i {
+            color: var(--primary);
+            font-size: 0.9em;
         }
 
-        .message-input::placeholder {
-            color: var(--text-muted);
+        /* ===== PREFERENCE OPTIONS ===== */
+        .pref-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border-light);
         }
 
-        .send-button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+        .pref-label {
+            font-size: 0.95em;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pref-label i {
+            width: 20px;
+            color: var(--text-dim);
+        }
+
+        /* ===== TOGGLE SWITCH ===== */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-checkbox {
+            display: none;
+        }
+
+        .toggle-slider {
+            position: absolute;
             cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-input);
+            border-radius: 34px;
+            transition: .4s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+
+        .toggle-checkbox:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        .toggle-checkbox:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* ===== SELECT DROPDOWN ===== */
+        .pref-select {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            padding: 8px 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9em;
+            width: 120px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pref-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* ===== BUTTONS ===== */
+        .pref-button {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            padding: 10px 15px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.2s;
+            gap: 8px;
+            width: 100%;
+            margin-top: 10px;
         }
 
-        .send-button:hover {
-            background-color: var(--primary-dark);
+        .pref-button:hover {
+            background: var(--bg-card-light);
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
-        .send-button:disabled {
-            background-color: var(--text-muted);
-            cursor: not-allowed;
+        .pref-button.danger {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: rgba(220, 53, 69, 0.3);
+            color: var(--danger);
         }
 
-        /* Login overlay */
+        .pref-button.danger:hover {
+            background: rgba(220, 53, 69, 0.2);
+            border-color: var(--danger);
+        }
+
+        .pref-button.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .pref-button.primary:hover {
+            background: var(--primary-hover);
+        }
+
+        /* ===== LOGIN OVERLAY ===== */
         .login-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .light-theme .login-overlay {
+            background: rgba(248, 249, 250, 0.95);
         }
 
         .login-box {
-            background-color: var(--background-dark);
-            border-radius: 8px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
             width: 100%;
-            max-width: 480px;
-            padding: 32px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .login-header {
+            max-width: 450px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
             text-align: center;
-            margin-bottom: 24px;
         }
 
-        .login-header h2 {
-            font-size: 24px;
-            margin-bottom: 8px;
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            padding: 5px;
+            background: white;
+            margin-bottom: 20px;
         }
 
-        .login-header p {
-            color: var(--text-muted);
+        .login-title {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 10px;
         }
 
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .login-subtitle {
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            font-size: 1em;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .login-input {
+            width: 100%;
+            padding: 15px 20px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 1em;
+            margin-bottom: 20px;
+            transition: all 0.2s ease;
+            text-align: center;
         }
 
-        .form-label {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-        }
-
-        .form-input {
-            padding: 12px;
-            background-color: var(--background-light);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            color: var(--text-color);
-            font-size: 16px;
-        }
-
-        .form-input:focus {
+        .login-input:focus {
             outline: none;
-            border-color: var(--primary-color);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
         }
 
         .login-button {
-            background-color: var(--primary-color);
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: var(--radius);
+            font-family: 'Inter', sans-serif;
+            font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .login-button:hover {
-            background-color: var(--primary-dark);
+            background: var(--primary-hover);
+            transform: translateY(-2px);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .channels-sidebar {
-                width: 200px;
-            }
-            
-            .chat-channel-info {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-            }
+        .login-note {
+            margin-top: 25px;
+            padding: 15px;
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.9em;
         }
 
-        @media (max-width: 576px) {
-            .app-container {
-                flex-direction: column;
-            }
-            
-            .channels-sidebar {
-                width: 100%;
-                height: auto;
-                max-height: 200px;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            .messages-container {
-                padding: 8px;
-            }
+        /* ===== FOOTER ===== */
+        .chat-footer {
+            text-align: center;
+            padding: 25px 0;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.9em;
+            margin-top: 30px;
         }
 
-        /* Scrollbar personalizado */
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar {
             width: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: transparent;
+            background: var(--bg-input);
+            border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--background-light);
+            background: var(--primary);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
+            background: var(--primary-hover);
         }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1100px) {
+            .chat-main {
+                flex-direction: column;
+            }
+            
+            .preferences-sidebar {
+                width: 100%;
+                position: static;
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 0 10px;
+            }
+            
+            .chat-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                padding: 15px 0;
+            }
+            
+            .header-left, .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .messages-container {
+                padding: 15px;
+            }
+            
+            .message {
+                max-width: 95%;
+            }
+            
+            .preferences-sidebar {
+                padding: 20px;
+            }
+            
+            .login-box {
+                padding: 30px 20px;
+                margin: 0 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-title {
+                font-size: 1.5em;
+            }
+            
+            .message-content {
+                padding: 12px;
+            }
+            
+            .message-input-box {
+                gap: 10px;
+            }
+            
+            .send-button {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .user-info-container {
+                padding: 6px 10px;
+            }
+            
+            .user-details {
+                display: none;
+            }
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .hidden {
+            display: none !important;
+        }
+
+        .visible {
+            display: flex !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 { margin-top: 10px; }
+        .mt-2 { margin-top: 20px; }
+        .mt-3 { margin-top: 30px; }
+        .mb-1 { margin-bottom: 10px; }
+        .mb-2 { margin-bottom: 20px; }
+        .mb-3 { margin-bottom: 30px; }
     </style>
 </head>
 <body>
-    <!-- Overlay de login -->
+    <!-- Login Overlay -->
     <div id="loginOverlay" class="login-overlay">
         <div class="login-box">
-            <div class="login-header">
-                <h2>Bienvenido a FoxWeb Chat</h2>
-                <p>El chat oficial de la comunidad FoxWeb</p>
+            <img src="https://i.imgur.com/qfsMx7V.png" alt="FoxWeb Logo" class="login-logo">
+            <h1 class="login-title">FoxWeb Chat</h1>
+            <p class="login-subtitle">Chat público oficial de la comunidad FoxWeb</p>
+            
+            <div class="mb-3">
+                <input type="text" id="usernameInput" class="login-input" 
+                       placeholder="Elige un nombre de usuario" maxlength="25" autocomplete="off" autofocus>
+                <div id="usernameError" style="color: var(--danger); font-size: 0.9em; margin-top: 5px; display: none;">
+                    Por favor, ingresa un nombre de usuario válido (3-25 caracteres)
+                </div>
             </div>
-            <div class="login-form">
-                <div class="form-group">
-                    <label for="usernameInput" class="form-label">Nombre de usuario</label>
-                    <input type="text" id="usernameInput" class="form-input" placeholder="Ingresa tu nombre de usuario" maxlength="32" autocomplete="off">
-                </div>
-                <button id="loginButton" class="login-button">
-                    <i class="fas fa-sign-in-alt"></i> Entrar al chat
-                </button>
-                <div class="system-message" style="text-align: center; margin-top: 16px;">
-                    <p>Este es un chat público. Todos los mensajes son visibles para todos los usuarios conectados.</p>
-                </div>
+            
+            <button id="loginButton" class="login-button">
+                <i class="fas fa-sign-in-alt"></i> Entrar al chat
+            </button>
+            
+            <div class="login-note">
+                <p><i class="fas fa-info-circle"></i> Este es un chat público donde puedes conversar con otros miembros de la comunidad sobre software, sistemas operativos, juegos y más.</p>
+                <p class="mt-1"><strong>Tu nombre de usuario se guardará para futuras visitas.</strong></p>
             </div>
         </div>
     </div>
 
-    <!-- Contenedor principal de la aplicación -->
-    <div class="app-container" style="display: none;" id="appContainer">
-        <!-- Sidebar de canales -->
-        <div class="channels-sidebar">
-            <div class="server-header">
-                <div class="server-title">
-                    <i class="fas fa-comments"></i>
-                    <span>FoxWeb Chat</span>
+    <!-- Main App Container -->
+    <div class="app-container" id="appContainer" style="display: none;">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="header-left">
+                <a href="https://foxweb.vercel.app" class="logo-container">
+                    <img src="https://i.imgur.com/qfsMx7V.png" alt="FoxWeb Logo" class="logo-img">
+                    <div class="logo-text">
+                        <div class="logo-title">FoxWeb</div>
+                        <div class="logo-subtitle">Chat Oficial</div>
+                    </div>
+                </a>
+                
+                <div class="user-info-container" id="userInfoContainer">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-details">
+                        <div class="username" id="usernameDisplay">Usuario</div>
+                        <div class="user-status">
+                            <div class="status-dot" id="statusDot"></div>
+                            <span id="statusText">Conectando...</span>
+                        </div>
+                    </div>
                 </div>
-                <button id="themeToggle" class="theme-toggle" title="Cambiar tema">
+            </div>
+            
+            <div class="header-right">
+                <button class="header-btn" id="preferencesToggle" title="Preferencias">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
+                
+                <button class="header-btn" id="themeToggle" title="Cambiar tema">
                     <i class="fas fa-moon"></i>
                 </button>
-            </div>
-            
-            <div class="channels-list">
-                <div class="channel-category">
-                    <div class="category-title">Canales de texto</div>
-                    <div class="channel-item active" data-channel="general">
-                        <i class="fas fa-hashtag"></i>
-                        <span>general</span>
-                    </div>
-                    <div class="channel-item" data-channel="soporte">
-                        <i class="fas fa-hashtag"></i>
-                        <span>soporte</span>
-                    </div>
-                    <div class="channel-item" data-channel="offtopic">
-                        <i class="fas fa-hashtag"></i>
-                        <span>off-topic</span>
-                    </div>
-                    <div class="channel-item" data-channel="juegos">
-                        <i class="fas fa-hashtag"></i>
-                        <span>juegos</span>
-                    </div>
-                </div>
                 
-                <div class="channel-category">
-                    <div class="category-title">Información</div>
-                    <div class="channel-item" data-channel="reglas">
-                        <i class="fas fa-scroll"></i>
-                        <span>reglas</span>
+                <a href="https://foxweb.vercel.app" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Volver al sitio
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <!-- Chat Container -->
+            <div class="chat-container">
+                <!-- Chat Info Bar -->
+                <div class="chat-info-bar">
+                    <div class="chat-title">
+                        <i class="fas fa-comments"></i> Chat público FoxWeb
                     </div>
-                    <div class="channel-item" data-channel="anuncios">
-                        <i class="fas fa-bullhorn"></i>
-                        <span>anuncios</span>
+                    <div class="online-counter">
+                        <i class="fas fa-users"></i>
+                        <span id="onlineCount">0</span> usuarios en línea
+                    </div>
+                </div>
+
+                <!-- Messages Container -->
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages will be loaded here -->
+                    <div class="system-message" id="welcomeMessage">
+                        <i class="fas fa-door-open"></i> Bienvenido al chat público de FoxWeb. Aquí puedes conversar con otros miembros de la comunidad sobre software, sistemas operativos, juegos y más.
+                    </div>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator">
+                    <span id="typingText"></span>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+
+                <!-- Message Input -->
+                <div class="message-input-container">
+                    <div class="message-input-box">
+                        <textarea class="message-input" id="messageInput" 
+                                  placeholder="Escribe tu mensaje aquí..." 
+                                  rows="1" maxlength="500"></textarea>
+                        <button class="send-button" id="sendButton" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
                 </div>
             </div>
-            
-            <div class="user-panel">
-                <div class="user-avatar" id="userAvatar">
-                    U
+
+            <!-- Preferences Sidebar -->
+            <div class="preferences-sidebar hidden" id="preferencesSidebar">
+                <div class="sidebar-header">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-cog"></i> Preferencias del chat
+                    </h3>
+                    <button class="close-sidebar" id="closePreferences">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <div class="user-info">
-                    <div class="username" id="usernameDisplay">Usuario</div>
-                    <div class="user-status">
-                        <div class="status-indicator" id="statusIndicator"></div>
-                        <span id="statusText">Conectado</span>
+
+                <!-- Appearance Section -->
+                <div class="preferences-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-palette"></i> Apariencia
+                    </h4>
+                    
+                    <div class="pref-option">
+                        <label class="pref-label">
+                            <i class="fas fa-moon"></i> Tema oscuro
+                        </label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="darkThemeToggle" class="toggle-checkbox" checked>
+                            <label for="darkThemeToggle" class="toggle-slider"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="pref-option">
+                        <label class="pref-label">
+                            <i class="fas fa-clock"></i> Mostrar hora en mensajes
+                        </label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="showTimestampsToggle" class="toggle-checkbox" checked>
+                            <label for="showTimestampsToggle" class="toggle-slider"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="pref-option">
+                        <label class="pref-label">
+                            <i class="fas fa-bell"></i> Sonido de notificaciones
+                        </label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="soundNotificationsToggle" class="toggle-checkbox" checked>
+                            <label for="soundNotificationsToggle" class="toggle-slider"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Behavior Section -->
+                <div class="preferences-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-comment-alt"></i> Comportamiento del chat
+                    </h4>
+                    
+                    <div class="pref-option">
+                        <label class="pref-label">
+                            <i class="fas fa-eye"></i> Mostrar cuando otros escriben
+                        </label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="showTypingToggle" class="toggle-checkbox" checked>
+                            <label for="showTypingToggle" class="toggle-slider"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="pref-option">
+                        <label class="pref-label">
+                            <i class="fas fa-image"></i> Mostrar imágenes automáticamente
+                        </label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="showImagesToggle" class="toggle-checkbox" checked>
+                            <label for="showImagesToggle" class="toggle-slider"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="pref-option">
+                        <label class="pref-label">
+                            <i class="fas fa-scroll"></i> Mensajes por carga
+                        </label>
+                        <select class="pref-select" id="messagesPerLoad">
+                            <option value="20">20 mensajes</option>
+                            <option value="50" selected>50 mensajes</option>
+                            <option value="100">100 mensajes</option>
+                            <option value="200">200 mensajes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- User Settings Section -->
+                <div class="preferences-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-user"></i> Configuración de usuario
+                    </h4>
+                    
+                    <div class="pref-option">
+                        <label class="pref-label">
+                            <i class="fas fa-signature"></i> Cambiar nombre de usuario
+                        </label>
+                        <button class="pref-button" id="changeUsernameBtn">
+                            <i class="fas fa-edit"></i> Cambiar
+                        </button>
+                    </div>
+                    
+                    <div class="pref-option">
+                        <label class="pref-label">
+                            <i class="fas fa-robot"></i> Avatar generado por IA
+                        </label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="aiAvatarToggle" class="toggle-checkbox">
+                            <label for="aiAvatarToggle" class="toggle-slider"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Management Section -->
+                <div class="preferences-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-database"></i> Gestión de datos
+                    </h4>
+                    
+                    <button class="pref-button" id="clearHistoryBtn">
+                        <i class="fas fa-trash-alt"></i> Limpiar historial local
+                    </button>
+                    
+                    <button class="pref-button" id="exportDataBtn">
+                        <i class="fas fa-download"></i> Exportar datos del chat
+                    </button>
+                    
+                    <button class="pref-button danger" id="resetSettingsBtn">
+                        <i class="fas fa-redo"></i> Restablecer preferencias
+                    </button>
+                </div>
+
+                <!-- Connection Info -->
+                <div class="preferences-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-wifi"></i> Conexión
+                    </h4>
+                    
+                    <div class="pref-option">
+                        <label class="pref-label">
+                            <i class="fas fa-server"></i> Servidor:
+                        </label>
+                        <span id="serverStatus" style="color: var(--success); font-weight: 600;">
+                            <i class="fas fa-circle"></i> Conectado
+                        </span>
+                    </div>
+                    
+                    <div class="pref-option">
+                        <label class="pref-label">
+                            <i class="fas fa-users"></i> Usuarios en línea:
+                        </label>
+                        <span id="sidebarOnlineCount" style="font-weight: 600;">0</span>
+                    </div>
+                    
+                    <button class="pref-button primary mt-2" id="refreshConnectionBtn">
+                        <i class="fas fa-sync-alt"></i> Re-conectar
+                    </button>
+                </div>
+
+                <!-- About Section -->
+                <div class="preferences-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-info-circle"></i> Acerca de
+                    </h4>
+                    
+                    <div style="font-size: 0.9em; color: var(--text-dim); line-height: 1.5;">
+                        <p><strong>FoxWeb Chat v1.0</strong></p>
+                        <p>Chat público oficial de la comunidad FoxWeb.</p>
+                        <p class="mt-1">Conectado a: <span id="serverUrl">foxweb-chat-server.onrender.com</span></p>
+                        <p class="mt-1">Todos los mensajes son públicos y se almacenan temporalmente en el servidor.</p>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Área principal del chat -->
-        <div class="chat-area">
-            <div class="chat-header">
-                <div class="chat-channel-info">
-                    <div class="chat-channel-name">
-                        <i class="fas fa-hashtag"></i> <span id="currentChannelName">general</span>
-                    </div>
-                    <div class="chat-channel-description" id="channelDescription">
-                        Chat principal de la comunidad FoxWeb
-                    </div>
-                </div>
-                <div class="online-users">
-                    <i class="fas fa-user-friends"></i>
-                    <span class="online-count" id="onlineCount">1</span> en línea
-                </div>
-            </div>
-            
-            <div class="messages-container" id="messagesContainer">
-                <!-- Los mensajes se cargarán aquí -->
-                <div class="system-message" id="welcomeMessage">
-                    Bienvenido al chat de FoxWeb. Este es un chat público donde puedes conversar con otros miembros de la comunidad.
-                </div>
-            </div>
-            
-            <div class="message-input-container">
-                <div class="message-input-box">
-                    <textarea class="message-input" id="messageInput" placeholder="Escribe un mensaje en #general" rows="1"></textarea>
-                    <button class="send-button" id="sendButton" title="Enviar mensaje">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+
+        <!-- Footer -->
+        <div class="chat-footer">
+            <p>© 2025 FoxWeb Chat - Chat oficial de la comunidad FoxWeb</p>
+            <div class="footer-links">
+                <a href="https://foxweb.vercel.app" class="footer-link">
+                    <i class="fas fa-home"></i> Sitio principal
+                </a>
+                <a href="https://github.com/foxorange224" class="footer-link" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <a href="https://www.youtube.com/@FoxOrange224" class="footer-link" target="_blank">
+                    <i class="fab fa-youtube"></i> YouTube
+                </a>
+                <a href="https://discord.gg/r9v67gFRcp" class="footer-link" target="_blank">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
             </div>
         </div>
     </div>
@@ -620,31 +1321,37 @@
     <script>
         // Configuración de la aplicación
         const CONFIG = {
-            SERVER_URL: 'https://foxweb-chat-server.onrender.com/',
+            SERVER_URL: 'https://foxweb-chat-server.onrender.com',
             STORAGE_KEYS: {
                 USERNAME: 'foxweb_chat_username',
-                THEME: 'foxweb_chat_theme',
-                MESSAGES: 'foxweb_chat_messages'
+                PREFERENCES: 'foxweb_chat_preferences',
+                MESSAGES: 'foxweb_chat_messages',
+                USER_ID: 'foxweb_chat_user_id'
             },
-            CHANNELS: {
-                general: { name: 'general', description: 'Chat principal de la comunidad FoxWeb' },
-                soporte: { name: 'soporte', description: 'Soporte técnico y ayuda con programas' },
-                offtopic: { name: 'off-topic', description: 'Conversaciones fuera de tema' },
-                juegos: { name: 'juegos', description: 'Discusión sobre videojuegos y clásicos' },
-                reglas: { name: 'reglas', description: 'Reglas del chat y comunidad' },
-                anuncios: { name: 'anuncios', description: 'Anuncios importantes de FoxWeb' }
-            }
+            DEFAULT_PREFERENCES: {
+                darkTheme: true,
+                showTimestamps: true,
+                soundNotifications: true,
+                showTyping: true,
+                showImages: true,
+                messagesPerLoad: 50,
+                aiAvatar: false
+            },
+            MAX_MESSAGES_STORED: 1000,
+            MESSAGE_LIMIT: 500
         };
 
         // Estado de la aplicación
         let appState = {
             username: '',
-            currentChannel: 'general',
+            userId: '',
             messages: [],
-            onlineUsers: 1,
+            onlineUsers: 0,
             connected: false,
             socket: null,
-            theme: 'dark'
+            preferences: {...CONFIG.DEFAULT_PREFERENCES},
+            typingUsers: new Set(),
+            lastMessageId: 0
         };
 
         // Elementos del DOM
@@ -652,80 +1359,83 @@
         const appContainer = document.getElementById('appContainer');
         const usernameInput = document.getElementById('usernameInput');
         const loginButton = document.getElementById('loginButton');
+        const usernameError = document.getElementById('usernameError');
         const usernameDisplay = document.getElementById('usernameDisplay');
         const userAvatar = document.getElementById('userAvatar');
-        const themeToggle = document.getElementById('themeToggle');
-        const currentChannelName = document.getElementById('currentChannelName');
-        const channelDescription = document.getElementById('channelDescription');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const onlineCount = document.getElementById('onlineCount');
+        const sidebarOnlineCount = document.getElementById('sidebarOnlineCount');
         const messagesContainer = document.getElementById('messagesContainer');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
-        const onlineCount = document.getElementById('onlineCount');
-        const statusIndicator = document.getElementById('statusIndicator');
-        const statusText = document.getElementById('statusText');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const typingText = document.getElementById('typingText');
         const welcomeMessage = document.getElementById('welcomeMessage');
-        const channelItems = document.querySelectorAll('.channel-item');
-
-        // Cargar preferencias del navegador
-        function loadPreferences() {
-            const savedUsername = localStorage.getItem(CONFIG.STORAGE_KEYS.USERNAME);
-            const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.THEME);
-            
-            if (savedUsername) {
-                usernameInput.value = savedUsername;
-            }
-            
-            if (savedTheme) {
-                appState.theme = savedTheme;
-                document.body.classList.toggle('light-theme', savedTheme === 'light');
-                updateThemeIcon();
-            }
-            
-            // Cargar mensajes guardados
-            loadSavedMessages();
-        }
-
-        // Guardar mensajes en el navegador
-        function saveMessages() {
-            try {
-                const messagesToSave = appState.messages.slice(-100); // Guardar solo los últimos 100 mensajes
-                localStorage.setItem(CONFIG.STORAGE_KEYS.MESSAGES, JSON.stringify(messagesToSave));
-            } catch (e) {
-                console.warn('No se pudieron guardar los mensajes:', e);
-            }
-        }
-
-        // Cargar mensajes guardados
-        function loadSavedMessages() {
-            try {
-                const savedMessages = localStorage.getItem(CONFIG.STORAGE_KEYS.MESSAGES);
-                if (savedMessages) {
-                    appState.messages = JSON.parse(savedMessages);
-                    renderMessages();
-                }
-            } catch (e) {
-                console.warn('No se pudieron cargar los mensajes guardados:', e);
-            }
-        }
+        const serverStatus = document.getElementById('serverStatus');
+        const serverUrl = document.getElementById('serverUrl');
+        
+        // Elementos de preferencias
+        const preferencesToggle = document.getElementById('preferencesToggle');
+        const preferencesSidebar = document.getElementById('preferencesSidebar');
+        const closePreferences = document.getElementById('closePreferences');
+        const themeToggle = document.getElementById('themeToggle');
+        const darkThemeToggle = document.getElementById('darkThemeToggle');
+        const showTimestampsToggle = document.getElementById('showTimestampsToggle');
+        const soundNotificationsToggle = document.getElementById('soundNotificationsToggle');
+        const showTypingToggle = document.getElementById('showTypingToggle');
+        const showImagesToggle = document.getElementById('showImagesToggle');
+        const messagesPerLoad = document.getElementById('messagesPerLoad');
+        const aiAvatarToggle = document.getElementById('aiAvatarToggle');
+        const changeUsernameBtn = document.getElementById('changeUsernameBtn');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        const exportDataBtn = document.getElementById('exportDataBtn');
+        const resetSettingsBtn = document.getElementById('resetSettingsBtn');
+        const refreshConnectionBtn = document.getElementById('refreshConnectionBtn');
 
         // Inicializar la aplicación
         function initApp() {
             loadPreferences();
+            loadSavedMessages();
+            setupEventListeners();
             
-            // Configurar eventos
+            // Verificar si hay un usuario guardado
+            const savedUsername = localStorage.getItem(CONFIG.STORAGE_KEYS.USERNAME);
+            const savedUserId = localStorage.getItem(CONFIG.STORAGE_KEYS.USER_ID);
+            
+            if (savedUsername && savedUsername.trim() !== '') {
+                // Auto-login con usuario guardado
+                usernameInput.value = savedUsername;
+                if (savedUserId) appState.userId = savedUserId;
+                handleLogin();
+            }
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Login
             loginButton.addEventListener('click', handleLogin);
             usernameInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') handleLogin();
             });
             
-            themeToggle.addEventListener('click', toggleTheme);
-            
+            // Chat input
             messageInput.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
                 
-                // Habilitar o deshabilitar el botón de enviar
+                // Habilitar/deshabilitar botón de enviar
                 sendButton.disabled = this.value.trim() === '';
+                
+                // Notificar que está escribiendo
+                if (appState.connected && appState.socket) {
+                    appState.socket.emit('typing');
+                    setTimeout(() => {
+                        if (appState.connected && appState.socket) {
+                            appState.socket.emit('stopTyping');
+                        }
+                    }, 1000);
+                }
             });
             
             messageInput.addEventListener('keypress', (e) => {
@@ -737,47 +1447,89 @@
             
             sendButton.addEventListener('click', sendMessage);
             
-            // Configurar eventos de canales
-            channelItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const channel = this.getAttribute('data-channel');
-                    switchChannel(channel);
-                });
+            // Preferencias
+            preferencesToggle.addEventListener('click', togglePreferences);
+            closePreferences.addEventListener('click', togglePreferences);
+            
+            // Tema
+            themeToggle.addEventListener('click', toggleTheme);
+            darkThemeToggle.addEventListener('change', function() {
+                updatePreference('darkTheme', this.checked);
+                applyTheme();
             });
             
-            // Verificar si hay un usuario guardado
-            const savedUsername = localStorage.getItem(CONFIG.STORAGE_KEYS.USERNAME);
-            if (savedUsername && savedUsername.trim() !== '') {
-                // Auto-login con usuario guardado
-                usernameInput.value = savedUsername;
-                handleLogin();
-            }
+            // Otras preferencias
+            showTimestampsToggle.addEventListener('change', function() {
+                updatePreference('showTimestamps', this.checked);
+                renderMessages();
+            });
+            
+            soundNotificationsToggle.addEventListener('change', function() {
+                updatePreference('soundNotifications', this.checked);
+            });
+            
+            showTypingToggle.addEventListener('change', function() {
+                updatePreference('showTyping', this.checked);
+                updateTypingIndicator();
+            });
+            
+            showImagesToggle.addEventListener('change', function() {
+                updatePreference('showImages', this.checked);
+            });
+            
+            messagesPerLoad.addEventListener('change', function() {
+                updatePreference('messagesPerLoad', parseInt(this.value));
+            });
+            
+            aiAvatarToggle.addEventListener('change', function() {
+                updatePreference('aiAvatar', this.checked);
+                updateUserAvatar();
+            });
+            
+            // Botones de preferencias
+            changeUsernameBtn.addEventListener('click', changeUsername);
+            clearHistoryBtn.addEventListener('click', clearLocalHistory);
+            exportDataBtn.addEventListener('click', exportChatData);
+            resetSettingsBtn.addEventListener('click', resetPreferences);
+            refreshConnectionBtn.addEventListener('click', reconnectToServer);
+            
+            // Cerrar preferencias al hacer clic fuera
+            document.addEventListener('click', (e) => {
+                if (!preferencesSidebar.contains(e.target) && 
+                    !preferencesToggle.contains(e.target) && 
+                    !preferencesSidebar.classList.contains('hidden')) {
+                    preferencesSidebar.classList.add('hidden');
+                }
+            });
         }
 
-        // Manejar el inicio de sesión
+        // Manejar inicio de sesión
         function handleLogin() {
             const username = usernameInput.value.trim();
             
-            if (!username) {
-                alert('Por favor, ingresa un nombre de usuario');
+            // Validar nombre de usuario
+            if (!username || username.length < 3 || username.length > 25) {
+                usernameError.style.display = 'block';
                 usernameInput.focus();
                 return;
             }
             
-            if (username.length > 32) {
-                alert('El nombre de usuario no puede tener más de 32 caracteres');
-                usernameInput.focus();
-                return;
-            }
+            usernameError.style.display = 'none';
             
             // Guardar nombre de usuario
             appState.username = username;
+            
+            // Generar o usar ID de usuario existente
+            if (!appState.userId) {
+                appState.userId = generateUserId(username);
+                localStorage.setItem(CONFIG.STORAGE_KEYS.USER_ID, appState.userId);
+            }
+            
             localStorage.setItem(CONFIG.STORAGE_KEYS.USERNAME, username);
             
             // Actualizar UI
             usernameDisplay.textContent = username;
-            userAvatar.textContent = username.charAt(0).toUpperCase();
-            userAvatar.style.backgroundColor = getAvatarColor(username);
+            updateUserAvatar();
             
             // Ocultar login, mostrar aplicación
             loginOverlay.style.display = 'none';
@@ -792,203 +1544,207 @@
             }, 100);
         }
 
-        // Conectar al servidor de chat WebSocket
+        // Generar ID de usuario único
+        function generateUserId(username) {
+            const timestamp = Date.now().toString(36);
+            const random = Math.random().toString(36).substring(2, 9);
+            return `${username.substring(0, 3)}_${timestamp}_${random}`;
+        }
+
+        // Conectar al servidor WebSocket
         function connectToChatServer() {
             try {
-                appState.socket = new WebSocket(CONFIG.SERVER_URL);
+                // Cargar Socket.io dinámicamente si es necesario
+                if (typeof io === 'undefined') {
+                    loadSocketIO().then(() => {
+                        initSocketConnection();
+                    });
+                } else {
+                    initSocketConnection();
+                }
+            } catch (error) {
+                console.error('Error al conectar al servidor:', error);
+                showConnectionError();
                 
-                appState.socket.onopen = function() {
-                    console.log('Conectado al servidor de chat');
+                // Intentar reconectar después de 5 segundos
+                setTimeout(connectToChatServer, 5000);
+            }
+        }
+
+        // Cargar Socket.io
+        function loadSocketIO() {
+            return new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.socket.io/4.5.0/socket.io.min.js';
+                script.onload = resolve;
+                script.onerror = () => {
+                    console.error('Error cargando Socket.io');
+                    resolve();
+                };
+                document.head.appendChild(script);
+            });
+        }
+
+        // Inicializar conexión Socket.io
+        function initSocketConnection() {
+            try {
+                appState.socket = io(CONFIG.SERVER_URL, {
+                    transports: ['websocket', 'polling'],
+                    reconnection: true,
+                    reconnectionAttempts: 5,
+                    reconnectionDelay: 1000
+                });
+                
+                appState.socket.on('connect', function() {
+                    console.log('✅ Conectado al servidor de chat');
                     appState.connected = true;
                     updateConnectionStatus(true);
                     
-                    // Enviar mensaje de conexión
-                    const connectMessage = {
-                        type: 'connect',
-                        username: appState.username,
-                        channel: appState.currentChannel
-                    };
-                    
-                    appState.socket.send(JSON.stringify(connectMessage));
+                    // Unirse al chat
+                    appState.socket.emit('join', appState.username);
                     
                     // Mostrar mensaje de conexión exitosa
                     addSystemMessage('Conectado al servidor de chat');
-                };
+                });
                 
-                appState.socket.onmessage = function(event) {
-                    try {
-                        const data = JSON.parse(event.data);
-                        handleServerMessage(data);
-                    } catch (e) {
-                        console.error('Error al procesar mensaje del servidor:', e);
+                appState.socket.on('userCount', function(count) {
+                    appState.onlineUsers = count;
+                    updateOnlineCount();
+                });
+                
+                appState.socket.on('userJoined', function(data) {
+                    if (data.username !== appState.username) {
+                        addSystemMessage(`${data.username} se ha unido al chat`);
+                        playNotificationSound('join');
                     }
-                };
+                });
                 
-                appState.socket.onclose = function() {
-                    console.log('Desconectado del servidor de chat');
+                appState.socket.on('userLeft', function(data) {
+                    addSystemMessage(`${data.username} ha salido del chat`);
+                });
+                
+                appState.socket.on('message', function(data) {
+                    addMessage({
+                        id: Date.now(),
+                        username: data.username,
+                        text: data.message,
+                        timestamp: data.time || new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                        isOwn: data.username === appState.username
+                    });
+                    
+                    // Reproducir sonido de notificación si está habilitado
+                    if (data.username !== appState.username && appState.preferences.soundNotifications) {
+                        playNotificationSound('message');
+                    }
+                });
+                
+                appState.socket.on('typing', function(data) {
+                    if (data.username !== appState.username && appState.preferences.showTyping) {
+                        appState.typingUsers.add(data.username);
+                        updateTypingIndicator();
+                    }
+                });
+                
+                appState.socket.on('stopTyping', function() {
+                    appState.typingUsers.clear();
+                    updateTypingIndicator();
+                });
+                
+                appState.socket.on('disconnect', function() {
+                    console.log('❌ Desconectado del servidor de chat');
                     appState.connected = false;
                     updateConnectionStatus(false);
+                    addSystemMessage('Desconectado del servidor. Reconectando...');
                     
-                    // Intentar reconectar después de 5 segundos
-                    setTimeout(() => {
-                        if (appState.username) {
-                            connectToChatServer();
-                        }
-                    }, 5000);
-                };
+                    // Intentar reconectar después de 3 segundos
+                    setTimeout(connectToChatServer, 3000);
+                });
                 
-                appState.socket.onerror = function(error) {
-                    console.error('Error en la conexión WebSocket:', error);
-                    addSystemMessage('Error de conexión con el servidor. Reintentando...');
-                };
+                appState.socket.on('connect_error', function(error) {
+                    console.error('Error de conexión:', error);
+                    showConnectionError();
+                });
                 
             } catch (error) {
-                console.error('Error al conectar al servidor:', error);
-                addSystemMessage('No se pudo conectar al servidor de chat. Usando modo local.');
-                
-                // Simular usuarios en línea para modo local
-                setOnlineUsers(1);
+                console.error('Error al inicializar Socket.io:', error);
+                showConnectionError();
             }
         }
 
-        // Manejar mensajes del servidor
-        function handleServerMessage(data) {
-            switch (data.type) {
-                case 'message':
-                    addMessage(data);
-                    break;
-                    
-                case 'user_joined':
-                    addSystemMessage(`${data.username} se ha unido al chat`);
-                    setOnlineUsers(data.onlineCount || appState.onlineUsers + 1);
-                    break;
-                    
-                case 'user_left':
-                    addSystemMessage(`${data.username} ha salido del chat`);
-                    setOnlineUsers(data.onlineCount || Math.max(1, appState.onlineUsers - 1));
-                    break;
-                    
-                case 'online_count':
-                    setOnlineUsers(data.count);
-                    break;
-                    
-                case 'history':
-                    // Agregar historial de mensajes
-                    if (Array.isArray(data.messages)) {
-                        data.messages.forEach(msg => {
-                            if (!appState.messages.some(m => m.id === msg.id)) {
-                                appState.messages.push(msg);
-                            }
-                        });
-                        renderMessages();
-                    }
-                    break;
+        // Mostrar error de conexión
+        function showConnectionError() {
+            serverStatus.innerHTML = '<i class="fas fa-circle" style="color: var(--danger);"></i> Desconectado';
+            statusDot.className = 'status-dot offline';
+            statusText.textContent = 'Desconectado';
+            addSystemMessage('No se pudo conectar al servidor. Reintentando...');
+        }
+
+        // Actualizar estado de conexión
+        function updateConnectionStatus(connected) {
+            if (connected) {
+                serverStatus.innerHTML = '<i class="fas fa-circle" style="color: var(--success);"></i> Conectado';
+                statusDot.className = 'status-dot';
+                statusText.textContent = 'Conectado';
+            } else {
+                serverStatus.innerHTML = '<i class="fas fa-circle" style="color: var(--danger);"></i> Desconectado';
+                statusDot.className = 'status-dot offline';
+                statusText.textContent = 'Desconectado';
             }
         }
 
-        // Cambiar de canal
-        function switchChannel(channel) {
-            if (!CONFIG.CHANNELS[channel]) return;
-            
-            // Actualizar UI
-            channelItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('data-channel') === channel) {
-                    item.classList.add('active');
-                }
-            });
-            
-            // Actualizar estado
-            appState.currentChannel = channel;
-            currentChannelName.textContent = channel;
-            channelDescription.textContent = CONFIG.CHANNELS[channel].description;
-            
-            // Actualizar placeholder
-            messageInput.placeholder = `Escribe un mensaje en #${channel}`;
-            
-            // Limpiar mensajes actuales y cargar mensajes del canal
-            messagesContainer.innerHTML = '';
-            
-            // Mostrar mensaje de bienvenida del canal
-            const welcomeMsg = document.createElement('div');
-            welcomeMsg.className = 'system-message';
-            welcomeMsg.textContent = `Bienvenido al canal #${channel}. ${CONFIG.CHANNELS[channel].description}`;
-            messagesContainer.appendChild(welcomeMsg);
-            
-            // Filtrar y mostrar mensajes del canal actual
-            const channelMessages = appState.messages.filter(msg => msg.channel === channel);
-            channelMessages.forEach(msg => {
-                const messageElement = createMessageElement(msg);
-                messagesContainer.appendChild(messageElement);
-            });
-            
-            // Desplazarse al final
-            scrollToBottom();
-            
-            // Notificar al servidor del cambio de canal
-            if (appState.connected && appState.socket) {
-                const channelMessage = {
-                    type: 'channel_change',
-                    username: appState.username,
-                    channel: channel
-                };
-                
-                appState.socket.send(JSON.stringify(channelMessage));
-            }
-            
-            // Guardar mensajes
-            saveMessages();
+        // Actualizar contador de usuarios en línea
+        function updateOnlineCount() {
+            onlineCount.textContent = appState.onlineUsers;
+            sidebarOnlineCount.textContent = appState.onlineUsers;
         }
 
         // Enviar mensaje
         function sendMessage() {
             const text = messageInput.value.trim();
             
-            if (!text || !appState.username) return;
+            if (!text || !appState.username || !appState.connected) return;
             
-            // Crear objeto de mensaje
-            const message = {
-                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                username: appState.username,
-                text: text,
-                timestamp: new Date().toISOString(),
-                channel: appState.currentChannel
-            };
-            
-            // Enviar al servidor si está conectado
-            if (appState.connected && appState.socket) {
-                const socketMessage = {
-                    type: 'message',
-                    ...message
-                };
-                
-                appState.socket.send(JSON.stringify(socketMessage));
+            // Enviar al servidor
+            if (appState.socket) {
+                appState.socket.emit('message', text);
             }
-            
-            // Agregar mensaje localmente
-            addMessage(message);
             
             // Limpiar campo de entrada
             messageInput.value = '';
             messageInput.style.height = 'auto';
             sendButton.disabled = true;
             
-            // Guardar mensajes
-            appState.messages.push(message);
-            saveMessages();
-            
             // Enfocar de nuevo en el campo
             messageInput.focus();
         }
 
         // Agregar mensaje a la UI
-        function addMessage(message) {
-            // Solo mostrar mensajes del canal actual
-            if (message.channel !== appState.currentChannel) return;
+        function addMessage(messageData) {
+            // Crear objeto de mensaje completo
+            const message = {
+                id: messageData.id || Date.now(),
+                username: messageData.username,
+                text: messageData.text,
+                timestamp: messageData.timestamp || new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                isOwn: messageData.isOwn || false,
+                date: new Date().toISOString()
+            };
+            
+            // Agregar al estado
+            appState.messages.push(message);
+            
+            // Guardar mensajes (manteniendo límite)
+            if (appState.messages.length > CONFIG.MAX_MESSAGES_STORED) {
+                appState.messages = appState.messages.slice(-CONFIG.MAX_MESSAGES_STORED);
+            }
+            
+            // Guardar en localStorage
+            saveMessages();
+            
+            // Renderizar mensaje si estamos en la vista principal
+            if (!preferencesSidebar.classList.contains('hidden')) return;
             
             const messageElement = createMessageElement(message);
-            
-            // Agregar al contenedor
             messagesContainer.appendChild(messageElement);
             
             // Desplazarse al final
@@ -998,33 +1754,38 @@
         // Crear elemento de mensaje
         function createMessageElement(message) {
             const messageDiv = document.createElement('div');
-            messageDiv.className = 'message';
+            messageDiv.className = `message ${message.isOwn ? 'own' : ''}`;
             messageDiv.dataset.id = message.id;
-            
-            // Formatear hora
-            const time = new Date(message.timestamp);
-            const timeString = time.toLocaleTimeString('es-ES', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
             
             // Color de avatar basado en el nombre de usuario
             const avatarColor = getAvatarColor(message.username);
             const avatarLetter = message.username.charAt(0).toUpperCase();
             
-            messageDiv.innerHTML = `
+            // Formatear texto (soporte para URLs y saltos de línea)
+            const formattedText = formatMessageText(message.text);
+            
+            // Construir HTML del mensaje
+            let messageHTML = `
                 <div class="message-avatar" style="background-color: ${avatarColor}">
                     ${avatarLetter}
                 </div>
                 <div class="message-content">
                     <div class="message-header">
                         <span class="message-username">${escapeHtml(message.username)}</span>
-                        <span class="message-time">${timeString}</span>
+            `;
+            
+            // Agregar timestamp si está habilitado
+            if (appState.preferences.showTimestamps) {
+                messageHTML += `<span class="message-time">${message.timestamp}</span>`;
+            }
+            
+            messageHTML += `
                     </div>
-                    <div class="message-text">${formatMessageText(message.text)}</div>
+                    <div class="message-text">${formattedText}</div>
                 </div>
             `;
             
+            messageDiv.innerHTML = messageHTML;
             return messageDiv;
         }
 
@@ -1032,7 +1793,7 @@
         function addSystemMessage(text) {
             const systemMessage = document.createElement('div');
             systemMessage.className = 'system-message';
-            systemMessage.textContent = text;
+            systemMessage.innerHTML = `<i class="fas fa-info-circle"></i> ${text}`;
             
             messagesContainer.appendChild(systemMessage);
             scrollToBottom();
@@ -1046,11 +1807,8 @@
             // Agregar mensaje de bienvenida
             messagesContainer.appendChild(welcomeMessage);
             
-            // Filtrar mensajes del canal actual
-            const channelMessages = appState.messages.filter(msg => msg.channel === appState.currentChannel);
-            
             // Agregar mensajes
-            channelMessages.forEach(msg => {
+            appState.messages.forEach(msg => {
                 const messageElement = createMessageElement(msg);
                 messagesContainer.appendChild(messageElement);
             });
@@ -1059,39 +1817,35 @@
             scrollToBottom();
         }
 
-        // Cambiar tema
-        function toggleTheme() {
-            appState.theme = appState.theme === 'dark' ? 'light' : 'dark';
-            document.body.classList.toggle('light-theme', appState.theme === 'light');
-            
-            // Guardar preferencia
-            localStorage.setItem(CONFIG.STORAGE_KEYS.THEME, appState.theme);
-            
-            // Actualizar icono
-            updateThemeIcon();
-        }
-
-        // Actualizar icono del tema
-        function updateThemeIcon() {
-            const icon = themeToggle.querySelector('i');
-            icon.className = appState.theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
-        }
-
-        // Actualizar estado de conexión
-        function updateConnectionStatus(connected) {
-            if (connected) {
-                statusIndicator.style.backgroundColor = '#3BA55C';
-                statusText.textContent = 'Conectado';
-            } else {
-                statusIndicator.style.backgroundColor = '#ED4245';
-                statusText.textContent = 'Desconectado';
+        // Actualizar indicador de escritura
+        function updateTypingIndicator() {
+            if (!appState.preferences.showTyping || appState.typingUsers.size === 0) {
+                typingIndicator.style.display = 'none';
+                return;
             }
-        }
-
-        // Establecer número de usuarios en línea
-        function setOnlineUsers(count) {
-            appState.onlineUsers = count;
-            onlineCount.textContent = count;
+            
+            const users = Array.from(appState.typingUsers);
+            let text = '';
+            
+            if (users.length === 1) {
+                text = `${users[0]} está escribiendo...`;
+            } else if (users.length === 2) {
+                text = `${users[0]} y ${users[1]} están escribiendo...`;
+            } else if (users.length === 3) {
+                text = `${users[0]}, ${users[1]} y ${users[2]} están escribiendo...`;
+            } else {
+                text = `${users[0]}, ${users[1]} y ${users.length - 2} más están escribiendo...`;
+            }
+            
+            typingText.textContent = text;
+            typingIndicator.style.display = 'flex';
+            
+            // Ocultar después de 3 segundos si no hay actualizaciones
+            clearTimeout(window.typingTimeout);
+            window.typingTimeout = setTimeout(() => {
+                appState.typingUsers.clear();
+                typingIndicator.style.display = 'none';
+            }, 3000);
         }
 
         // Desplazarse al final del chat
@@ -1099,11 +1853,206 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
+        // Cargar preferencias guardadas
+        function loadPreferences() {
+            try {
+                const savedPrefs = localStorage.getItem(CONFIG.STORAGE_KEYS.PREFERENCES);
+                if (savedPrefs) {
+                    appState.preferences = {...CONFIG.DEFAULT_PREFERENCES, ...JSON.parse(savedPrefs)};
+                }
+            } catch (e) {
+                console.warn('Error cargando preferencias:', e);
+            }
+            
+            // Aplicar preferencias a los controles
+            darkThemeToggle.checked = appState.preferences.darkTheme;
+            showTimestampsToggle.checked = appState.preferences.showTimestamps;
+            soundNotificationsToggle.checked = appState.preferences.soundNotifications;
+            showTypingToggle.checked = appState.preferences.showTyping;
+            showImagesToggle.checked = appState.preferences.showImages;
+            messagesPerLoad.value = appState.preferences.messagesPerLoad;
+            aiAvatarToggle.checked = appState.preferences.aiAvatar;
+            
+            // Aplicar tema
+            applyTheme();
+        }
+
+        // Guardar preferencias
+        function savePreferences() {
+            try {
+                localStorage.setItem(CONFIG.STORAGE_KEYS.PREFERENCES, JSON.stringify(appState.preferences));
+            } catch (e) {
+                console.warn('Error guardando preferencias:', e);
+            }
+        }
+
+        // Actualizar una preferencia
+        function updatePreference(key, value) {
+            appState.preferences[key] = value;
+            savePreferences();
+        }
+
+        // Cambiar tema
+        function toggleTheme() {
+            const newTheme = !appState.preferences.darkTheme;
+            updatePreference('darkTheme', newTheme);
+            applyTheme();
+        }
+
+        // Aplicar tema
+        function applyTheme() {
+            if (appState.preferences.darkTheme) {
+                document.body.classList.remove('light-theme');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            } else {
+                document.body.classList.add('light-theme');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        }
+
+        // Cargar mensajes guardados
+        function loadSavedMessages() {
+            try {
+                const savedMessages = localStorage.getItem(CONFIG.STORAGE_KEYS.MESSAGES);
+                if (savedMessages) {
+                    appState.messages = JSON.parse(savedMessages);
+                    renderMessages();
+                }
+            } catch (e) {
+                console.warn('Error cargando mensajes guardados:', e);
+            }
+        }
+
+        // Guardar mensajes
+        function saveMessages() {
+            try {
+                localStorage.setItem(CONFIG.STORAGE_KEYS.MESSAGES, JSON.stringify(appState.messages));
+            } catch (e) {
+                console.warn('Error guardando mensajes:', e);
+            }
+        }
+
+        // Alternar panel de preferencias
+        function togglePreferences() {
+            preferencesSidebar.classList.toggle('hidden');
+        }
+
+        // Cambiar nombre de usuario
+        function changeUsername() {
+            const newUsername = prompt('Ingresa tu nuevo nombre de usuario (3-25 caracteres):', appState.username);
+            
+            if (!newUsername || newUsername.length < 3 || newUsername.length > 25) {
+                alert('El nombre de usuario debe tener entre 3 y 25 caracteres.');
+                return;
+            }
+            
+            const oldUsername = appState.username;
+            appState.username = newUsername;
+            localStorage.setItem(CONFIG.STORAGE_KEYS.USERNAME, newUsername);
+            usernameDisplay.textContent = newUsername;
+            updateUserAvatar();
+            
+            // Notificar al servidor si está conectado
+            if (appState.connected && appState.socket) {
+                appState.socket.emit('join', newUsername);
+                addSystemMessage(`Has cambiado tu nombre de usuario de "${oldUsername}" a "${newUsername}"`);
+            }
+        }
+
+        // Actualizar avatar del usuario
+        function updateUserAvatar() {
+            const avatarLetter = appState.username.charAt(0).toUpperCase();
+            const avatarColor = getAvatarColor(appState.username);
+            
+            userAvatar.textContent = avatarLetter;
+            userAvatar.style.backgroundColor = avatarColor;
+        }
+
+        // Limpiar historial local
+        function clearLocalHistory() {
+            if (confirm('¿Estás seguro de que quieres eliminar todo el historial de mensajes guardado localmente? Esto no afectará los mensajes en el servidor.')) {
+                appState.messages = [];
+                localStorage.removeItem(CONFIG.STORAGE_KEYS.MESSAGES);
+                renderMessages();
+                addSystemMessage('Historial local limpiado.');
+            }
+        }
+
+        // Exportar datos del chat
+        function exportChatData() {
+            try {
+                const data = {
+                    username: appState.username,
+                    userId: appState.userId,
+                    preferences: appState.preferences,
+                    messages: appState.messages,
+                    exportDate: new Date().toISOString(),
+                    totalMessages: appState.messages.length
+                };
+                
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `foxweb_chat_export_${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                addSystemMessage('Datos del chat exportados correctamente.');
+            } catch (error) {
+                console.error('Error exportando datos:', error);
+                alert('Error al exportar los datos.');
+            }
+        }
+
+        // Restablecer preferencias
+        function resetPreferences() {
+            if (confirm('¿Estás seguro de que quieres restablecer todas las preferencias a los valores predeterminados?')) {
+                appState.preferences = {...CONFIG.DEFAULT_PREFERENCES};
+                savePreferences();
+                loadPreferences(); // Para actualizar los controles
+                addSystemMessage('Preferencias restablecidas a los valores predeterminados.');
+            }
+        }
+
+        // Re-conectar al servidor
+        function reconnectToServer() {
+            if (appState.socket) {
+                appState.socket.disconnect();
+            }
+            
+            addSystemMessage('Reconectando al servidor...');
+            setTimeout(connectToChatServer, 1000);
+        }
+
+        // Reproducir sonido de notificación
+        function playNotificationSound(type) {
+            if (!appState.preferences.soundNotifications) return;
+            
+            try {
+                const audio = new Audio();
+                
+                // Sonidos simples (podrías reemplazarlos con archivos reales)
+                if (type === 'message') {
+                    audio.src = 'https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3';
+                } else if (type === 'join') {
+                    audio.src = 'https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3';
+                }
+                
+                audio.volume = 0.3;
+                audio.play().catch(e => console.log('Error reproduciendo sonido:', e));
+            } catch (error) {
+                console.log('No se pudo reproducir sonido:', error);
+            }
+        }
+
         // Obtener color de avatar basado en nombre de usuario
         function getAvatarColor(username) {
             const colors = [
-                '#5865F2', '#EB459E', '#ED4245', 
-                '#FEE75C', '#57F287', '#FAA61A'
+                '#FF4500', '#1E90FF', '#32CD32', '#FF1493', 
+                '#FFD700', '#9370DB', '#00CED1', '#FF6347'
             ];
             
             let hash = 0;
@@ -1114,7 +2063,7 @@
             return colors[Math.abs(hash) % colors.length];
         }
 
-        // Formatear texto del mensaje (soporte para URLs y saltos de línea)
+        // Formatear texto del mensaje
         function formatMessageText(text) {
             // Escapar HTML para seguridad
             let escapedText = escapeHtml(text);
@@ -1122,7 +2071,7 @@
             // Reemplazar URLs con enlaces
             escapedText = escapedText.replace(
                 /(https?:\/\/[^\s]+)/g, 
-                '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+                '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">$1</a>'
             );
             
             // Reemplazar saltos de línea
