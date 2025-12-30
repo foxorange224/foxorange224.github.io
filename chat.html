@@ -2,15 +2,14 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoxWeb Chat - Chat oficial de la comunidad</title>
-    <meta name="description" content="Chat público de FoxWeb. Conéctate con otros usuarios para hablar sobre software, sistemas operativos, juegos y más.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FoxWeb Chat</title>
     <link rel="icon" href="https://i.imgur.com/qfsMx7V.png" type="image/png">
     
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
@@ -18,69 +17,65 @@
         :root {
             --primary: #FF4500;
             --primary-hover: #CC3700;
-            --primary-light: rgba(255, 69, 0, 0.1);
-            --bg-body: #0c0c0c;
-            --bg-card: #161616;
-            --bg-card-light: #1e1e1e;
+            --primary-light: rgba(255, 69, 0, 0.15);
+            --primary-transparent: rgba(255, 69, 0, 0.05);
+            --bg-main: #0a0a0a;
+            --bg-secondary: #121212;
+            --bg-tertiary: #1a1a1a;
             --bg-input: #222222;
-            --text-main: #E0E0E0;
-            --text-dim: #999;
-            --text-light: #FFFFFF;
-            --border: #222;
-            --border-light: #333;
-            --success: #2ea44f;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --info: #17a2b8;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
-            --radius: 10px;
-            --radius-sm: 6px;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #888888;
+            --border: #2a2a2a;
+            --border-light: #333333;
+            --success: #00cc66;
+            --warning: #ffaa00;
+            --danger: #ff4444;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+            --radius-sm: 8px;
         }
 
         .light-theme {
             --primary: #FF4500;
             --primary-hover: #CC3700;
-            --primary-light: rgba(255, 69, 0, 0.08);
-            --bg-body: #f8f9fa;
-            --bg-card: #ffffff;
-            --bg-card-light: #f5f5f5;
-            --bg-input: #f0f0f0;
-            --text-main: #333333;
-            --text-dim: #666666;
-            --text-light: #000000;
-            --border: #e0e0e0;
-            --border-light: #dddddd;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
+            --primary-light: rgba(255, 69, 0, 0.1);
+            --primary-transparent: rgba(255, 69, 0, 0.03);
+            --bg-main: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f0f0f0;
+            --bg-input: #e9ecef;
+            --text-primary: #121212;
+            --text-secondary: #555555;
+            --text-tertiary: #777777;
+            --border: #dee2e6;
+            --border-light: #e0e0e0;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         }
 
-        /* ===== RESET & BASE ===== */
+        /* ===== RESET ===== */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
 
-        html {
-            scroll-behavior: smooth;
+        html, body {
             height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 0;
-            transition: background-color 0.3s, color 0.3s;
             background-image: url('https://i.imgur.com/qJpo1hb.jpeg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            background-repeat: no-repeat;
+            position: relative;
         }
 
         body::before {
@@ -90,555 +85,347 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(12, 12, 12, 0.85);
+            background: rgba(10, 10, 10, 0.85);
             z-index: -1;
         }
 
         .light-theme body::before {
-            background: rgba(248, 249, 250, 0.9);
+            background: rgba(248, 249, 250, 0.92);
         }
 
-        /* ===== APP CONTAINER ===== */
-        .app-container {
+        /* ===== APP LAYOUT ===== */
+        #app {
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 15px;
+            position: relative;
         }
 
         /* ===== HEADER ===== */
-        .chat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
+        .header {
+            padding: 12px 16px;
+            background: var(--bg-secondary);
             border-bottom: 1px solid var(--border);
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 15px;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
             gap: 12px;
-            text-decoration: none;
         }
 
-        .logo-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-            padding: 3px;
-            background: white;
-        }
-
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logo-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--text-light);
-            line-height: 1;
-        }
-
-        .logo-subtitle {
-            font-size: 0.9em;
-            color: var(--primary);
-            font-weight: 600;
-            margin-top: 3px;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* ===== USER INFO ===== */
-        .user-info-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 15px;
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.2em;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .user-details {
+        .menu-toggle:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .header-title {
             display: flex;
             flex-direction: column;
+            gap: 2px;
         }
 
-        .username {
+        .chat-name {
             font-weight: 600;
-            font-size: 0.95em;
+            font-size: 1.1em;
+            color: var(--text-primary);
         }
 
-        .user-status {
-            font-size: 0.8em;
-            color: var(--text-dim);
+        .chat-status {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            font-size: 0.8em;
+            color: var(--text-secondary);
         }
 
         .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background-color: var(--success);
+            background: var(--success);
+            display: inline-block;
         }
 
         .status-dot.offline {
-            background-color: var(--text-dim);
+            background: var(--danger);
         }
 
-        /* ===== HEADER BUTTONS ===== */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .header-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-main);
+            background: none;
+            border: none;
             width: 40px;
             height: 40px;
-            border-radius: var(--radius);
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.2s ease;
             font-size: 1.1em;
         }
 
         .header-btn:hover {
-            background: var(--bg-card-light);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .back-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .back-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        /* ===== MAIN CHAT AREA ===== */
-        .chat-main {
-            display: flex;
-            flex: 1;
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        /* ===== CHAT INFO BAR ===== */
-        .chat-info-bar {
-            padding: 15px 25px;
-            background: var(--bg-card-light);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .chat-title {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: var(--text-light);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .chat-title i {
-            color: var(--primary);
-        }
-
-        .online-counter {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9em;
-            color: var(--text-dim);
-            background: var(--bg-input);
-            padding: 6px 15px;
-            border-radius: 20px;
-        }
-
-        .online-count {
-            color: var(--success);
-            font-weight: 600;
-        }
-
-        /* ===== MESSAGES CONTAINER ===== */
-        .messages-container {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* ===== MESSAGE STYLES ===== */
-        .message {
-            display: flex;
-            gap: 15px;
-            max-width: 85%;
-            animation: messageAppear 0.3s ease;
-        }
-
-        @keyframes messageAppear {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.own {
-            margin-left: auto;
-            flex-direction: row-reverse;
-        }
-
-        .message.own .message-content {
-            background: linear-gradient(135deg, var(--primary), #ff6b35);
-            color: white;
-            border-radius: 18px 18px 5px 18px;
-        }
-
-        .message.own .message-time {
-            text-align: right;
-        }
-
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.1em;
-            color: white;
-            flex-shrink: 0;
-            margin-top: 5px;
-        }
-
-        .message-content {
-            background: var(--bg-card-light);
-            padding: 15px;
-            border-radius: 18px 18px 18px 5px;
-            border: 1px solid var(--border-light);
-            max-width: 100%;
-            word-break: break-word;
-            box-shadow: var(--shadow);
-        }
-
-        .message-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .message-username {
-            font-weight: 600;
-            font-size: 0.95em;
-            color: var(--text-light);
-        }
-
-        .message.own .message-username {
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .message-time {
-            font-size: 0.8em;
-            color: var(--text-dim);
-        }
-
-        .message-text {
-            line-height: 1.5;
-            font-size: 0.95em;
-        }
-
-        .message.own .message-text {
-            color: rgba(255, 255, 255, 0.95);
-        }
-
-        /* ===== SYSTEM MESSAGE ===== */
-        .system-message {
-            text-align: center;
-            margin: 15px 0;
-            color: var(--text-dim);
-            font-size: 0.9em;
-            font-style: italic;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 12px 20px;
             background: var(--primary-light);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-
-        .system-message i {
             color: var(--primary);
         }
 
-        /* ===== TYPING INDICATOR ===== */
-        .typing-indicator {
-            padding: 15px 25px;
-            display: none;
-            align-items: center;
-            gap: 10px;
-            color: var(--text-dim);
-            font-style: italic;
-            font-size: 0.9em;
-            background: var(--bg-card-light);
-            border-top: 1px solid var(--border);
-        }
-
-        .typing-dots {
-            display: flex;
-            gap: 4px;
-        }
-
-        .typing-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--primary);
-            animation: typingDot 1.4s infinite;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingDot {
-            0%, 60%, 100% { 
-                opacity: 0.4;
-                transform: translateY(0);
-            }
-            30% { 
-                opacity: 1;
-                transform: translateY(-4px);
-            }
-        }
-
-        /* ===== MESSAGE INPUT ===== */
-        .message-input-container {
-            padding: 20px 25px;
-            border-top: 1px solid var(--border);
-            background: var(--bg-card-light);
-        }
-
-        .message-input-box {
-            display: flex;
-            gap: 15px;
-            align-items: flex-end;
-        }
-
-        .message-input {
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
             flex: 1;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 15px 20px;
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            font-size: 1em;
-            resize: none;
-            min-height: 50px;
-            max-height: 150px;
-            line-height: 1.5;
-            transition: all 0.2s ease;
-        }
-
-        .message-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
-
-        .message-input::placeholder {
-            color: var(--text-dim);
-        }
-
-        .send-button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: var(--radius);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 1.2em;
-            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
         }
 
-        .send-button:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-        }
-
-        .send-button:disabled {
-            background: var(--text-dim);
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* ===== SIDEBAR (PREFERENCES) ===== */
-        .preferences-sidebar {
+        /* ===== SIDEBAR ===== */
+        .sidebar {
             width: 320px;
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            height: fit-content;
-            position: sticky;
-            top: 20px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 90;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 85;
+            display: none;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
         }
 
         .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
         }
 
         .sidebar-title {
-            font-size: 1.3em;
             font-weight: 600;
-            color: var(--text-light);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 1.2em;
+            color: var(--text-primary);
         }
 
-        .sidebar-title i {
-            color: var(--primary);
-        }
-
-        .close-sidebar {
+        .sidebar-close {
             background: none;
             border: none;
-            color: var(--text-dim);
+            color: var(--text-secondary);
             font-size: 1.2em;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            padding: 5px;
-            border-radius: 4px;
             transition: all 0.2s ease;
         }
 
-        .close-sidebar:hover {
-            color: var(--primary);
+        .sidebar-close:hover {
             background: var(--primary-light);
+            color: var(--primary);
         }
 
-        .preferences-section {
-            margin-bottom: 30px;
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* ===== USER INFO ===== */
+        .user-info {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-light);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #ff6b35);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .user-details {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .username {
+            font-weight: 600;
+            font-size: 1em;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-status {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ===== ONLINE USERS ===== */
+        .online-section {
+            margin-bottom: 24px;
         }
 
         .section-title {
-            font-size: 1em;
             font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--text-light);
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+        }
+
+        .online-count {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .online-list {
+            display: flex;
+            flex-direction: column;
             gap: 8px;
         }
 
-        .section-title i {
-            color: var(--primary);
-            font-size: 0.9em;
+        .online-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s ease;
         }
 
-        /* ===== PREFERENCE OPTIONS ===== */
+        .online-user:hover {
+            background: var(--primary-transparent);
+            border-color: var(--primary);
+        }
+
+        .online-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+
+        .online-name {
+            font-weight: 500;
+            font-size: 0.9em;
+            color: var(--text-primary);
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ===== PREFERENCES ===== */
+        .preferences-section {
+            margin-bottom: 24px;
+        }
+
         .pref-option {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            justify-content: space-between;
             padding: 12px 0;
-            border-bottom: 1px dashed var(--border-light);
+            border-bottom: 1px solid var(--border-light);
         }
 
         .pref-label {
-            font-size: 0.95em;
-            color: var(--text-main);
+            font-size: 0.9em;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -646,13 +433,12 @@
 
         .pref-label i {
             width: 20px;
-            color: var(--text-dim);
+            color: var(--text-secondary);
         }
 
-        /* ===== TOGGLE SWITCH ===== */
         .toggle-switch {
             position: relative;
-            width: 50px;
+            width: 44px;
             height: 24px;
         }
 
@@ -667,7 +453,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: var(--bg-input);
+            background: var(--bg-input);
             border-radius: 34px;
             transition: .4s;
         }
@@ -679,82 +465,277 @@
             width: 18px;
             left: 3px;
             bottom: 3px;
-            background-color: white;
+            background: white;
             border-radius: 50%;
             transition: .4s;
         }
 
         .toggle-checkbox:checked + .toggle-slider {
-            background-color: var(--primary);
+            background: var(--primary);
         }
 
         .toggle-checkbox:checked + .toggle-slider:before {
-            transform: translateX(26px);
+            transform: translateX(20px);
         }
 
-        /* ===== SELECT DROPDOWN ===== */
-        .pref-select {
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            color: var(--text-main);
-            padding: 8px 12px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9em;
-            width: 120px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .pref-select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        /* ===== BUTTONS ===== */
         .pref-button {
-            background: var(--bg-input);
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-tertiary);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            color: var(--text-main);
-            padding: 10px 15px;
-            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
             font-size: 0.9em;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            width: 100%;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .pref-button:hover {
-            background: var(--bg-card-light);
+            background: var(--primary-light);
             border-color: var(--primary);
-            color: var(--primary);
         }
 
         .pref-button.danger {
-            background: rgba(220, 53, 69, 0.1);
-            border-color: rgba(220, 53, 69, 0.3);
+            background: rgba(255, 68, 68, 0.1);
+            border-color: rgba(255, 68, 68, 0.3);
             color: var(--danger);
         }
 
         .pref-button.danger:hover {
-            background: rgba(220, 53, 69, 0.2);
+            background: rgba(255, 68, 68, 0.2);
             border-color: var(--danger);
         }
 
-        .pref-button.primary {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
+        /* ===== CHAT AREA ===== */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
         }
 
-        .pref-button.primary:hover {
+        /* ===== MESSAGES ===== */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--bg-main);
+        }
+
+        .message {
+            max-width: 85%;
+            animation: messageSlide 0.25s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.own {
+            align-self: flex-end;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-light);
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: var(--shadow);
+        }
+
+        .message.own .message-content {
+            background: linear-gradient(135deg, var(--primary), #ff6b35);
+            color: white;
+            border: none;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .message-username {
+            font-weight: 600;
+            font-size: 0.9em;
+            color: var(--text-primary);
+        }
+
+        .message.own .message-username {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .message-time {
+            font-size: 0.75em;
+            color: var(--text-tertiary);
+        }
+
+        .message.own .message-time {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .message-text {
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        .message.own .message-text {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .system-message {
+            align-self: center;
+            max-width: 90%;
+            text-align: center;
+            margin: 8px 0;
+            padding: 10px 16px;
+            background: var(--primary-transparent);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .system-message i {
+            color: var(--primary);
+        }
+
+        /* ===== TYPING INDICATOR ===== */
+        .typing-indicator {
+            padding: 12px 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-4px);
+                opacity: 1;
+            }
+        }
+
+        /* ===== INPUT AREA ===== */
+        .input-area {
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95em;
+            resize: none;
+            min-height: 48px;
+            max-height: 120px;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .message-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border: none;
+            border-radius: var(--radius);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            font-size: 1.1em;
+        }
+
+        .send-btn:hover {
             background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .send-btn:disabled {
+            background: var(--bg-input);
+            color: var(--text-tertiary);
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* ===== LOGIN OVERLAY ===== */
@@ -764,65 +745,55 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(10, 10, 10, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(5px);
+            padding: 20px;
         }
 
         .light-theme .login-overlay {
-            background: rgba(248, 249, 250, 0.95);
+            background: rgba(248, 249, 250, 0.98);
         }
 
-        .login-box {
-            background: var(--bg-card);
+        .login-container {
+            background: var(--bg-secondary);
             border-radius: var(--radius);
             border: 1px solid var(--border);
             width: 100%;
-            max-width: 450px;
-            padding: 40px;
-            box-shadow: var(--shadow-lg);
+            max-width: 400px;
+            padding: 32px;
+            box-shadow: var(--shadow);
             text-align: center;
         }
 
-        .login-logo {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            object-fit: cover;
-            border: 3px solid var(--primary);
-            padding: 5px;
-            background: white;
-            margin-bottom: 20px;
-        }
-
         .login-title {
-            font-size: 2em;
+            font-size: 1.8em;
             font-weight: 700;
-            color: var(--text-light);
-            margin-bottom: 10px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
         }
 
         .login-subtitle {
-            color: var(--text-dim);
-            margin-bottom: 30px;
-            font-size: 1em;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            font-size: 0.95em;
+            line-height: 1.5;
         }
 
         .login-input {
             width: 100%;
-            padding: 15px 20px;
+            padding: 16px;
             background: var(--bg-input);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            color: var(--text-main);
+            color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             font-size: 1em;
-            margin-bottom: 20px;
-            transition: all 0.2s ease;
+            margin-bottom: 16px;
             text-align: center;
+            transition: all 0.2s ease;
         }
 
         .login-input:focus {
@@ -831,13 +802,13 @@
             box-shadow: 0 0 0 3px var(--primary-light);
         }
 
-        .login-button {
+        .login-btn {
             width: 100%;
-            padding: 15px;
+            padding: 16px;
             background: var(--primary);
-            color: white;
             border: none;
             border-radius: var(--radius);
+            color: white;
             font-family: 'Inter', sans-serif;
             font-size: 1em;
             font-weight: 600;
@@ -849,65 +820,35 @@
             gap: 10px;
         }
 
-        .login-button:hover {
+        .login-btn:hover {
             background: var(--primary-hover);
             transform: translateY(-2px);
         }
 
         .login-note {
-            margin-top: 25px;
-            padding: 15px;
-            background: var(--primary-light);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            color: var(--text-dim);
-            font-size: 0.9em;
-        }
-
-        /* ===== FOOTER ===== */
-        .chat-footer {
-            text-align: center;
-            padding: 25px 0;
-            border-top: 1px solid var(--border);
-            color: var(--text-dim);
-            font-size: 0.9em;
-            margin-top: 30px;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .footer-link {
-            color: var(--text-dim);
-            text-decoration: none;
-            transition: color 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .footer-link:hover {
-            color: var(--primary);
+            margin-top: 24px;
+            padding: 16px;
+            background: var(--primary-transparent);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            line-height: 1.5;
         }
 
         /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         ::-webkit-scrollbar-track {
             background: var(--bg-input);
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb {
             background: var(--primary);
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
@@ -915,191 +856,253 @@
         }
 
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 1100px) {
-            .chat-main {
-                flex-direction: column;
+        @media (min-width: 768px) {
+            .sidebar {
+                position: relative;
+                transform: translateX(0);
+                box-shadow: none;
             }
             
-            .preferences-sidebar {
-                width: 100%;
-                position: static;
-                order: -1;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .app-container {
-                padding: 0 10px;
+            .sidebar-overlay {
+                display: none !important;
             }
             
-            .chat-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-                padding: 15px 0;
-            }
-            
-            .header-left, .header-right {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .messages-container {
-                padding: 15px;
-            }
-            
-            .message {
-                max-width: 95%;
-            }
-            
-            .preferences-sidebar {
-                padding: 20px;
-            }
-            
-            .login-box {
-                padding: 30px 20px;
-                margin: 0 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .logo-title {
-                font-size: 1.5em;
-            }
-            
-            .message-content {
-                padding: 12px;
-            }
-            
-            .message-input-box {
-                gap: 10px;
-            }
-            
-            .send-button {
-                width: 45px;
-                height: 45px;
-            }
-            
-            .user-info-container {
-                padding: 6px 10px;
-            }
-            
-            .user-details {
+            .menu-toggle {
                 display: none;
             }
         }
 
-        /* ===== UTILITY CLASSES ===== */
+        @media (max-width: 767px) {
+            .sidebar {
+                width: 280px;
+            }
+            
+            .header {
+                padding: 10px 12px;
+            }
+            
+            .messages-container {
+                padding: 16px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .input-area {
+                padding: 12px;
+            }
+            
+            .login-container {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+            }
+            
+            .chat-name {
+                font-size: 1em;
+            }
+            
+            .message-content {
+                padding: 10px 14px;
+            }
+            
+            .login-container {
+                padding: 20px;
+            }
+        }
+
+        /* ===== UTILITY ===== */
         .hidden {
             display: none !important;
         }
 
-        .visible {
-            display: flex !important;
+        .text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .text-center {
-            text-align: center;
+        .scroll-to-bottom {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            z-index: 50;
+            transition: all 0.2s ease;
         }
 
-        .mt-1 { margin-top: 10px; }
-        .mt-2 { margin-top: 20px; }
-        .mt-3 { margin-top: 30px; }
-        .mb-1 { margin-bottom: 10px; }
-        .mb-2 { margin-bottom: 20px; }
-        .mb-3 { margin-bottom: 30px; }
+        .scroll-to-bottom:hover {
+            background: var(--primary-hover);
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
     <!-- Login Overlay -->
     <div id="loginOverlay" class="login-overlay">
-        <div class="login-box">
-            <img src="https://i.imgur.com/qfsMx7V.png" alt="FoxWeb Logo" class="login-logo">
+        <div class="login-container">
             <h1 class="login-title">FoxWeb Chat</h1>
-            <p class="login-subtitle">Chat público oficial de la comunidad FoxWeb</p>
+            <p class="login-subtitle">Conéctate con la comunidad de FoxWeb</p>
             
-            <div class="mb-3">
-                <input type="text" id="usernameInput" class="login-input" 
-                       placeholder="Elige un nombre de usuario" maxlength="25" autocomplete="off" autofocus>
-                <div id="usernameError" style="color: var(--danger); font-size: 0.9em; margin-top: 5px; display: none;">
-                    Por favor, ingresa un nombre de usuario válido (3-25 caracteres)
-                </div>
-            </div>
+            <input type="text" id="usernameInput" class="login-input" 
+                   placeholder="Tu nombre de usuario" maxlength="20" 
+                   autocomplete="off" autofocus>
             
-            <button id="loginButton" class="login-button">
+            <button id="loginBtn" class="login-btn">
                 <i class="fas fa-sign-in-alt"></i> Entrar al chat
             </button>
             
             <div class="login-note">
-                <p><i class="fas fa-info-circle"></i> Este es un chat público donde puedes conversar con otros miembros de la comunidad sobre software, sistemas operativos, juegos y más.</p>
-                <p class="mt-1"><strong>Tu nombre de usuario se guardará para futuras visitas.</strong></p>
+                <i class="fas fa-info-circle"></i> Tu nombre se guardará para futuras visitas. 
+                Este es un chat público donde puedes hablar sobre software, juegos y más.
             </div>
         </div>
     </div>
 
-    <!-- Main App Container -->
-    <div class="app-container" id="appContainer" style="display: none;">
+    <!-- Main App -->
+    <div id="app" class="hidden">
         <!-- Header -->
-        <div class="chat-header">
+        <div class="header">
             <div class="header-left">
-                <a href="https://foxweb.vercel.app" class="logo-container">
-                    <img src="https://i.imgur.com/qfsMx7V.png" alt="FoxWeb Logo" class="logo-img">
-                    <div class="logo-text">
-                        <div class="logo-title">FoxWeb</div>
-                        <div class="logo-subtitle">Chat Oficial</div>
-                    </div>
-                </a>
-                
-                <div class="user-info-container" id="userInfoContainer">
-                    <div class="user-avatar" id="userAvatar">U</div>
-                    <div class="user-details">
-                        <div class="username" id="usernameDisplay">Usuario</div>
-                        <div class="user-status">
-                            <div class="status-dot" id="statusDot"></div>
-                            <span id="statusText">Conectando...</span>
-                        </div>
+                <button id="menuToggle" class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-title">
+                    <div class="chat-name">FoxWeb Chat</div>
+                    <div class="chat-status">
+                        <span class="status-dot" id="statusDot"></span>
+                        <span id="statusText">Conectando...</span>
                     </div>
                 </div>
             </div>
             
             <div class="header-right">
-                <button class="header-btn" id="preferencesToggle" title="Preferencias">
-                    <i class="fas fa-sliders-h"></i>
-                </button>
-                
-                <button class="header-btn" id="themeToggle" title="Cambiar tema">
+                <button id="themeToggle" class="header-btn" title="Cambiar tema">
                     <i class="fas fa-moon"></i>
                 </button>
-                
-                <a href="https://foxweb.vercel.app" class="back-btn">
-                    <i class="fas fa-arrow-left"></i> Volver al sitio
+                <button id="usersToggle" class="header-btn" title="Usuarios en línea">
+                    <i class="fas fa-users"></i>
+                </button>
+                <a href="https://foxweb.vercel.app" class="header-btn" title="Volver al sitio">
+                    <i class="fas fa-home"></i>
                 </a>
             </div>
         </div>
 
-        <!-- Main Chat Area -->
-        <div class="chat-main">
-            <!-- Chat Container -->
-            <div class="chat-container">
-                <!-- Chat Info Bar -->
-                <div class="chat-info-bar">
-                    <div class="chat-title">
-                        <i class="fas fa-comments"></i> Chat público FoxWeb
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar Overlay -->
+            <div id="sidebarOverlay" class="sidebar-overlay"></div>
+            
+            <!-- Sidebar -->
+            <div id="sidebar" class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">Configuración</div>
+                    <button id="sidebarClose" class="sidebar-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="sidebar-content">
+                    <!-- User Info -->
+                    <div class="user-info">
+                        <div class="user-profile">
+                            <div class="user-avatar" id="userAvatar">U</div>
+                            <div class="user-details">
+                                <div class="username" id="sidebarUsername">Usuario</div>
+                                <div class="user-status">
+                                    <span class="status-dot"></span>
+                                    <span>En línea</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="changeNameBtn" class="pref-button">
+                            <i class="fas fa-edit"></i> Cambiar nombre
+                        </button>
                     </div>
-                    <div class="online-counter">
-                        <i class="fas fa-users"></i>
-                        <span id="onlineCount">0</span> usuarios en línea
+                    
+                    <!-- Online Users -->
+                    <div class="online-section">
+                        <div class="section-title">
+                            <span>Usuarios en línea</span>
+                            <span class="online-count" id="onlineCount">0</span>
+                        </div>
+                        <div class="online-list" id="onlineList">
+                            <div class="online-user">
+                                <div class="online-avatar">U</div>
+                                <div class="online-name">Cargando...</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preferences -->
+                    <div class="preferences-section">
+                        <div class="section-title">Preferencias</div>
+                        
+                        <div class="pref-option">
+                            <label class="pref-label">
+                                <i class="fas fa-moon"></i> Tema oscuro
+                            </label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="darkThemeToggle" class="toggle-checkbox" checked>
+                                <label for="darkThemeToggle" class="toggle-slider"></label>
+                            </div>
+                        </div>
+                        
+                        <div class="pref-option">
+                            <label class="pref-label">
+                                <i class="fas fa-bell"></i> Sonidos
+                            </label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="soundToggle" class="toggle-checkbox" checked>
+                                <label for="soundToggle" class="toggle-slider"></label>
+                            </div>
+                        </div>
+                        
+                        <div class="pref-option">
+                            <label class="pref-label">
+                                <i class="fas fa-eye"></i> Ver escribiendo
+                            </label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="typingToggle" class="toggle-checkbox" checked>
+                                <label for="typingToggle" class="toggle-slider"></label>
+                            </div>
+                        </div>
+                        
+                        <button id="clearChatBtn" class="pref-button">
+                            <i class="fas fa-trash"></i> Limpiar chat
+                        </button>
+                        <button id="exportChatBtn" class="pref-button">
+                            <i class="fas fa-download"></i> Exportar chat
+                        </button>
                     </div>
                 </div>
-
-                <!-- Messages Container -->
+            </div>
+            
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <!-- Messages -->
                 <div class="messages-container" id="messagesContainer">
-                    <!-- Messages will be loaded here -->
-                    <div class="system-message" id="welcomeMessage">
-                        <i class="fas fa-door-open"></i> Bienvenido al chat público de FoxWeb. Aquí puedes conversar con otros miembros de la comunidad sobre software, sistemas operativos, juegos y más.
+                    <div class="system-message">
+                        <i class="fas fa-comments"></i> Bienvenido al chat de FoxWeb
                     </div>
                 </div>
-
+                
                 <!-- Typing Indicator -->
                 <div class="typing-indicator" id="typingIndicator">
                     <span id="typingText"></span>
@@ -1109,799 +1112,499 @@
                         <div class="typing-dot"></div>
                     </div>
                 </div>
-
-                <!-- Message Input -->
-                <div class="message-input-container">
-                    <div class="message-input-box">
-                        <textarea class="message-input" id="messageInput" 
-                                  placeholder="Escribe tu mensaje aquí..." 
+                
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="input-container">
+                        <textarea id="messageInput" class="message-input" 
+                                  placeholder="Escribe un mensaje..." 
                                   rows="1" maxlength="500"></textarea>
-                        <button class="send-button" id="sendButton" disabled>
+                        <button id="sendBtn" class="send-btn" disabled>
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
                 </div>
             </div>
-
-            <!-- Preferences Sidebar -->
-            <div class="preferences-sidebar hidden" id="preferencesSidebar">
-                <div class="sidebar-header">
-                    <h3 class="sidebar-title">
-                        <i class="fas fa-cog"></i> Preferencias del chat
-                    </h3>
-                    <button class="close-sidebar" id="closePreferences">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <!-- Appearance Section -->
-                <div class="preferences-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-palette"></i> Apariencia
-                    </h4>
-                    
-                    <div class="pref-option">
-                        <label class="pref-label">
-                            <i class="fas fa-moon"></i> Tema oscuro
-                        </label>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="darkThemeToggle" class="toggle-checkbox" checked>
-                            <label for="darkThemeToggle" class="toggle-slider"></label>
-                        </div>
-                    </div>
-                    
-                    <div class="pref-option">
-                        <label class="pref-label">
-                            <i class="fas fa-clock"></i> Mostrar hora en mensajes
-                        </label>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="showTimestampsToggle" class="toggle-checkbox" checked>
-                            <label for="showTimestampsToggle" class="toggle-slider"></label>
-                        </div>
-                    </div>
-                    
-                    <div class="pref-option">
-                        <label class="pref-label">
-                            <i class="fas fa-bell"></i> Sonido de notificaciones
-                        </label>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="soundNotificationsToggle" class="toggle-checkbox" checked>
-                            <label for="soundNotificationsToggle" class="toggle-slider"></label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chat Behavior Section -->
-                <div class="preferences-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-comment-alt"></i> Comportamiento del chat
-                    </h4>
-                    
-                    <div class="pref-option">
-                        <label class="pref-label">
-                            <i class="fas fa-eye"></i> Mostrar cuando otros escriben
-                        </label>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="showTypingToggle" class="toggle-checkbox" checked>
-                            <label for="showTypingToggle" class="toggle-slider"></label>
-                        </div>
-                    </div>
-                    
-                    <div class="pref-option">
-                        <label class="pref-label">
-                            <i class="fas fa-image"></i> Mostrar imágenes automáticamente
-                        </label>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="showImagesToggle" class="toggle-checkbox" checked>
-                            <label for="showImagesToggle" class="toggle-slider"></label>
-                        </div>
-                    </div>
-                    
-                    <div class="pref-option">
-                        <label class="pref-label">
-                            <i class="fas fa-scroll"></i> Mensajes por carga
-                        </label>
-                        <select class="pref-select" id="messagesPerLoad">
-                            <option value="20">20 mensajes</option>
-                            <option value="50" selected>50 mensajes</option>
-                            <option value="100">100 mensajes</option>
-                            <option value="200">200 mensajes</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- User Settings Section -->
-                <div class="preferences-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-user"></i> Configuración de usuario
-                    </h4>
-                    
-                    <div class="pref-option">
-                        <label class="pref-label">
-                            <i class="fas fa-signature"></i> Cambiar nombre de usuario
-                        </label>
-                        <button class="pref-button" id="changeUsernameBtn">
-                            <i class="fas fa-edit"></i> Cambiar
-                        </button>
-                    </div>
-                    
-                    <div class="pref-option">
-                        <label class="pref-label">
-                            <i class="fas fa-robot"></i> Avatar generado por IA
-                        </label>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="aiAvatarToggle" class="toggle-checkbox">
-                            <label for="aiAvatarToggle" class="toggle-slider"></label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Data Management Section -->
-                <div class="preferences-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-database"></i> Gestión de datos
-                    </h4>
-                    
-                    <button class="pref-button" id="clearHistoryBtn">
-                        <i class="fas fa-trash-alt"></i> Limpiar historial local
-                    </button>
-                    
-                    <button class="pref-button" id="exportDataBtn">
-                        <i class="fas fa-download"></i> Exportar datos del chat
-                    </button>
-                    
-                    <button class="pref-button danger" id="resetSettingsBtn">
-                        <i class="fas fa-redo"></i> Restablecer preferencias
-                    </button>
-                </div>
-
-                <!-- Connection Info -->
-                <div class="preferences-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-wifi"></i> Conexión
-                    </h4>
-                    
-                    <div class="pref-option">
-                        <label class="pref-label">
-                            <i class="fas fa-server"></i> Servidor:
-                        </label>
-                        <span id="serverStatus" style="color: var(--success); font-weight: 600;">
-                            <i class="fas fa-circle"></i> Conectado
-                        </span>
-                    </div>
-                    
-                    <div class="pref-option">
-                        <label class="pref-label">
-                            <i class="fas fa-users"></i> Usuarios en línea:
-                        </label>
-                        <span id="sidebarOnlineCount" style="font-weight: 600;">0</span>
-                    </div>
-                    
-                    <button class="pref-button primary mt-2" id="refreshConnectionBtn">
-                        <i class="fas fa-sync-alt"></i> Re-conectar
-                    </button>
-                </div>
-
-                <!-- About Section -->
-                <div class="preferences-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-info-circle"></i> Acerca de
-                    </h4>
-                    
-                    <div style="font-size: 0.9em; color: var(--text-dim); line-height: 1.5;">
-                        <p><strong>FoxWeb Chat v1.0</strong></p>
-                        <p>Chat público oficial de la comunidad FoxWeb.</p>
-                        <p class="mt-1">Conectado a: <span id="serverUrl">foxweb-chat-server.onrender.com</span></p>
-                        <p class="mt-1">Todos los mensajes son públicos y se almacenan temporalmente en el servidor.</p>
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <!-- Footer -->
-        <div class="chat-footer">
-            <p>© 2025 FoxWeb Chat - Chat oficial de la comunidad FoxWeb</p>
-            <div class="footer-links">
-                <a href="https://foxweb.vercel.app" class="footer-link">
-                    <i class="fas fa-home"></i> Sitio principal
-                </a>
-                <a href="https://github.com/foxorange224" class="footer-link" target="_blank">
-                    <i class="fab fa-github"></i> GitHub
-                </a>
-                <a href="https://www.youtube.com/@FoxOrange224" class="footer-link" target="_blank">
-                    <i class="fab fa-youtube"></i> YouTube
-                </a>
-                <a href="https://discord.gg/r9v67gFRcp" class="footer-link" target="_blank">
-                    <i class="fab fa-discord"></i> Discord
-                </a>
-            </div>
-        </div>
+        
+        <!-- Scroll to Bottom Button -->
+        <button id="scrollBottomBtn" class="scroll-to-bottom hidden">
+            <i class="fas fa-chevron-down"></i>
+        </button>
     </div>
 
     <script>
-        // Configuración de la aplicación
+        // Configuración
         const CONFIG = {
             SERVER_URL: 'https://foxweb-chat-server.onrender.com',
             STORAGE_KEYS: {
                 USERNAME: 'foxweb_chat_username',
-                PREFERENCES: 'foxweb_chat_preferences',
-                MESSAGES: 'foxweb_chat_messages',
-                USER_ID: 'foxweb_chat_user_id'
+                USER_ID: 'foxweb_chat_user_id',
+                PREFERENCES: 'foxweb_chat_prefs',
+                MESSAGES: 'foxweb_chat_msgs'
             },
-            DEFAULT_PREFERENCES: {
-                darkTheme: true,
-                showTimestamps: true,
-                soundNotifications: true,
-                showTyping: true,
-                showImages: true,
-                messagesPerLoad: 50,
-                aiAvatar: false
-            },
-            MAX_MESSAGES_STORED: 1000,
-            MESSAGE_LIMIT: 500
+            TYPING_TIMEOUT: 3000, // 3 segundos
+            MAX_MESSAGES: 500
         };
 
-        // Estado de la aplicación
-        let appState = {
+        // Estado
+        const state = {
             username: '',
             userId: '',
-            messages: [],
-            onlineUsers: 0,
             connected: false,
             socket: null,
-            preferences: {...CONFIG.DEFAULT_PREFERENCES},
-            typingUsers: new Set(),
-            lastMessageId: 0
+            messages: [],
+            onlineUsers: new Map(),
+            typingUsers: new Map(),
+            preferences: {
+                darkTheme: true,
+                sounds: true,
+                showTyping: true
+            }
         };
 
-        // Elementos del DOM
+        // Elementos DOM
         const loginOverlay = document.getElementById('loginOverlay');
-        const appContainer = document.getElementById('appContainer');
+        const app = document.getElementById('app');
         const usernameInput = document.getElementById('usernameInput');
-        const loginButton = document.getElementById('loginButton');
-        const usernameError = document.getElementById('usernameError');
-        const usernameDisplay = document.getElementById('usernameDisplay');
+        const loginBtn = document.getElementById('loginBtn');
         const userAvatar = document.getElementById('userAvatar');
+        const sidebarUsername = document.getElementById('sidebarUsername');
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
         const onlineCount = document.getElementById('onlineCount');
-        const sidebarOnlineCount = document.getElementById('sidebarOnlineCount');
+        const onlineList = document.getElementById('onlineList');
         const messagesContainer = document.getElementById('messagesContainer');
         const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
+        const sendBtn = document.getElementById('sendBtn');
         const typingIndicator = document.getElementById('typingIndicator');
         const typingText = document.getElementById('typingText');
-        const welcomeMessage = document.getElementById('welcomeMessage');
-        const serverStatus = document.getElementById('serverStatus');
-        const serverUrl = document.getElementById('serverUrl');
-        
-        // Elementos de preferencias
-        const preferencesToggle = document.getElementById('preferencesToggle');
-        const preferencesSidebar = document.getElementById('preferencesSidebar');
-        const closePreferences = document.getElementById('closePreferences');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
         const themeToggle = document.getElementById('themeToggle');
+        const usersToggle = document.getElementById('usersToggle');
         const darkThemeToggle = document.getElementById('darkThemeToggle');
-        const showTimestampsToggle = document.getElementById('showTimestampsToggle');
-        const soundNotificationsToggle = document.getElementById('soundNotificationsToggle');
-        const showTypingToggle = document.getElementById('showTypingToggle');
-        const showImagesToggle = document.getElementById('showImagesToggle');
-        const messagesPerLoad = document.getElementById('messagesPerLoad');
-        const aiAvatarToggle = document.getElementById('aiAvatarToggle');
-        const changeUsernameBtn = document.getElementById('changeUsernameBtn');
-        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-        const exportDataBtn = document.getElementById('exportDataBtn');
-        const resetSettingsBtn = document.getElementById('resetSettingsBtn');
-        const refreshConnectionBtn = document.getElementById('refreshConnectionBtn');
+        const soundToggle = document.getElementById('soundToggle');
+        const typingToggle = document.getElementById('typingToggle');
+        const changeNameBtn = document.getElementById('changeNameBtn');
+        const clearChatBtn = document.getElementById('clearChatBtn');
+        const exportChatBtn = document.getElementById('exportChatBtn');
+        const scrollBottomBtn = document.getElementById('scrollBottomBtn');
 
-        // Inicializar la aplicación
-        function initApp() {
+        // Inicializar
+        function init() {
             loadPreferences();
-            loadSavedMessages();
+            loadMessages();
             setupEventListeners();
             
-            // Verificar si hay un usuario guardado
+            // Auto login si hay usuario guardado
             const savedUsername = localStorage.getItem(CONFIG.STORAGE_KEYS.USERNAME);
-            const savedUserId = localStorage.getItem(CONFIG.STORAGE_KEYS.USER_ID);
-            
-            if (savedUsername && savedUsername.trim() !== '') {
-                // Auto-login con usuario guardado
+            if (savedUsername && savedUsername.trim()) {
                 usernameInput.value = savedUsername;
-                if (savedUserId) appState.userId = savedUserId;
-                handleLogin();
+                login();
             }
         }
 
         // Configurar event listeners
         function setupEventListeners() {
             // Login
-            loginButton.addEventListener('click', handleLogin);
-            usernameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleLogin();
+            loginBtn.addEventListener('click', login);
+            usernameInput.addEventListener('keypress', e => {
+                if (e.key === 'Enter') login();
             });
             
             // Chat input
-            messageInput.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-                
-                // Habilitar/deshabilitar botón de enviar
-                sendButton.disabled = this.value.trim() === '';
-                
-                // Notificar que está escribiendo
-                if (appState.connected && appState.socket) {
-                    appState.socket.emit('typing');
-                    setTimeout(() => {
-                        if (appState.connected && appState.socket) {
-                            appState.socket.emit('stopTyping');
-                        }
-                    }, 1000);
-                }
-            });
-            
-            messageInput.addEventListener('keypress', (e) => {
+            messageInput.addEventListener('input', handleInput);
+            messageInput.addEventListener('keypress', e => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();
                 }
             });
+            sendBtn.addEventListener('click', sendMessage);
             
-            sendButton.addEventListener('click', sendMessage);
+            // Sidebar
+            menuToggle.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+            sidebarClose.addEventListener('click', closeSidebar);
+            usersToggle.addEventListener('click', toggleSidebar);
             
             // Preferencias
-            preferencesToggle.addEventListener('click', togglePreferences);
-            closePreferences.addEventListener('click', togglePreferences);
-            
-            // Tema
             themeToggle.addEventListener('click', toggleTheme);
-            darkThemeToggle.addEventListener('change', function() {
-                updatePreference('darkTheme', this.checked);
+            darkThemeToggle.addEventListener('change', e => {
+                state.preferences.darkTheme = e.target.checked;
+                savePreferences();
                 applyTheme();
             });
             
-            // Otras preferencias
-            showTimestampsToggle.addEventListener('change', function() {
-                updatePreference('showTimestamps', this.checked);
-                renderMessages();
+            soundToggle.addEventListener('change', e => {
+                state.preferences.sounds = e.target.checked;
+                savePreferences();
             });
             
-            soundNotificationsToggle.addEventListener('change', function() {
-                updatePreference('soundNotifications', this.checked);
+            typingToggle.addEventListener('change', e => {
+                state.preferences.showTyping = e.target.checked;
+                savePreferences();
             });
             
-            showTypingToggle.addEventListener('change', function() {
-                updatePreference('showTyping', this.checked);
-                updateTypingIndicator();
-            });
+            // Botones
+            changeNameBtn.addEventListener('click', changeUsername);
+            clearChatBtn.addEventListener('click', clearChat);
+            exportChatBtn.addEventListener('click', exportChat);
             
-            showImagesToggle.addEventListener('change', function() {
-                updatePreference('showImages', this.checked);
-            });
+            // Scroll
+            messagesContainer.addEventListener('scroll', handleScroll);
+            scrollBottomBtn.addEventListener('click', scrollToBottom);
             
-            messagesPerLoad.addEventListener('change', function() {
-                updatePreference('messagesPerLoad', parseInt(this.value));
-            });
-            
-            aiAvatarToggle.addEventListener('change', function() {
-                updatePreference('aiAvatar', this.checked);
-                updateUserAvatar();
-            });
-            
-            // Botones de preferencias
-            changeUsernameBtn.addEventListener('click', changeUsername);
-            clearHistoryBtn.addEventListener('click', clearLocalHistory);
-            exportDataBtn.addEventListener('click', exportChatData);
-            resetSettingsBtn.addEventListener('click', resetPreferences);
-            refreshConnectionBtn.addEventListener('click', reconnectToServer);
-            
-            // Cerrar preferencias al hacer clic fuera
-            document.addEventListener('click', (e) => {
-                if (!preferencesSidebar.contains(e.target) && 
-                    !preferencesToggle.contains(e.target) && 
-                    !preferencesSidebar.classList.contains('hidden')) {
-                    preferencesSidebar.classList.add('hidden');
-                }
+            // Cerrar sidebar al cambiar tamaño
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) closeSidebar();
             });
         }
 
-        // Manejar inicio de sesión
-        function handleLogin() {
+        // Login
+        function login() {
             const username = usernameInput.value.trim();
-            
-            // Validar nombre de usuario
-            if (!username || username.length < 3 || username.length > 25) {
-                usernameError.style.display = 'block';
-                usernameInput.focus();
+            if (!username || username.length < 2) {
+                alert('Por favor, ingresa un nombre válido (mínimo 2 caracteres)');
                 return;
             }
             
-            usernameError.style.display = 'none';
+            state.username = username;
+            state.userId = Date.now().toString(36) + Math.random().toString(36).substr(2);
             
-            // Guardar nombre de usuario
-            appState.username = username;
-            
-            // Generar o usar ID de usuario existente
-            if (!appState.userId) {
-                appState.userId = generateUserId(username);
-                localStorage.setItem(CONFIG.STORAGE_KEYS.USER_ID, appState.userId);
-            }
-            
+            // Guardar
             localStorage.setItem(CONFIG.STORAGE_KEYS.USERNAME, username);
+            localStorage.setItem(CONFIG.STORAGE_KEYS.USER_ID, state.userId);
             
             // Actualizar UI
-            usernameDisplay.textContent = username;
-            updateUserAvatar();
-            
-            // Ocultar login, mostrar aplicación
+            updateUserInfo();
             loginOverlay.style.display = 'none';
-            appContainer.style.display = 'flex';
+            app.classList.remove('hidden');
             
-            // Conectar al servidor de chat
-            connectToChatServer();
+            // Conectar al chat
+            connectToChat();
             
-            // Enfocar el campo de mensaje
-            setTimeout(() => {
-                messageInput.focus();
-            }, 100);
+            // Enfocar input
+            setTimeout(() => messageInput.focus(), 100);
         }
 
-        // Generar ID de usuario único
-        function generateUserId(username) {
-            const timestamp = Date.now().toString(36);
-            const random = Math.random().toString(36).substring(2, 9);
-            return `${username.substring(0, 3)}_${timestamp}_${random}`;
-        }
-
-        // Conectar al servidor WebSocket
-        function connectToChatServer() {
-            try {
-                // Cargar Socket.io dinámicamente si es necesario
-                if (typeof io === 'undefined') {
-                    loadSocketIO().then(() => {
-                        initSocketConnection();
-                    });
-                } else {
-                    initSocketConnection();
-                }
-            } catch (error) {
-                console.error('Error al conectar al servidor:', error);
-                showConnectionError();
-                
-                // Intentar reconectar después de 5 segundos
-                setTimeout(connectToChatServer, 5000);
-            }
-        }
-
-        // Cargar Socket.io
-        function loadSocketIO() {
-            return new Promise((resolve) => {
+        // Conectar al servidor
+        function connectToChat() {
+            // Cargar Socket.io dinámicamente
+            if (typeof io === 'undefined') {
                 const script = document.createElement('script');
                 script.src = 'https://cdn.socket.io/4.5.0/socket.io.min.js';
-                script.onload = resolve;
-                script.onerror = () => {
-                    console.error('Error cargando Socket.io');
-                    resolve();
-                };
+                script.onload = initSocket;
                 document.head.appendChild(script);
-            });
+            } else {
+                initSocket();
+            }
         }
 
-        // Inicializar conexión Socket.io
-        function initSocketConnection() {
+        // Inicializar Socket.io
+        function initSocket() {
             try {
-                appState.socket = io(CONFIG.SERVER_URL, {
+                state.socket = io(CONFIG.SERVER_URL, {
                     transports: ['websocket', 'polling'],
                     reconnection: true,
-                    reconnectionAttempts: 5,
-                    reconnectionDelay: 1000
+                    reconnectionAttempts: 5
                 });
                 
-                appState.socket.on('connect', function() {
-                    console.log('✅ Conectado al servidor de chat');
-                    appState.connected = true;
+                // Eventos
+                state.socket.on('connect', () => {
+                    state.connected = true;
                     updateConnectionStatus(true);
-                    
-                    // Unirse al chat
-                    appState.socket.emit('join', appState.username);
-                    
-                    // Mostrar mensaje de conexión exitosa
-                    addSystemMessage('Conectado al servidor de chat');
+                    state.socket.emit('join', state.username);
+                    addSystemMessage('Conectado al chat');
                 });
                 
-                appState.socket.on('userCount', function(count) {
-                    appState.onlineUsers = count;
-                    updateOnlineCount();
+                state.socket.on('userCount', count => {
+                    updateOnlineCount(count);
                 });
                 
-                appState.socket.on('userJoined', function(data) {
-                    if (data.username !== appState.username) {
-                        addSystemMessage(`${data.username} se ha unido al chat`);
-                        playNotificationSound('join');
+                state.socket.on('userJoined', data => {
+                    if (data.username !== state.username) {
+                        addSystemMessage(`${data.username} se ha unido`);
+                        playSound('join');
                     }
                 });
                 
-                appState.socket.on('userLeft', function(data) {
-                    addSystemMessage(`${data.username} ha salido del chat`);
+                state.socket.on('userLeft', data => {
+                    addSystemMessage(`${data.username} se ha ido`);
                 });
                 
-                appState.socket.on('message', function(data) {
-                    addMessage({
-                        id: Date.now(),
-                        username: data.username,
-                        text: data.message,
-                        timestamp: data.time || new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                        isOwn: data.username === appState.username
-                    });
+                state.socket.on('message', data => {
+                    addMessage(data.username, data.message, data.time);
+                    if (data.username !== state.username && state.preferences.sounds) {
+                        playSound('message');
+                    }
+                });
+                
+                state.socket.on('typing', data => {
+                    if (data.username === state.username || !state.preferences.showTyping) return;
                     
-                    // Reproducir sonido de notificación si está habilitado
-                    if (data.username !== appState.username && appState.preferences.soundNotifications) {
-                        playNotificationSound('message');
-                    }
-                });
-                
-                appState.socket.on('typing', function(data) {
-                    if (data.username !== appState.username && appState.preferences.showTyping) {
-                        appState.typingUsers.add(data.username);
-                        updateTypingIndicator();
-                    }
-                });
-                
-                appState.socket.on('stopTyping', function() {
-                    appState.typingUsers.clear();
+                    // Actualizar usuario escribiendo
+                    state.typingUsers.set(data.username, Date.now());
                     updateTypingIndicator();
-                });
-                
-                appState.socket.on('disconnect', function() {
-                    console.log('❌ Desconectado del servidor de chat');
-                    appState.connected = false;
-                    updateConnectionStatus(false);
-                    addSystemMessage('Desconectado del servidor. Reconectando...');
                     
-                    // Intentar reconectar después de 3 segundos
-                    setTimeout(connectToChatServer, 3000);
+                    // Limpiar después de 3 segundos
+                    setTimeout(() => {
+                        if (state.typingUsers.has(data.username)) {
+                            const typingTime = state.typingUsers.get(data.username);
+                            if (Date.now() - typingTime >= CONFIG.TYPING_TIMEOUT) {
+                                state.typingUsers.delete(data.username);
+                                updateTypingIndicator();
+                            }
+                        }
+                    }, CONFIG.TYPING_TIMEOUT);
                 });
                 
-                appState.socket.on('connect_error', function(error) {
-                    console.error('Error de conexión:', error);
-                    showConnectionError();
+                state.socket.on('disconnect', () => {
+                    state.connected = false;
+                    updateConnectionStatus(false);
+                    addSystemMessage('Desconectado. Reconectando...');
+                });
+                
+                state.socket.on('connect_error', () => {
+                    addSystemMessage('Error de conexión');
                 });
                 
             } catch (error) {
-                console.error('Error al inicializar Socket.io:', error);
-                showConnectionError();
+                console.error('Error conectando al chat:', error);
+                addSystemMessage('Modo local activado (sin conexión al servidor)');
             }
         }
 
-        // Mostrar error de conexión
-        function showConnectionError() {
-            serverStatus.innerHTML = '<i class="fas fa-circle" style="color: var(--danger);"></i> Desconectado';
-            statusDot.className = 'status-dot offline';
-            statusText.textContent = 'Desconectado';
-            addSystemMessage('No se pudo conectar al servidor. Reintentando...');
-        }
-
-        // Actualizar estado de conexión
-        function updateConnectionStatus(connected) {
-            if (connected) {
-                serverStatus.innerHTML = '<i class="fas fa-circle" style="color: var(--success);"></i> Conectado';
-                statusDot.className = 'status-dot';
-                statusText.textContent = 'Conectado';
-            } else {
-                serverStatus.innerHTML = '<i class="fas fa-circle" style="color: var(--danger);"></i> Desconectado';
-                statusDot.className = 'status-dot offline';
-                statusText.textContent = 'Desconectado';
+        // Manejar input
+        let typingTimeout;
+        function handleInput() {
+            // Ajustar altura
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            
+            // Habilitar/deshabilitar botón
+            sendBtn.disabled = !this.value.trim();
+            
+            // Notificar que está escribiendo
+            if (state.connected && state.socket) {
+                clearTimeout(typingTimeout);
+                state.socket.emit('typing');
+                
+                typingTimeout = setTimeout(() => {
+                    if (state.connected && state.socket) {
+                        state.socket.emit('stopTyping');
+                    }
+                }, 1000);
             }
-        }
-
-        // Actualizar contador de usuarios en línea
-        function updateOnlineCount() {
-            onlineCount.textContent = appState.onlineUsers;
-            sidebarOnlineCount.textContent = appState.onlineUsers;
         }
 
         // Enviar mensaje
         function sendMessage() {
             const text = messageInput.value.trim();
-            
-            if (!text || !appState.username || !appState.connected) return;
+            if (!text || !state.connected) return;
             
             // Enviar al servidor
-            if (appState.socket) {
-                appState.socket.emit('message', text);
-            }
+            state.socket.emit('message', text);
             
-            // Limpiar campo de entrada
+            // Limpiar input
             messageInput.value = '';
             messageInput.style.height = 'auto';
-            sendButton.disabled = true;
-            
-            // Enfocar de nuevo en el campo
+            sendBtn.disabled = true;
             messageInput.focus();
         }
 
-        // Agregar mensaje a la UI
-        function addMessage(messageData) {
-            // Crear objeto de mensaje completo
+        // Agregar mensaje
+        function addMessage(username, text, time) {
+            const isOwn = username === state.username;
             const message = {
-                id: messageData.id || Date.now(),
-                username: messageData.username,
-                text: messageData.text,
-                timestamp: messageData.timestamp || new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                isOwn: messageData.isOwn || false,
+                id: Date.now(),
+                username,
+                text,
+                time: time || new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                isOwn,
                 date: new Date().toISOString()
             };
             
-            // Agregar al estado
-            appState.messages.push(message);
-            
-            // Guardar mensajes (manteniendo límite)
-            if (appState.messages.length > CONFIG.MAX_MESSAGES_STORED) {
-                appState.messages = appState.messages.slice(-CONFIG.MAX_MESSAGES_STORED);
+            state.messages.push(message);
+            if (state.messages.length > CONFIG.MAX_MESSAGES) {
+                state.messages = state.messages.slice(-CONFIG.MAX_MESSAGES);
             }
             
-            // Guardar en localStorage
             saveMessages();
-            
-            // Renderizar mensaje si estamos en la vista principal
-            if (!preferencesSidebar.classList.contains('hidden')) return;
-            
-            const messageElement = createMessageElement(message);
-            messagesContainer.appendChild(messageElement);
-            
-            // Desplazarse al final
-            scrollToBottom();
+            renderMessage(message);
         }
 
-        // Crear elemento de mensaje
-        function createMessageElement(message) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${message.isOwn ? 'own' : ''}`;
-            messageDiv.dataset.id = message.id;
+        // Renderizar mensaje
+        function renderMessage(message) {
+            const div = document.createElement('div');
+            div.className = `message ${message.isOwn ? 'own' : ''}`;
             
-            // Color de avatar basado en el nombre de usuario
-            const avatarColor = getAvatarColor(message.username);
-            const avatarLetter = message.username.charAt(0).toUpperCase();
+            // Formatear texto (enlaces y saltos de línea)
+            const formattedText = message.text
+                .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: inherit; text-decoration: underline;">$1</a>')
+                .replace(/\n/g, '<br>');
             
-            // Formatear texto (soporte para URLs y saltos de línea)
-            const formattedText = formatMessageText(message.text);
-            
-            // Construir HTML del mensaje
-            let messageHTML = `
-                <div class="message-avatar" style="background-color: ${avatarColor}">
-                    ${avatarLetter}
-                </div>
+            div.innerHTML = `
                 <div class="message-content">
                     <div class="message-header">
                         <span class="message-username">${escapeHtml(message.username)}</span>
-            `;
-            
-            // Agregar timestamp si está habilitado
-            if (appState.preferences.showTimestamps) {
-                messageHTML += `<span class="message-time">${message.timestamp}</span>`;
-            }
-            
-            messageHTML += `
+                        <span class="message-time">${message.time}</span>
                     </div>
                     <div class="message-text">${formattedText}</div>
                 </div>
             `;
             
-            messageDiv.innerHTML = messageHTML;
-            return messageDiv;
+            messagesContainer.appendChild(div);
+            
+            // Auto-scroll si está cerca del final
+            const scrollThreshold = 100;
+            if (messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < scrollThreshold) {
+                scrollToBottom();
+            } else {
+                scrollBottomBtn.classList.remove('hidden');
+            }
         }
 
         // Agregar mensaje del sistema
         function addSystemMessage(text) {
-            const systemMessage = document.createElement('div');
-            systemMessage.className = 'system-message';
-            systemMessage.innerHTML = `<i class="fas fa-info-circle"></i> ${text}`;
-            
-            messagesContainer.appendChild(systemMessage);
-            scrollToBottom();
-        }
-
-        // Renderizar todos los mensajes
-        function renderMessages() {
-            // Limpiar contenedor
-            messagesContainer.innerHTML = '';
-            
-            // Agregar mensaje de bienvenida
-            messagesContainer.appendChild(welcomeMessage);
-            
-            // Agregar mensajes
-            appState.messages.forEach(msg => {
-                const messageElement = createMessageElement(msg);
-                messagesContainer.appendChild(messageElement);
-            });
-            
-            // Desplazarse al final
+            const div = document.createElement('div');
+            div.className = 'system-message';
+            div.innerHTML = `<i class="fas fa-info-circle"></i> ${text}`;
+            messagesContainer.appendChild(div);
             scrollToBottom();
         }
 
         // Actualizar indicador de escritura
         function updateTypingIndicator() {
-            if (!appState.preferences.showTyping || appState.typingUsers.size === 0) {
+            if (state.typingUsers.size === 0 || !state.preferences.showTyping) {
                 typingIndicator.style.display = 'none';
                 return;
             }
             
-            const users = Array.from(appState.typingUsers);
+            const users = Array.from(state.typingUsers.keys());
             let text = '';
             
             if (users.length === 1) {
-                text = `${users[0]} está escribiendo...`;
+                text = `${users[0]} está escribiendo`;
             } else if (users.length === 2) {
-                text = `${users[0]} y ${users[1]} están escribiendo...`;
-            } else if (users.length === 3) {
-                text = `${users[0]}, ${users[1]} y ${users[2]} están escribiendo...`;
+                text = `${users[0]} y ${users[1]} están escribiendo`;
             } else {
-                text = `${users[0]}, ${users[1]} y ${users.length - 2} más están escribiendo...`;
+                text = `${users[0]} y ${users.length - 1} más están escribiendo`;
             }
             
             typingText.textContent = text;
             typingIndicator.style.display = 'flex';
+        }
+
+        // Actualizar información del usuario
+        function updateUserInfo() {
+            const firstLetter = state.username.charAt(0).toUpperCase();
+            const color = getAvatarColor(state.username);
             
-            // Ocultar después de 3 segundos si no hay actualizaciones
-            clearTimeout(window.typingTimeout);
-            window.typingTimeout = setTimeout(() => {
-                appState.typingUsers.clear();
-                typingIndicator.style.display = 'none';
-            }, 3000);
+            userAvatar.textContent = firstLetter;
+            userAvatar.style.background = color;
+            sidebarUsername.textContent = state.username;
         }
 
-        // Desplazarse al final del chat
-        function scrollToBottom() {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        // Actualizar contador en línea
+        function updateOnlineCount(count) {
+            onlineCount.textContent = count;
+            
+            // Actualizar lista (simulada - necesitarías recibir lista completa del servidor)
+            updateOnlineList();
         }
 
-        // Cargar preferencias guardadas
-        function loadPreferences() {
-            try {
-                const savedPrefs = localStorage.getItem(CONFIG.STORAGE_KEYS.PREFERENCES);
-                if (savedPrefs) {
-                    appState.preferences = {...CONFIG.DEFAULT_PREFERENCES, ...JSON.parse(savedPrefs)};
-                }
-            } catch (e) {
-                console.warn('Error cargando preferencias:', e);
+        // Actualizar lista en línea
+        function updateOnlineList() {
+            // Esto es un ejemplo - necesitarías recibir la lista real del servidor
+            onlineList.innerHTML = `
+                <div class="online-user">
+                    <div class="online-avatar" style="background: ${getAvatarColor(state.username)}">${state.username.charAt(0).toUpperCase()}</div>
+                    <div class="online-name">${state.username} (tú)</div>
+                </div>
+            `;
+        }
+
+        // Cambiar nombre de usuario
+        function changeUsername() {
+            const newName = prompt('Nuevo nombre de usuario:', state.username);
+            if (!newName || newName.trim().length < 2) return;
+            
+            const oldName = state.username;
+            state.username = newName.trim();
+            localStorage.setItem(CONFIG.STORAGE_KEYS.USERNAME, state.username);
+            
+            updateUserInfo();
+            
+            if (state.connected && state.socket) {
+                state.socket.emit('join', state.username);
+                addSystemMessage(`Cambiaste tu nombre de ${oldName} a ${state.username}`);
             }
-            
-            // Aplicar preferencias a los controles
-            darkThemeToggle.checked = appState.preferences.darkTheme;
-            showTimestampsToggle.checked = appState.preferences.showTimestamps;
-            soundNotificationsToggle.checked = appState.preferences.soundNotifications;
-            showTypingToggle.checked = appState.preferences.showTyping;
-            showImagesToggle.checked = appState.preferences.showImages;
-            messagesPerLoad.value = appState.preferences.messagesPerLoad;
-            aiAvatarToggle.checked = appState.preferences.aiAvatar;
-            
-            // Aplicar tema
-            applyTheme();
         }
 
-        // Guardar preferencias
-        function savePreferences() {
-            try {
-                localStorage.setItem(CONFIG.STORAGE_KEYS.PREFERENCES, JSON.stringify(appState.preferences));
-            } catch (e) {
-                console.warn('Error guardando preferencias:', e);
+        // Limpiar chat
+        function clearChat() {
+            if (confirm('¿Limpiar todo el historial de mensajes?')) {
+                state.messages = [];
+                messagesContainer.innerHTML = `
+                    <div class="system-message">
+                        <i class="fas fa-comments"></i> Chat limpio
+                    </div>
+                `;
+                saveMessages();
             }
         }
 
-        // Actualizar una preferencia
-        function updatePreference(key, value) {
-            appState.preferences[key] = value;
-            savePreferences();
+        // Exportar chat
+        function exportChat() {
+            try {
+                const data = {
+                    username: state.username,
+                    exportDate: new Date().toISOString(),
+                    messages: state.messages
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `foxweb_chat_${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                addSystemMessage('Chat exportado');
+            } catch (error) {
+                alert('Error al exportar el chat');
+            }
         }
 
-        // Cambiar tema
+        // Alternar sidebar
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        }
+
+        // Alternar tema
         function toggleTheme() {
-            const newTheme = !appState.preferences.darkTheme;
-            updatePreference('darkTheme', newTheme);
+            state.preferences.darkTheme = !state.preferences.darkTheme;
+            darkThemeToggle.checked = state.preferences.darkTheme;
+            savePreferences();
             applyTheme();
         }
 
-        // Aplicar tema
         function applyTheme() {
-            if (appState.preferences.darkTheme) {
+            if (state.preferences.darkTheme) {
                 document.body.classList.remove('light-theme');
                 themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
             } else {
@@ -1910,149 +1613,66 @@
             }
         }
 
-        // Cargar mensajes guardados
-        function loadSavedMessages() {
-            try {
-                const savedMessages = localStorage.getItem(CONFIG.STORAGE_KEYS.MESSAGES);
-                if (savedMessages) {
-                    appState.messages = JSON.parse(savedMessages);
-                    renderMessages();
-                }
-            } catch (e) {
-                console.warn('Error cargando mensajes guardados:', e);
+        // Actualizar estado de conexión
+        function updateConnectionStatus(connected) {
+            if (connected) {
+                statusDot.className = 'status-dot';
+                statusText.textContent = 'Conectado';
+            } else {
+                statusDot.className = 'status-dot offline';
+                statusText.textContent = 'Desconectado';
             }
         }
 
-        // Guardar mensajes
-        function saveMessages() {
-            try {
-                localStorage.setItem(CONFIG.STORAGE_KEYS.MESSAGES, JSON.stringify(appState.messages));
-            } catch (e) {
-                console.warn('Error guardando mensajes:', e);
-            }
-        }
-
-        // Alternar panel de preferencias
-        function togglePreferences() {
-            preferencesSidebar.classList.toggle('hidden');
-        }
-
-        // Cambiar nombre de usuario
-        function changeUsername() {
-            const newUsername = prompt('Ingresa tu nuevo nombre de usuario (3-25 caracteres):', appState.username);
+        // Manejar scroll
+        function handleScroll() {
+            const threshold = 200;
+            const isNearBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < threshold;
             
-            if (!newUsername || newUsername.length < 3 || newUsername.length > 25) {
-                alert('El nombre de usuario debe tener entre 3 y 25 caracteres.');
-                return;
-            }
-            
-            const oldUsername = appState.username;
-            appState.username = newUsername;
-            localStorage.setItem(CONFIG.STORAGE_KEYS.USERNAME, newUsername);
-            usernameDisplay.textContent = newUsername;
-            updateUserAvatar();
-            
-            // Notificar al servidor si está conectado
-            if (appState.connected && appState.socket) {
-                appState.socket.emit('join', newUsername);
-                addSystemMessage(`Has cambiado tu nombre de usuario de "${oldUsername}" a "${newUsername}"`);
+            if (isNearBottom) {
+                scrollBottomBtn.classList.add('hidden');
+            } else {
+                scrollBottomBtn.classList.remove('hidden');
             }
         }
 
-        // Actualizar avatar del usuario
-        function updateUserAvatar() {
-            const avatarLetter = appState.username.charAt(0).toUpperCase();
-            const avatarColor = getAvatarColor(appState.username);
-            
-            userAvatar.textContent = avatarLetter;
-            userAvatar.style.backgroundColor = avatarColor;
+        // Scroll al final
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            scrollBottomBtn.classList.add('hidden');
         }
 
-        // Limpiar historial local
-        function clearLocalHistory() {
-            if (confirm('¿Estás seguro de que quieres eliminar todo el historial de mensajes guardado localmente? Esto no afectará los mensajes en el servidor.')) {
-                appState.messages = [];
-                localStorage.removeItem(CONFIG.STORAGE_KEYS.MESSAGES);
-                renderMessages();
-                addSystemMessage('Historial local limpiado.');
-            }
-        }
-
-        // Exportar datos del chat
-        function exportChatData() {
-            try {
-                const data = {
-                    username: appState.username,
-                    userId: appState.userId,
-                    preferences: appState.preferences,
-                    messages: appState.messages,
-                    exportDate: new Date().toISOString(),
-                    totalMessages: appState.messages.length
-                };
-                
-                const dataStr = JSON.stringify(data, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                
-                const exportFileDefaultName = `foxweb_chat_export_${new Date().toISOString().slice(0,10)}.json`;
-                
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', exportFileDefaultName);
-                linkElement.click();
-                
-                addSystemMessage('Datos del chat exportados correctamente.');
-            } catch (error) {
-                console.error('Error exportando datos:', error);
-                alert('Error al exportar los datos.');
-            }
-        }
-
-        // Restablecer preferencias
-        function resetPreferences() {
-            if (confirm('¿Estás seguro de que quieres restablecer todas las preferencias a los valores predeterminados?')) {
-                appState.preferences = {...CONFIG.DEFAULT_PREFERENCES};
-                savePreferences();
-                loadPreferences(); // Para actualizar los controles
-                addSystemMessage('Preferencias restablecidas a los valores predeterminados.');
-            }
-        }
-
-        // Re-conectar al servidor
-        function reconnectToServer() {
-            if (appState.socket) {
-                appState.socket.disconnect();
-            }
-            
-            addSystemMessage('Reconectando al servidor...');
-            setTimeout(connectToChatServer, 1000);
-        }
-
-        // Reproducir sonido de notificación
-        function playNotificationSound(type) {
-            if (!appState.preferences.soundNotifications) return;
+        // Reproducir sonido
+        function playSound(type) {
+            if (!state.preferences.sounds) return;
             
             try {
                 const audio = new Audio();
                 
-                // Sonidos simples (podrías reemplazarlos con archivos reales)
+                // Sonidos base64 simples
                 if (type === 'message') {
-                    audio.src = 'https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3';
+                    audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ';
                 } else if (type === 'join') {
-                    audio.src = 'https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3';
+                    audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ';
                 }
                 
                 audio.volume = 0.3;
-                audio.play().catch(e => console.log('Error reproduciendo sonido:', e));
-            } catch (error) {
-                console.log('No se pudo reproducir sonido:', error);
+                audio.play().catch(() => {});
+            } catch (e) {
+                // Ignorar errores de audio
             }
         }
 
-        // Obtener color de avatar basado en nombre de usuario
+        // Obtener color de avatar
         function getAvatarColor(username) {
             const colors = [
-                '#FF4500', '#1E90FF', '#32CD32', '#FF1493', 
-                '#FFD700', '#9370DB', '#00CED1', '#FF6347'
+                'linear-gradient(135deg, #FF4500, #FF6B35)',
+                'linear-gradient(135deg, #1E90FF, #00BFFF)',
+                'linear-gradient(135deg, #32CD32, #00FF7F)',
+                'linear-gradient(135deg, #FF1493, #FF69B4)',
+                'linear-gradient(135deg, #FFD700, #FFA500)',
+                'linear-gradient(135deg, #9370DB, #8A2BE2)',
+                'linear-gradient(135deg, #00CED1, #20B2AA)'
             ];
             
             let hash = 0;
@@ -2063,32 +1683,64 @@
             return colors[Math.abs(hash) % colors.length];
         }
 
-        // Formatear texto del mensaje
-        function formatMessageText(text) {
-            // Escapar HTML para seguridad
-            let escapedText = escapeHtml(text);
-            
-            // Reemplazar URLs con enlaces
-            escapedText = escapedText.replace(
-                /(https?:\/\/[^\s]+)/g, 
-                '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">$1</a>'
-            );
-            
-            // Reemplazar saltos de línea
-            escapedText = escapedText.replace(/\n/g, '<br>');
-            
-            return escapedText;
-        }
-
-        // Escapar HTML para seguridad
+        // Escape HTML
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // Inicializar la aplicación cuando se carga la página
-        document.addEventListener('DOMContentLoaded', initApp);
+        // Cargar preferencias
+        function loadPreferences() {
+            try {
+                const saved = localStorage.getItem(CONFIG.STORAGE_KEYS.PREFERENCES);
+                if (saved) {
+                    state.preferences = {...state.preferences, ...JSON.parse(saved)};
+                }
+            } catch (e) {
+                console.warn('Error cargando preferencias:', e);
+            }
+            
+            // Aplicar a controles
+            darkThemeToggle.checked = state.preferences.darkTheme;
+            soundToggle.checked = state.preferences.sounds;
+            typingToggle.checked = state.preferences.showTyping;
+            applyTheme();
+        }
+
+        // Guardar preferencias
+        function savePreferences() {
+            try {
+                localStorage.setItem(CONFIG.STORAGE_KEYS.PREFERENCES, JSON.stringify(state.preferences));
+            } catch (e) {
+                console.warn('Error guardando preferencias:', e);
+            }
+        }
+
+        // Cargar mensajes guardados
+        function loadMessages() {
+            try {
+                const saved = localStorage.getItem(CONFIG.STORAGE_KEYS.MESSAGES);
+                if (saved) {
+                    state.messages = JSON.parse(saved);
+                    state.messages.forEach(renderMessage);
+                }
+            } catch (e) {
+                console.warn('Error cargando mensajes:', e);
+            }
+        }
+
+        // Guardar mensajes
+        function saveMessages() {
+            try {
+                localStorage.setItem(CONFIG.STORAGE_KEYS.MESSAGES, JSON.stringify(state.messages));
+            } catch (e) {
+                console.warn('Error guardando mensajes:', e);
+            }
+        }
+
+        // Iniciar aplicación
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
