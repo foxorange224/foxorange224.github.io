@@ -1,9 +1,193 @@
 {
   "version": 2,
-  "name": "foxweb",
-  "alias": ["foxweb.vercel.app"],
-  "public": true,
-  
+  "builds": [
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.txt",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.xml",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.json",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.jpg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.ico",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "^/chat\\.html$",
+      "dest": "/chat.html",
+      "headers": {
+        "Cache-Control": "public, max-age=300, s-maxage=3600",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Robots-Tag": "noindex, nofollow"
+      }
+    },
+    {
+      "src": "^/index\\.html$",
+      "dest": "/index.html",
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=3600",
+        "Content-Type": "text/html; charset=utf-8",
+        "X-Robots-Tag": "index, follow, max-image-preview:large"
+      }
+    },
+    {
+      "src": "^/data\\.js$",
+      "dest": "/data.js",
+      "headers": {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Access-Control-Allow-Origin": "*",
+        "Timing-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "^/ads\\.txt$",
+      "dest": "/ads.txt",
+      "headers": {
+        "Cache-Control": "public, max-age=86400, s-maxage=604800",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "^/robots\\.txt$",
+      "dest": "/robots.txt",
+      "headers": {
+        "Cache-Control": "public, max-age=86400, s-maxage=604800",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "^/sitemap\\.xml$",
+      "dest": "/sitemap.xml",
+      "headers": {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        "Content-Type": "application/xml; charset=utf-8"
+      }
+    },
+    {
+      "src": "^/(.*\\.(js|mjs))$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Content-Type": "application/javascript",
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "^/(.*\\.css)$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Content-Type": "text/css",
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "^/(.*\\.(png|jpg|jpeg|gif|ico|svg|webp))$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "^/(.*\\.(woff|woff2|ttf|eot|otf))$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "^/(.*\\.(json|xml))$",
+      "headers": {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "^/manifest\\.json$",
+      "dest": "/manifest.json",
+      "headers": {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        "Content-Type": "application/manifest+json; charset=utf-8",
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "^/service-worker\\.js$",
+      "dest": "/service-worker.js",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Service-Worker-Allowed": "/"
+      }
+    },
+    {
+      "src": "^/(.*\\.(zip|rar|7z|exe|msi|dmg|pkg|deb|rpm))$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition": "attachment"
+      }
+    },
+    {
+      "src": "^/(.*\\.(pdf))$",
+      "headers": {
+        "Cache-Control": "public, max-age=604800, s-maxage=2592000",
+        "Content-Type": "application/pdf",
+        "Access-Control-Allow-Origin": "*"
+      }
+    },
+    {
+      "src": "^/(.*\\.(mp4|webm|ogg|mp3|wav|flac|aac))$",
+      "headers": {
+        "Cache-Control": "public, max-age=604800, s-maxage=2592000",
+        "Access-Control-Allow-Origin": "*",
+        "Accept-Ranges": "bytes"
+      }
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/(.*)$",
+      "dest": "/index.html",
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=3600",
+        "Content-Type": "text/html; charset=utf-8"
+      }
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -26,7 +210,15 @@
         },
         {
           "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
+          "value": "accelerometer=(), autoplay=(), camera=(), cross-origin-isolated=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), xr-spatial-tracking=()"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "cross-origin"
         }
       ]
     },
@@ -36,119 +228,29 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "CDN-Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "Vary",
-          "value": "Accept-Encoding"
         }
       ]
     },
     {
-      "source": "/data.js",
+      "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|webp|woff|woff2|ttf|eot))$",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        },
-        {
-          "key": "CDN-Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/javascript; charset=utf-8"
-        }
-      ]
-    },
-    {
-      "source": "/(.*).(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=604800, stale-while-revalidate=2592000"
-        },
-        {
-          "key": "CDN-Cache-Control",
-          "value": "public, max-age=604800, stale-while-revalidate=2592000"
-        }
-      ]
-    },
-    {
-      "source": "/(.*).html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600, stale-while-revalidate=86400"
-        },
-        {
-          "key": "CDN-Cache-Control",
-          "value": "public, max-age=3600, stale-while-revalidate=86400"
-        }
-      ]
-    },
-    {
-      "source": "/ads.txt",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400"
-        },
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        },
         {
           "key": "Access-Control-Allow-Origin",
           "value": "*"
-        }
-      ]
-    },
-    {
-      "source": "/robots.txt",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400"
-        },
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        },
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        }
-      ]
-    },
-    {
-      "source": "/sitemap.xml",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/xml; charset=utf-8"
         }
       ]
     }
   ],
-  
   "redirects": [
     {
-      "source": "/index.html",
-      "destination": "/",
-      "permanent": true
+      "source": "/",
+      "destination": "/index.html",
+      "permanent": false
     },
     {
-      "source": "/chat.html",
-      "destination": "/chat",
-      "permanent": true
+      "source": "/chat",
+      "destination": "/chat.html",
+      "permanent": false
     },
     {
       "source": "/home",
@@ -161,91 +263,86 @@
       "permanent": true
     },
     {
-      "source": "/descargas",
-      "destination": "/#Programas",
+      "source": "/main",
+      "destination": "/",
       "permanent": true
     },
     {
-      "source": "/downloads",
+      "source": "/programas",
       "destination": "/#Programas",
-      "permanent": true
-    },
-    {
-      "source": "/software",
-      "destination": "/#Programas",
-      "permanent": true
-    },
-    {
-      "source": "/juegos",
-      "destination": "/#Juegos",
-      "permanent": true
+      "permanent": false
     },
     {
       "source": "/sistemas",
       "destination": "/#Sistemas",
-      "permanent": true
+      "permanent": false
     },
     {
-      "source": "/apks",
-      "destination": "/#APKs",
-      "permanent": true
+      "source": "/juegos",
+      "destination": "/#Juegos",
+      "permanent": false
     },
     {
       "source": "/extras",
       "destination": "/#Extras",
+      "permanent": false
+    },
+    {
+      "source": "/apks",
+      "destination": "/#APKs",
+      "permanent": false
+    },
+    {
+      "source": "/descargas",
+      "destination": "/#Programas",
+      "permanent": false
+    },
+    {
+      "source": "/software",
+      "destination": "/#Programas",
+      "permanent": false
+    },
+    {
+      "source": "/downloads",
+      "destination": "/#Programas",
+      "permanent": false
+    },
+    {
+      "source": "/discord",
+      "destination": "https://discord.gg/r9v67gFRcp",
+      "permanent": true
+    },
+    {
+      "source": "/youtube",
+      "destination": "https://www.youtube.com/@FoxOrange224",
+      "permanent": true
+    },
+    {
+      "source": "/github",
+      "destination": "https://github.com/foxorange224",
+      "permanent": true
+    },
+    {
+      "source": "/paypal",
+      "destination": "https://www.paypal.com/ncp/payment/QLFVSACHGMW5E",
+      "permanent": true
+    },
+    {
+      "source": "/donate",
+      "destination": "https://www.paypal.com/ncp/payment/QLFVSACHGMW5E",
+      "permanent": true
+    },
+    {
+      "source": "/donar",
+      "destination": "https://www.paypal.com/ncp/payment/QLFVSACHGMW5E",
       "permanent": true
     }
   ],
-  
-  "rewrites": [
-    {
-      "source": "/chat",
-      "destination": "/chat.html"
-    },
-    {
-      "source": "/admin",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/panel",
-      "destination": "/index.html"
-    }
-  ],
-  
   "trailingSlash": false,
-  
   "cleanUrls": true,
-  
-  "regions": ["sfo1", "iad1", "hnd1", "syd1", "cdg1", "arn1"],
-  
-  "build": {
-    "env": {
-      "NODE_ENV": "production",
-      "NEXT_TELEMETRY_DISABLED": "1"
-    }
+  "github": {
+    "silent": true,
+    "autoAlias": true
   },
-  
-  "functions": {
-    "api/*.js": {
-      "maxDuration": 10
-    }
-  },
-  
-  "env": {
-    "ENABLE_EXPERIMENTAL_COREPACK": "1"
-  },
-  
-  "git": {
-    "deploymentEnabled": {
-      "main": true,
-      "develop": false
-    }
-  },
-  
-  "crons": [
-    {
-      "path": "/api/keepalive",
-      "schedule": "*/5 * * * *"
-    }
-  ]
+  "regions": ["sfo1", "iad1", "gru1", "cdg1", "hnd1", "syd1"]
 }
