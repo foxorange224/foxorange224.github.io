@@ -272,7 +272,7 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: none; /* Ocultado por defecto */
+            display: none;
         }
 
         .sidebar-close:hover {
@@ -280,7 +280,6 @@
             color: var(--primary);
         }
 
-        /* Mostrar solo en móvil */
         @media (max-width: 767px) {
             .sidebar-close {
                 display: flex;
@@ -533,16 +532,24 @@
         .messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 20px 20px 20px;
             display: flex;
             flex-direction: column;
             gap: 12px;
             background: var(--bg-main);
+            transition: padding-bottom 0.3s ease;
+            scroll-behavior: smooth;
+        }
+
+        /* Cuando hay alguien escribiendo, agregar padding extra */
+        .messages-container:has(+ .typing-indicator[style*="display: flex"]) {
+            padding-bottom: 60px;
         }
 
         .message {
             max-width: 85%;
             animation: messageSlide 0.25s ease;
+            transition: transform 0.2s ease, opacity 0.2s ease;
         }
 
         @keyframes messageSlide {
@@ -635,15 +642,38 @@
 
         /* ===== TYPING INDICATOR ===== */
         .typing-indicator {
-            padding: 12px 20px;
+            position: fixed;
+            bottom: 75px;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            padding: 8px 16px;
             background: var(--bg-secondary);
-            border-top: 1px solid var(--border);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             display: none;
             align-items: center;
             gap: 10px;
             color: var(--text-secondary);
             font-size: 0.85em;
             font-style: italic;
+            z-index: 10;
+            box-shadow: var(--shadow);
+            max-width: 300px;
+            width: auto;
+            white-space: nowrap;
+            opacity: 0;
+            animation: slideUp 0.3s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
         }
 
         .typing-dots {
@@ -675,6 +705,13 @@
             30% {
                 transform: translateY(-4px);
                 opacity: 1;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .typing-indicator {
+                bottom: 70px;
+                max-width: 90%;
             }
         }
 
@@ -716,6 +753,11 @@
 
         .message-input::placeholder {
             color: var(--text-tertiary);
+            transition: opacity 0.2s ease;
+        }
+
+        .message-input:focus::placeholder {
+            opacity: 0.5;
         }
 
         .send-btn {
@@ -891,6 +933,7 @@
             
             .messages-container {
                 padding: 16px;
+                -webkit-overflow-scrolling: touch;
             }
             
             .message {
@@ -952,11 +995,13 @@
             box-shadow: var(--shadow);
             z-index: 50;
             transition: all 0.2s ease;
+            opacity: 0.9;
         }
 
         .scroll-to-bottom:hover {
             background: var(--primary-hover);
             transform: scale(1.1);
+            opacity: 1;
         }
 
         /* ===== NOTIFICATION BADGE ===== */
@@ -1068,6 +1113,44 @@
             font-size: 0.85em;
             position: relative;
             z-index: 2;
+        }
+
+        /* ===== EFEJCTO DE NUEVO MENSAJE ===== */
+        .message.new-message {
+            animation: highlightMessage 1.5s ease;
+        }
+
+        @keyframes highlightMessage {
+            0% { background-color: var(--primary-transparent); }
+            100% { background-color: transparent; }
+        }
+
+        /* ===== ANIMACIÓN PARA EL BOTÓN DE ENVIAR ===== */
+        .send-btn:not(:disabled) {
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite;
+        }
+
+        .send-btn:not(:disabled):active {
+            transform: scale(0.95);
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 69, 0, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 69, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 69, 0, 0);
+            }
+        }
+
+        /* ===== INPUT CON TYPING ACTIVO ===== */
+        .typing-active {
+            border-color: var(--primary) !important;
         }
     </style>
 </head>
@@ -1364,10 +1447,12 @@
                 PREFERENCES: 'foxweb_chat_prefs',
                 MESSAGES: 'foxweb_chat_msgs'
             },
-            TYPING_TIMEOUT: 3000,
+            TYPING_TIMEOUT: 5000, // 5 segundos
+            TYPING_EMIT_DELAY: 1000, // 1 segundo para emitir "typing"
             MAX_MESSAGES: 1000,
             PING_INTERVAL: 30000,
-            HISTORY_LIMIT: 50
+            HISTORY_LIMIT: 50,
+            SCROLL_THRESHOLD: 150
         };
 
         // Estado
@@ -1381,7 +1466,7 @@
             typingUsers: new Map(),
             preferences: {
                 darkTheme: true,
-                showConnections: false, // NUEVA OPCIÓN
+                showConnections: false,
                 sounds: true,
                 showTyping: true,
                 timeFormat: '12',
@@ -1389,12 +1474,16 @@
                 showLinks: true,
                 messagesPerLoad: 50
             },
-            typingTimeout: null,
+            typingTimer: null,
+            typingEmitTimer: null,
             pingInterval: null,
             lastPing: 0,
             isLoading: false,
             serverHistoryLoaded: false,
-            timeFormatCache: {} // Para caché de formato de hora
+            timeFormatCache: {},
+            userIsScrolling: false,
+            scrollTimeout: null,
+            hasEmittedTyping: false
         };
 
         // Elementos DOM
@@ -1419,7 +1508,7 @@
         const sidebarClose = document.getElementById('sidebarClose');
         const themeToggle = document.getElementById('themeToggle');
         const darkThemeToggle = document.getElementById('darkThemeToggle');
-        const showConnectionsToggle = document.getElementById('showConnectionsToggle'); // NUEVO
+        const showConnectionsToggle = document.getElementById('showConnectionsToggle');
         const soundToggle = document.getElementById('soundToggle');
         const typingToggle = document.getElementById('typingToggle');
         const timeFormat = document.getElementById('timeFormat');
@@ -1443,6 +1532,7 @@
             loadPreferences();
             loadMessages();
             setupEventListeners();
+            setupScrollHandling();
             
             // Auto login si hay usuario guardado
             const savedUsername = localStorage.getItem(CONFIG.STORAGE_KEYS.USERNAME);
@@ -1450,6 +1540,9 @@
                 usernameInput.value = savedUsername;
                 login();
             }
+            
+            // Limpiar recursos al cerrar
+            window.addEventListener('beforeunload', cleanupResources);
         }
 
         // Configurar event listeners
@@ -1483,7 +1576,6 @@
                 applyTheme();
             });
             
-            // NUEVO: Evento para mostrar conexiones
             showConnectionsToggle.addEventListener('change', e => {
                 state.preferences.showConnections = e.target.checked;
                 savePreferences();
@@ -1499,14 +1591,14 @@
                 savePreferences();
                 if (!e.target.checked) {
                     typingIndicator.style.display = 'none';
+                    typingIndicator.style.opacity = '0';
                 }
             });
             
-            // CORREGIDO: Evento para formato de hora que actualiza todos los mensajes
             timeFormat.addEventListener('change', e => {
                 state.preferences.timeFormat = e.target.value;
                 savePreferences();
-                updateAllMessageTimes(); // Nueva función para actualizar todos los tiempos
+                updateAllMessageTimes();
             });
             
             imagesToggle.addEventListener('change', e => {
@@ -1540,6 +1632,47 @@
             window.addEventListener('resize', () => {
                 if (window.innerWidth >= 768) closeSidebar();
             });
+        }
+
+        // Configurar manejo de scroll
+        function setupScrollHandling() {
+            messagesContainer.addEventListener('scroll', () => {
+                state.userIsScrolling = true;
+                clearTimeout(state.scrollTimeout);
+                
+                state.scrollTimeout = setTimeout(() => {
+                    state.userIsScrolling = false;
+                }, 150);
+                
+                handleScroll();
+            });
+        }
+
+        // Limpiar recursos
+        function cleanupResources() {
+            if (state.socket) {
+                state.socket.disconnect();
+            }
+            stopPing();
+            clearTimeout(state.typingTimer);
+            clearTimeout(state.typingEmitTimer);
+            clearTimeout(state.scrollTimeout);
+        }
+
+        // Resetear estado de typing
+        function resetTypingState() {
+            clearTimeout(state.typingTimer);
+            clearTimeout(state.typingEmitTimer);
+            state.hasEmittedTyping = false;
+            
+            // Eliminar al usuario actual del mapa de typing
+            state.typingUsers.delete(state.username);
+            updateTypingIndicator();
+            
+            // Notificar al servidor que dejó de escribir
+            if (state.connected && state.socket) {
+                state.socket.emit('stopTyping');
+            }
         }
 
         // Login
@@ -1642,7 +1775,7 @@
                                 username: msg.username,
                                 userId: msg.userId,
                                 text: msg.text,
-                                time: formatTimeFromDate(new Date(msg.timestamp)), // Usar función corregida
+                                time: formatTimeFromDate(new Date(msg.timestamp)),
                                 isOwn: msg.username === state.username,
                                 date: new Date(msg.timestamp).toISOString(),
                                 fromServer: true
@@ -1680,7 +1813,6 @@
                     updateOnlineCount();
                 });
                 
-                // MODIFICADO: Mostrar conexiones solo si está habilitado
                 state.socket.on('userJoined', (data) => {
                     if (data.username !== state.username && state.preferences.showConnections) {
                         addSystemMessage(`${data.username} se ha unido al chat`);
@@ -1690,7 +1822,6 @@
                     updateOnlineCount();
                 });
                 
-                // MODIFICADO: Mostrar desconexiones solo si está habilitado
                 state.socket.on('userLeft', (data) => {
                     if (state.preferences.showConnections) {
                         addSystemMessage(`${data.username} ha salido del chat`);
@@ -1722,6 +1853,7 @@
                 state.socket.on('stopTyping', (data) => {
                     if (data.username === state.username) return;
                     
+                    // Eliminar inmediatamente al usuario que dejó de escribir
                     state.typingUsers.delete(data.username);
                     updateTypingIndicator();
                 });
@@ -1730,6 +1862,20 @@
                     const latency = Date.now() - data.timestamp;
                     pingValue.textContent = `${latency}ms`;
                     state.lastPing = latency;
+                });
+                
+                state.socket.on('usernameChanged', (data) => {
+                    // Actualizar mensajes existentes con nuevo username
+                    state.messages.forEach(msg => {
+                        if (msg.userId === data.userId) {
+                            msg.username = data.newUsername;
+                        }
+                    });
+                    
+                    // Re-renderizar si es necesario
+                    if (data.userId !== state.userId) {
+                        renderMessages();
+                    }
                 });
                 
                 state.socket.on('disconnect', () => {
@@ -1776,17 +1922,26 @@
         function reconnect() {
             if (state.socket) {
                 state.socket.disconnect();
+                state.socket = null;
             }
             
             addSystemMessage('Reconectando al servidor...');
             state.serverHistoryLoaded = false;
+            state.typingUsers.clear();
+            resetTypingState();
+            typingIndicator.style.display = 'none';
             loadingIndicator.style.display = 'flex';
             
-            setTimeout(connectToChat, 1000);
+            // Limpiar caché de mensajes del servidor
+            const localMessages = state.messages.filter(m => !m.fromServer);
+            state.messages = localMessages;
+            
+            setTimeout(() => {
+                connectToChat();
+            }, 1000);
         }
 
         // Manejar input
-        let typingTimer;
         function handleInput() {
             // Ajustar altura
             this.style.height = 'auto';
@@ -1796,18 +1951,31 @@
             sendBtn.disabled = !this.value.trim();
             
             // Notificar que está escribiendo
-            if (state.connected && state.socket) {
-                clearTimeout(typingTimer);
+            if (state.connected && state.socket && this.value.trim().length > 0) {
+                clearTimeout(state.typingTimer);
+                clearTimeout(state.typingEmitTimer);
                 
-                // Emitir typing
-                state.socket.emit('typing');
+                // Emitir typing después de 1 segundo de escribir
+                if (!state.hasEmittedTyping) {
+                    state.typingEmitTimer = setTimeout(() => {
+                        if (state.connected && state.socket && messageInput.value.trim().length > 0) {
+                            state.socket.emit('typing');
+                            state.hasEmittedTyping = true;
+                            
+                            // Agregar usuario actual al mapa local
+                            state.typingUsers.set(state.username, Date.now());
+                            updateTypingIndicator();
+                        }
+                    }, CONFIG.TYPING_EMIT_DELAY);
+                }
                 
-                // Configurar timer para stopTyping
-                typingTimer = setTimeout(() => {
-                    if (state.connected && state.socket) {
-                        state.socket.emit('stopTyping');
-                    }
-                }, 1000);
+                // Configurar timer para stopTyping después de 5 segundos de inactividad
+                state.typingTimer = setTimeout(() => {
+                    resetTypingState();
+                }, CONFIG.TYPING_TIMEOUT);
+            } else if (this.value.trim().length === 0 && state.hasEmittedTyping) {
+                // Si el usuario borra todo el texto, resetear estado
+                resetTypingState();
             }
         }
 
@@ -1816,19 +1984,17 @@
             const text = messageInput.value.trim();
             if (!text || !state.connected) return;
             
-            // Enviar al servidor
+            // Enviar mensaje al servidor
             state.socket.emit('message', { text });
             
-            // Limpiar input
-            messageInput.value = '';
-            messageInput.style.height = 'auto';
-            sendBtn.disabled = true;
+            // Resetear estado de typing inmediatamente
+            resetTypingState();
             
-            // Detener indicador de escritura inmediatamente
-            if (state.connected && state.socket) {
-                clearTimeout(typingTimer);
-                state.socket.emit('stopTyping');
-            }
+            // Limpiar y resetear input
+            messageInput.value = '';
+            messageInput.style.height = '48px';
+            messageInput.style.overflowY = 'hidden';
+            sendBtn.disabled = true;
             
             // Enfocar input
             messageInput.focus();
@@ -1841,7 +2007,7 @@
                 username: messageData.username,
                 userId: messageData.userId,
                 text: messageData.text,
-                time: formatTimeFromDate(new Date(messageData.timestamp || Date.now())), // Usar función corregida
+                time: formatTimeFromDate(new Date(messageData.timestamp || Date.now())),
                 isOwn: messageData.username === state.username,
                 date: new Date(messageData.timestamp || Date.now()).toISOString(),
                 fromServer: true
@@ -1861,39 +2027,52 @@
                     saveMessages();
                 }
                 
+                // Si este mensaje es de alguien que estaba escribiendo, eliminarlo
+                if (messageData.username !== state.username) {
+                    state.typingUsers.delete(messageData.username);
+                    updateTypingIndicator();
+                }
+                
                 renderMessage(message);
             }
         }
 
-        // CORREGIDO: Formatear hora desde objeto Date
+        // Formatear hora desde objeto Date con caché limitado
         function formatTimeFromDate(date) {
             const cacheKey = `${date.getTime()}_${state.preferences.timeFormat}`;
             
-            // Usar caché para mejorar rendimiento
+            // Limitar tamaño del caché
+            if (Object.keys(state.timeFormatCache).length > 1000) {
+                // Eliminar las primeras 500 entradas (las más antiguas)
+                const keys = Object.keys(state.timeFormatCache);
+                for (let i = 0; i < Math.min(500, keys.length); i++) {
+                    delete state.timeFormatCache[keys[i]];
+                }
+            }
+            
             if (state.timeFormatCache[cacheKey]) {
                 return state.timeFormatCache[cacheKey];
             }
             
             const hours = date.getHours();
             const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
             
             let formattedTime;
             
             if (state.preferences.timeFormat === '24') {
-                formattedTime = `${hours}:${minutes}`;
+                formattedTime = `${hours}:${minutes}:${seconds}`;
             } else {
                 const ampm = hours >= 12 ? 'PM' : 'AM';
                 const hour12 = hours % 12 || 12;
-                formattedTime = `${hour12}:${minutes} ${ampm}`;
+                formattedTime = `${hour12}:${minutes}:${seconds} ${ampm}`;
             }
             
-            // Guardar en caché
             state.timeFormatCache[cacheKey] = formattedTime;
-            
             return formattedTime;
         }
 
-        // NUEVA: Actualizar tiempos de todos los mensajes
+        // Actualizar tiempos de todos los mensajes
         function updateAllMessageTimes() {
             // Limpiar caché
             state.timeFormatCache = {};
@@ -1945,10 +2124,18 @@
             
             messagesContainer.appendChild(div);
             
-            // Auto-scroll si está cerca del final
-            const scrollThreshold = 100;
-            if (messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < scrollThreshold) {
-                scrollToBottom();
+            // Auto-scroll inteligente
+            const isAtBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight <= CONFIG.SCROLL_THRESHOLD;
+            
+            if (isAtBottom && !state.userIsScrolling) {
+                // Scroll suave
+                requestAnimationFrame(() => {
+                    messagesContainer.scrollTo({
+                        top: messagesContainer.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                    scrollBottomBtn.classList.add('hidden');
+                });
             } else {
                 scrollBottomBtn.classList.remove('hidden');
             }
@@ -1997,30 +2184,39 @@
 
         // Actualizar indicador de escritura
         function updateTypingIndicator() {
-            if (state.typingUsers.size === 0 || !state.preferences.showTyping) {
+            // Filtrar solo otros usuarios (excluyendo al usuario actual)
+            const otherUsers = Array.from(state.typingUsers.keys())
+                .filter(username => username !== state.username);
+            
+            if (otherUsers.length === 0 || !state.preferences.showTyping) {
                 typingIndicator.style.display = 'none';
+                typingIndicator.style.opacity = '0';
                 return;
             }
             
-            const users = Array.from(state.typingUsers.keys());
             let text = '';
             
-            if (users.length === 1) {
-                text = `${users[0]} está escribiendo`;
-            } else if (users.length === 2) {
-                text = `${users[0]} y ${users[1]} están escribiendo`;
+            if (otherUsers.length === 1) {
+                text = `${otherUsers[0]} está escribiendo`;
+            } else if (otherUsers.length === 2) {
+                text = `${otherUsers[0]} y ${otherUsers[1]} están escribiendo`;
             } else {
-                text = `${users[0]} y ${users.length - 1} más están escribiendo`;
+                text = `${otherUsers[0]} y ${otherUsers.length - 1} más están escribiendo`;
             }
             
             typingText.textContent = text;
             typingIndicator.style.display = 'flex';
             
-            // Limpiar usuarios después de 3 segundos
+            // Animar entrada
+            setTimeout(() => {
+                typingIndicator.style.opacity = '1';
+            }, 10);
+            
+            // Limpiar usuarios después del timeout
             setTimeout(() => {
                 const now = Date.now();
                 for (const [username, timestamp] of state.typingUsers) {
-                    if (now - timestamp > CONFIG.TYPING_TIMEOUT) {
+                    if (username !== state.username && now - timestamp > CONFIG.TYPING_TIMEOUT) {
                         state.typingUsers.delete(username);
                     }
                 }
@@ -2069,11 +2265,18 @@
             state.username = newName.trim();
             localStorage.setItem(CONFIG.STORAGE_KEYS.USERNAME, state.username);
             
-            updateUserInfo();
+            // Actualizar avatar con nueva inicial y color
+            const firstLetter = state.username.charAt(0).toUpperCase();
+            const color = getAvatarColor(state.username);
+            userAvatar.textContent = firstLetter;
+            userAvatar.style.background = color;
+            
+            sidebarUsername.textContent = state.username;
             
             if (state.connected && state.socket) {
-                state.socket.emit('join', {
-                    username: state.username,
+                state.socket.emit('usernameChange', {
+                    oldUsername: oldName,
+                    newUsername: state.username,
                     userId: state.userId
                 });
                 addSystemMessage(`Cambiaste tu nombre de "${oldName}" a "${state.username}"`);
@@ -2206,35 +2409,47 @@
 
         // Scroll al final
         function scrollToBottom() {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            messagesContainer.scrollTo({
+                top: messagesContainer.scrollHeight,
+                behavior: 'smooth'
+            });
             scrollBottomBtn.classList.add('hidden');
         }
 
-        // Reproducir sonido
+        // Reproducir sonido mejorado para móviles
         function playSound(type) {
             if (!state.preferences.sounds) return;
             
             try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                if (type === 'message') {
-                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                } else if (type === 'join') {
-                    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                // Crear contexto de audio solo una vez
+                if (!window.audioContext) {
+                    window.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
                 
-                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                // Reanudar contexto si está suspendido (necesario en móviles)
+                if (window.audioContext.state === 'suspended') {
+                    window.audioContext.resume();
+                }
                 
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.1);
+                const oscillator = window.audioContext.createOscillator();
+                const gainNode = window.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(window.audioContext.destination);
+                
+                if (type === 'message') {
+                    oscillator.frequency.setValueAtTime(800, window.audioContext.currentTime);
+                } else if (type === 'join') {
+                    oscillator.frequency.setValueAtTime(600, window.audioContext.currentTime);
+                }
+                
+                gainNode.gain.setValueAtTime(0.1, window.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, window.audioContext.currentTime + 0.1);
+                
+                oscillator.start(window.audioContext.currentTime);
+                oscillator.stop(window.audioContext.currentTime + 0.1);
             } catch (e) {
-                // Ignorar errores de audio
+                console.warn('Audio no disponible:', e);
             }
         }
 
@@ -2279,7 +2494,7 @@
             
             // Aplicar a controles
             darkThemeToggle.checked = state.preferences.darkTheme;
-            showConnectionsToggle.checked = state.preferences.showConnections; // NUEVO
+            showConnectionsToggle.checked = state.preferences.showConnections;
             soundToggle.checked = state.preferences.sounds;
             typingToggle.checked = state.preferences.showTyping;
             timeFormat.value = state.preferences.timeFormat;
