@@ -1,45 +1,251 @@
 {
   "version": 2,
-  "builds": [
+  "name": "foxweb",
+  "alias": ["foxweb.vercel.app"],
+  "public": true,
+  
+  "headers": [
     {
-      "src": "*.html",
-      "use": "@vercel/static"
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
     },
     {
-      "src": "*.js",
-      "use": "@vercel/static"
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Vary",
+          "value": "Accept-Encoding"
+        }
+      ]
     },
     {
-      "src": "*.txt",
-      "use": "@vercel/static"
+      "source": "/data.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/(.*).(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=2592000"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=2592000"
+        }
+      ]
+    },
+    {
+      "source": "/(.*).html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/ads.txt",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        },
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        },
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/xml; charset=utf-8"
+        }
+      ]
     }
   ],
-  "routes": [
+  
+  "redirects": [
     {
-      "src": "^/data\\.js$",
-      "dest": "/data.js",
-      "headers": {
-        "Content-Type": "application/javascript"
-      }
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
     },
     {
-      "src": "^/ads\\.txt$",
-      "dest": "/ads.txt",
-      "headers": {
-        "Content-Type": "text/plain"
-      }
+      "source": "/chat.html",
+      "destination": "/chat",
+      "permanent": true
     },
     {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|txt|json))$",
-      "dest": "/$1"
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/inicio",
+      "destination": "/",
+      "permanent": true
     },
     {
-      "src": "/chat",
-      "dest": "/chat.html"
+      "source": "/descargas",
+      "destination": "/#Programas",
+      "permanent": true
+    },
+    {
+      "source": "/downloads",
+      "destination": "/#Programas",
+      "permanent": true
+    },
+    {
+      "source": "/software",
+      "destination": "/#Programas",
+      "permanent": true
+    },
+    {
+      "source": "/juegos",
+      "destination": "/#Juegos",
+      "permanent": true
+    },
+    {
+      "source": "/sistemas",
+      "destination": "/#Sistemas",
+      "permanent": true
+    },
+    {
+      "source": "/apks",
+      "destination": "/#APKs",
+      "permanent": true
+    },
+    {
+      "source": "/extras",
+      "destination": "/#Extras",
+      "permanent": true
+    }
+  ],
+  
+  "rewrites": [
+    {
+      "source": "/chat",
+      "destination": "/chat.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/panel",
+      "destination": "/index.html"
+    }
+  ],
+  
+  "trailingSlash": false,
+  
+  "cleanUrls": true,
+  
+  "regions": ["sfo1", "iad1", "hnd1", "syd1", "cdg1", "arn1"],
+  
+  "build": {
+    "env": {
+      "NODE_ENV": "production",
+      "NEXT_TELEMETRY_DISABLED": "1"
+    }
+  },
+  
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 10
+    }
+  },
+  
+  "env": {
+    "ENABLE_EXPERIMENTAL_COREPACK": "1"
+  },
+  
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "develop": false
+    }
+  },
+  
+  "crons": [
+    {
+      "path": "/api/keepalive",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
