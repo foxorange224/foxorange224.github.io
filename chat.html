@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FoxWeb Chat</title>
-    <link rel="icon" href="https://i.imgur.com/5JzgCvZ.png" type="image/png">
+    <link rel="icon" href="https://i.imgur.com/qfsMx7V.png" type="image/png">
     
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -998,7 +998,7 @@
         .settings-group-title i {
             color: var(--primary);
         }
-
+        
         /* ===== LOADING INDICATOR ===== */
         .loading {
             display: flex;
@@ -1173,6 +1173,16 @@
                             <div class="toggle-switch">
                                 <input type="checkbox" id="darkThemeToggle" class="toggle-checkbox" checked>
                                 <label for="darkThemeToggle" class="toggle-slider"></label>
+                            </div>
+                        </div>
+                        
+                        <div class="pref-option">
+                            <label class="pref-label">
+                                <i class="fas fa-user-plus"></i> Mostrar conexiones
+                            </label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="showConnectionsToggle" class="toggle-checkbox">
+                                <label for="showConnectionsToggle" class="toggle-slider"></label>
                             </div>
                         </div>
                         
@@ -1371,6 +1381,7 @@
             typingUsers: new Map(),
             preferences: {
                 darkTheme: true,
+                showConnections: false, // NUEVA OPCIÓN
                 sounds: true,
                 showTyping: true,
                 timeFormat: '12',
@@ -1382,7 +1393,8 @@
             pingInterval: null,
             lastPing: 0,
             isLoading: false,
-            serverHistoryLoaded: false
+            serverHistoryLoaded: false,
+            timeFormatCache: {} // Para caché de formato de hora
         };
 
         // Elementos DOM
@@ -1407,6 +1419,7 @@
         const sidebarClose = document.getElementById('sidebarClose');
         const themeToggle = document.getElementById('themeToggle');
         const darkThemeToggle = document.getElementById('darkThemeToggle');
+        const showConnectionsToggle = document.getElementById('showConnectionsToggle'); // NUEVO
         const soundToggle = document.getElementById('soundToggle');
         const typingToggle = document.getElementById('typingToggle');
         const timeFormat = document.getElementById('timeFormat');
@@ -1470,6 +1483,12 @@
                 applyTheme();
             });
             
+            // NUEVO: Evento para mostrar conexiones
+            showConnectionsToggle.addEventListener('change', e => {
+                state.preferences.showConnections = e.target.checked;
+                savePreferences();
+            });
+            
             soundToggle.addEventListener('change', e => {
                 state.preferences.sounds = e.target.checked;
                 savePreferences();
@@ -1483,10 +1502,11 @@
                 }
             });
             
+            // CORREGIDO: Evento para formato de hora que actualiza todos los mensajes
             timeFormat.addEventListener('change', e => {
                 state.preferences.timeFormat = e.target.value;
                 savePreferences();
-                renderMessages();
+                updateAllMessageTimes(); // Nueva función para actualizar todos los tiempos
             });
             
             imagesToggle.addEventListener('change', e => {
@@ -1622,7 +1642,7 @@
                                 username: msg.username,
                                 userId: msg.userId,
                                 text: msg.text,
-                                time: msg.time || formatTime(new Date(msg.timestamp)),
+                                time: formatTimeFromDate(new Date(msg.timestamp)), // Usar función corregida
                                 isOwn: msg.username === state.username,
                                 date: new Date(msg.timestamp).toISOString(),
                                 fromServer: true
@@ -1660,8 +1680,9 @@
                     updateOnlineCount();
                 });
                 
+                // MODIFICADO: Mostrar conexiones solo si está habilitado
                 state.socket.on('userJoined', (data) => {
-                    if (data.username !== state.username) {
+                    if (data.username !== state.username && state.preferences.showConnections) {
                         addSystemMessage(`${data.username} se ha unido al chat`);
                         playSound('join');
                     }
@@ -1669,8 +1690,11 @@
                     updateOnlineCount();
                 });
                 
+                // MODIFICADO: Mostrar desconexiones solo si está habilitado
                 state.socket.on('userLeft', (data) => {
-                    addSystemMessage(`${data.username} ha salido del chat`);
+                    if (state.preferences.showConnections) {
+                        addSystemMessage(`${data.username} ha salido del chat`);
+                    }
                     state.onlineUsers = data.onlineCount;
                     updateOnlineCount();
                 });
@@ -1817,7 +1841,7 @@
                 username: messageData.username,
                 userId: messageData.userId,
                 text: messageData.text,
-                time: messageData.time || formatTime(new Date(messageData.timestamp)),
+                time: formatTimeFromDate(new Date(messageData.timestamp || Date.now())), // Usar función corregida
                 isOwn: messageData.username === state.username,
                 date: new Date(messageData.timestamp || Date.now()).toISOString(),
                 fromServer: true
@@ -1841,18 +1865,47 @@
             }
         }
 
-        // Formatear hora
-        function formatTime(date) {
+        // CORREGIDO: Formatear hora desde objeto Date
+        function formatTimeFromDate(date) {
+            const cacheKey = `${date.getTime()}_${state.preferences.timeFormat}`;
+            
+            // Usar caché para mejorar rendimiento
+            if (state.timeFormatCache[cacheKey]) {
+                return state.timeFormatCache[cacheKey];
+            }
+            
             const hours = date.getHours();
             const minutes = date.getMinutes().toString().padStart(2, '0');
             
+            let formattedTime;
+            
             if (state.preferences.timeFormat === '24') {
-                return `${hours}:${minutes}`;
+                formattedTime = `${hours}:${minutes}`;
             } else {
                 const ampm = hours >= 12 ? 'PM' : 'AM';
                 const hour12 = hours % 12 || 12;
-                return `${hour12}:${minutes} ${ampm}`;
+                formattedTime = `${hour12}:${minutes} ${ampm}`;
             }
+            
+            // Guardar en caché
+            state.timeFormatCache[cacheKey] = formattedTime;
+            
+            return formattedTime;
+        }
+
+        // NUEVA: Actualizar tiempos de todos los mensajes
+        function updateAllMessageTimes() {
+            // Limpiar caché
+            state.timeFormatCache = {};
+            
+            // Actualizar tiempos en todos los mensajes
+            state.messages.forEach(msg => {
+                const date = new Date(msg.date);
+                msg.time = formatTimeFromDate(date);
+            });
+            
+            // Volver a renderizar todos los mensajes
+            renderMessages();
         }
 
         // Renderizar mensaje
@@ -2217,7 +2270,8 @@
             try {
                 const saved = localStorage.getItem(CONFIG.STORAGE_KEYS.PREFERENCES);
                 if (saved) {
-                    state.preferences = {...state.preferences, ...JSON.parse(saved)};
+                    const loadedPrefs = JSON.parse(saved);
+                    state.preferences = {...state.preferences, ...loadedPrefs};
                 }
             } catch (e) {
                 console.warn('Error cargando preferencias:', e);
@@ -2225,6 +2279,7 @@
             
             // Aplicar a controles
             darkThemeToggle.checked = state.preferences.darkTheme;
+            showConnectionsToggle.checked = state.preferences.showConnections; // NUEVO
             soundToggle.checked = state.preferences.sounds;
             typingToggle.checked = state.preferences.showTyping;
             timeFormat.value = state.preferences.timeFormat;
