@@ -612,10 +612,31 @@
         .message-text {
             line-height: 1.5;
             font-size: 0.95em;
+            max-height: 300px;
+            overflow-y: auto;
+            word-break: break-word;
+            padding-right: 4px;
+        }
+
+        .message-text::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .message-text::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .message-text::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 2px;
         }
 
         .message.own .message-text {
             color: rgba(255, 255, 255, 0.95);
+        }
+
+        .message.own .message-text::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .system-message {
@@ -1347,12 +1368,6 @@
                         <button id="clearChatBtn" class="pref-button">
                             <i class="fas fa-trash"></i> Limpiar historial local
                         </button>
-                        <button id="exportChatBtn" class="pref-button">
-                            <i class="fas fa-download"></i> Exportar conversación
-                        </button>
-                        <button id="importChatBtn" class="pref-button">
-                            <i class="fas fa-upload"></i> Importar conversación
-                        </button>
                     </div>
                     
                     <!-- Connection Info -->
@@ -1434,9 +1449,6 @@
         </button>
     </div>
 
-    <!-- Hidden file input for import -->
-    <input type="file" id="importFileInput" accept=".json" style="display: none;">
-
     <script>
         // Configuración
         const CONFIG = {
@@ -1447,13 +1459,45 @@
                 PREFERENCES: 'foxweb_chat_prefs',
                 MESSAGES: 'foxweb_chat_msgs'
             },
-            TYPING_TIMEOUT: 5000, // 5 segundos
-            TYPING_EMIT_DELAY: 1000, // 1 segundo para emitir "typing"
-            MAX_MESSAGES: 1000,
+            TYPING_TIMEOUT: 3000,
+            TYPING_EMIT_DELAY: 800,
+            MAX_MESSAGES: 500,
             PING_INTERVAL: 30000,
             HISTORY_LIMIT: 50,
-            SCROLL_THRESHOLD: 150
+            SCROLL_THRESHOLD: 150,
+            MAX_MESSAGE_LENGTH: 500,
+            MAX_MESSAGES_IN_DOM: 200
         };
+
+        // Sistema de caché LRU para formato de hora
+        class LRUCache {
+            constructor(maxSize = 100) {
+                this.maxSize = maxSize;
+                this.cache = new Map();
+            }
+            
+            get(key) {
+                if (!this.cache.has(key)) return null;
+                const value = this.cache.get(key);
+                this.cache.delete(key);
+                this.cache.set(key, value);
+                return value;
+            }
+            
+            set(key, value) {
+                if (this.cache.has(key)) {
+                    this.cache.delete(key);
+                } else if (this.cache.size >= this.maxSize) {
+                    const firstKey = this.cache.keys().next().value;
+                    this.cache.delete(firstKey);
+                }
+                this.cache.set(key, value);
+            }
+            
+            clear() {
+                this.cache.clear();
+            }
+        }
 
         // Estado
         const state = {
@@ -1480,10 +1524,13 @@
             lastPing: 0,
             isLoading: false,
             serverHistoryLoaded: false,
-            timeFormatCache: {},
+            timeFormatCache: new LRUCache(100),
             userIsScrolling: false,
             scrollTimeout: null,
-            hasEmittedTyping: false
+            hasEmittedTyping: false,
+            reconnectAttempts: 0,
+            maxReconnectAttempts: 10,
+            isReconnecting: false
         };
 
         // Elementos DOM
@@ -1517,9 +1564,6 @@
         const messagesPerLoad = document.getElementById('messagesPerLoad');
         const changeNameBtn = document.getElementById('changeNameBtn');
         const clearChatBtn = document.getElementById('clearChatBtn');
-        const exportChatBtn = document.getElementById('exportChatBtn');
-        const importChatBtn = document.getElementById('importChatBtn');
-        const importFileInput = document.getElementById('importFileInput');
         const connectionStatus = document.getElementById('connectionStatus');
         const pingValue = document.getElementById('pingValue');
         const historyCount = document.getElementById('historyCount');
@@ -1538,7 +1582,7 @@
             const savedUsername = localStorage.getItem(CONFIG.STORAGE_KEYS.USERNAME);
             if (savedUsername && savedUsername.trim()) {
                 usernameInput.value = savedUsername;
-                login();
+                setTimeout(() => login(), 100);
             }
             
             // Limpiar recursos al cerrar
@@ -1590,8 +1634,7 @@
                 state.preferences.showTyping = e.target.checked;
                 savePreferences();
                 if (!e.target.checked) {
-                    typingIndicator.style.display = 'none';
-                    typingIndicator.style.opacity = '0';
+                    hideTypingIndicator();
                 }
             });
             
@@ -1619,9 +1662,6 @@
             // Botones
             changeNameBtn.addEventListener('click', changeUsername);
             clearChatBtn.addEventListener('click', clearChat);
-            exportChatBtn.addEventListener('click', exportChat);
-            importChatBtn.addEventListener('click', () => importFileInput.click());
-            importFileInput.addEventListener('change', importChat);
             reconnectBtn.addEventListener('click', reconnect);
             
             // Scroll
@@ -1663,16 +1703,22 @@
         function resetTypingState() {
             clearTimeout(state.typingTimer);
             clearTimeout(state.typingEmitTimer);
-            state.hasEmittedTyping = false;
             
-            // Eliminar al usuario actual del mapa de typing
-            state.typingUsers.delete(state.username);
-            updateTypingIndicator();
-            
-            // Notificar al servidor que dejó de escribir
-            if (state.connected && state.socket) {
-                state.socket.emit('stopTyping');
+            if (state.hasEmittedTyping) {
+                state.hasEmittedTyping = false;
+                state.typingUsers.delete(state.username);
+                updateTypingIndicator();
+                
+                if (state.connected && state.socket) {
+                    state.socket.emit('stopTyping');
+                }
             }
+        }
+
+        // Ocultar indicador de typing
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+            typingIndicator.style.opacity = '0';
         }
 
         // Login
@@ -1680,6 +1726,11 @@
             const username = usernameInput.value.trim();
             if (!username || username.length < 2) {
                 alert('Por favor, ingresa un nombre válido (mínimo 2 caracteres)');
+                return;
+            }
+            
+            if (username.length > 20) {
+                alert('El nombre de usuario no puede tener más de 20 caracteres');
                 return;
             }
             
@@ -1713,6 +1764,10 @@
                 const script = document.createElement('script');
                 script.src = 'https://cdn.socket.io/4.5.0/socket.io.min.js';
                 script.onload = initSocket;
+                script.onerror = () => {
+                    loadingIndicator.style.display = 'none';
+                    addSystemMessage('Error al cargar Socket.io. Recarga la página.');
+                };
                 document.head.appendChild(script);
             } else {
                 initSocket();
@@ -1726,16 +1781,20 @@
                     state.socket.disconnect();
                 }
                 
+                state.isReconnecting = true;
                 state.socket = io(CONFIG.SERVER_URL, {
                     transports: ['websocket', 'polling'],
                     reconnection: true,
                     reconnectionAttempts: 5,
-                    reconnectionDelay: 1000
+                    reconnectionDelay: 1000,
+                    timeout: 10000
                 });
                 
                 // Eventos
                 state.socket.on('connect', () => {
                     state.connected = true;
+                    state.isReconnecting = false;
+                    state.reconnectAttempts = 0;
                     updateConnectionStatus(true);
                     
                     // Unirse al chat
@@ -1755,8 +1814,6 @@
                 
                 // Recibir historial del servidor
                 state.socket.on('history', (historyData) => {
-                    console.log('Historial recibido:', historyData.messages.length, 'mensajes');
-                    
                     // Ocultar loading
                     loadingIndicator.style.display = 'none';
                     
@@ -1767,6 +1824,7 @@
                     
                     // Agregar mensajes del servidor (evitando duplicados)
                     const existingIds = new Set(state.messages.map(m => m.id));
+                    const newMessages = [];
                     
                     historyData.messages.forEach(msg => {
                         if (!existingIds.has(msg.id)) {
@@ -1780,25 +1838,28 @@
                                 date: new Date(msg.timestamp).toISOString(),
                                 fromServer: true
                             };
-                            
-                            state.messages.push(message);
+                            newMessages.push(message);
                         }
                     });
                     
-                    // Ordenar por fecha
-                    state.messages.sort((a, b) => new Date(a.date) - new Date(b.date));
-                    
-                    // Limitar tamaño
-                    if (state.messages.length > CONFIG.MAX_MESSAGES) {
-                        state.messages = state.messages.slice(-CONFIG.MAX_MESSAGES);
+                    // Agregar en lote para mejor rendimiento
+                    if (newMessages.length > 0) {
+                        state.messages.push(...newMessages);
+                        
+                        // Ordenar por fecha
+                        state.messages.sort((a, b) => new Date(a.date) - new Date(b.date));
+                        
+                        // Limitar tamaño
+                        if (state.messages.length > CONFIG.MAX_MESSAGES) {
+                            state.messages = state.messages.slice(-CONFIG.MAX_MESSAGES);
+                        }
+                        
+                        // Renderizar en lote
+                        renderMessagesBatch(newMessages);
                     }
                     
                     // Actualizar contador de historial
                     historyCount.textContent = `${historyData.total} mensajes (24h)`;
-                    
-                    // Renderizar todos los mensajes
-                    renderMessages();
-                    scrollToBottom();
                     
                     addSystemMessage(`Cargado historial de ${historyData.messages.length} mensajes`);
                 });
@@ -1878,16 +1939,28 @@
                     }
                 });
                 
-                state.socket.on('disconnect', () => {
+                state.socket.on('disconnect', (reason) => {
                     state.connected = false;
+                    state.isReconnecting = false;
                     updateConnectionStatus(false);
-                    addSystemMessage('Desconectado del servidor. Reconectando...');
+                    
+                    if (reason === 'io server disconnect') {
+                        addSystemMessage('Desconectado por el servidor. Intentando reconectar...');
+                    } else {
+                        addSystemMessage('Desconectado. Intentando reconectar...');
+                    }
+                    
                     stopPing();
                 });
                 
-                state.socket.on('connect_error', () => {
+                state.socket.on('connect_error', (error) => {
                     loadingIndicator.style.display = 'none';
-                    addSystemMessage('Error de conexión con el servidor');
+                    state.isReconnecting = false;
+                    
+                    if (state.reconnectAttempts === 0) {
+                        addSystemMessage('Error de conexión con el servidor');
+                    }
+                    
                     updateConnectionStatus(false);
                     stopPing();
                 });
@@ -1897,6 +1970,7 @@
                 loadingIndicator.style.display = 'none';
                 addSystemMessage('Error al conectar con el servidor');
                 updateConnectionStatus(false);
+                state.isReconnecting = false;
             }
         }
 
@@ -1905,7 +1979,7 @@
             stopPing();
             state.pingInterval = setInterval(() => {
                 if (state.socket && state.socket.connected) {
-                    state.socket.emit('ping');
+                    state.socket.emit('ping', { timestamp: Date.now() });
                 }
             }, CONFIG.PING_INTERVAL);
         }
@@ -1918,44 +1992,55 @@
             }
         }
 
-        // Re-conectar
+        // Re-conectar con backoff exponencial
         function reconnect() {
+            if (state.isReconnecting) return;
+            
+            state.reconnectAttempts++;
+            
+            if (state.reconnectAttempts > state.maxReconnectAttempts) {
+                addSystemMessage('No se pudo reconectar. Recarga la página.');
+                return;
+            }
+            
+            const delay = Math.min(1000 * Math.pow(2, state.reconnectAttempts), 30000);
+            
+            addSystemMessage(`Intentando reconectar (${state.reconnectAttempts}/${state.maxReconnectAttempts})...`);
+            
+            state.isReconnecting = true;
+            
             if (state.socket) {
                 state.socket.disconnect();
                 state.socket = null;
             }
             
-            addSystemMessage('Reconectando al servidor...');
             state.serverHistoryLoaded = false;
             state.typingUsers.clear();
             resetTypingState();
-            typingIndicator.style.display = 'none';
+            hideTypingIndicator();
             loadingIndicator.style.display = 'flex';
-            
-            // Limpiar caché de mensajes del servidor
-            const localMessages = state.messages.filter(m => !m.fromServer);
-            state.messages = localMessages;
             
             setTimeout(() => {
                 connectToChat();
-            }, 1000);
+            }, delay);
         }
 
-        // Manejar input
+        // Manejar input con debounce mejorado
         function handleInput() {
             // Ajustar altura
             this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            const newHeight = Math.min(this.scrollHeight, 120);
+            this.style.height = newHeight + 'px';
+            this.style.overflowY = newHeight >= 120 ? 'auto' : 'hidden';
             
             // Habilitar/deshabilitar botón
-            sendBtn.disabled = !this.value.trim();
+            const hasText = this.value.trim().length > 0;
+            sendBtn.disabled = !hasText || !state.connected;
             
             // Notificar que está escribiendo
-            if (state.connected && state.socket && this.value.trim().length > 0) {
+            if (state.connected && state.socket && hasText) {
                 clearTimeout(state.typingTimer);
-                clearTimeout(state.typingEmitTimer);
                 
-                // Emitir typing después de 1 segundo de escribir
                 if (!state.hasEmittedTyping) {
                     state.typingEmitTimer = setTimeout(() => {
                         if (state.connected && state.socket && messageInput.value.trim().length > 0) {
@@ -1969,12 +2054,11 @@
                     }, CONFIG.TYPING_EMIT_DELAY);
                 }
                 
-                // Configurar timer para stopTyping después de 5 segundos de inactividad
+                // Configurar timer para stopTyping después de timeout
                 state.typingTimer = setTimeout(() => {
                     resetTypingState();
                 }, CONFIG.TYPING_TIMEOUT);
-            } else if (this.value.trim().length === 0 && state.hasEmittedTyping) {
-                // Si el usuario borra todo el texto, resetear estado
+            } else if (!hasText && state.hasEmittedTyping) {
                 resetTypingState();
             }
         }
@@ -1982,7 +2066,7 @@
         // Enviar mensaje
         function sendMessage() {
             const text = messageInput.value.trim();
-            if (!text || !state.connected) return;
+            if (!text || !state.connected || text.length > CONFIG.MAX_MESSAGE_LENGTH) return;
             
             // Enviar mensaje al servidor
             state.socket.emit('message', { text });
@@ -1997,16 +2081,22 @@
             sendBtn.disabled = true;
             
             // Enfocar input
-            messageInput.focus();
+            setTimeout(() => messageInput.focus(), 50);
         }
 
         // Agregar mensaje del servidor
         function addMessageFromServer(messageData) {
+            // Validar datos del mensaje
+            if (!messageData.text || !messageData.username || !messageData.userId) {
+                console.warn('Mensaje inválido recibido:', messageData);
+                return;
+            }
+            
             const message = {
                 id: messageData.id || Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                username: messageData.username,
+                username: messageData.username.substring(0, 30),
                 userId: messageData.userId,
-                text: messageData.text,
+                text: messageData.text.substring(0, CONFIG.MAX_MESSAGE_LENGTH),
                 time: formatTimeFromDate(new Date(messageData.timestamp || Date.now())),
                 isOwn: messageData.username === state.username,
                 date: new Date(messageData.timestamp || Date.now()).toISOString(),
@@ -2022,11 +2112,6 @@
                     state.messages = state.messages.slice(-CONFIG.MAX_MESSAGES);
                 }
                 
-                // Solo guardar en localStorage si no es del servidor
-                if (!message.fromServer) {
-                    saveMessages();
-                }
-                
                 // Si este mensaje es de alguien que estaba escribiendo, eliminarlo
                 if (messageData.username !== state.username) {
                     state.typingUsers.delete(messageData.username);
@@ -2034,25 +2119,17 @@
                 }
                 
                 renderMessage(message);
+                
+                // Limitar mensajes en el DOM para mejor rendimiento
+                limitMessagesInDOM();
             }
         }
 
-        // Formatear hora desde objeto Date con caché limitado
+        // Formatear hora desde objeto Date con caché LRU
         function formatTimeFromDate(date) {
             const cacheKey = `${date.getTime()}_${state.preferences.timeFormat}`;
-            
-            // Limitar tamaño del caché
-            if (Object.keys(state.timeFormatCache).length > 1000) {
-                // Eliminar las primeras 500 entradas (las más antiguas)
-                const keys = Object.keys(state.timeFormatCache);
-                for (let i = 0; i < Math.min(500, keys.length); i++) {
-                    delete state.timeFormatCache[keys[i]];
-                }
-            }
-            
-            if (state.timeFormatCache[cacheKey]) {
-                return state.timeFormatCache[cacheKey];
-            }
+            const cached = state.timeFormatCache.get(cacheKey);
+            if (cached) return cached;
             
             const hours = date.getHours();
             const minutes = date.getMinutes().toString().padStart(2, '0');
@@ -2068,14 +2145,14 @@
                 formattedTime = `${hour12}:${minutes}:${seconds} ${ampm}`;
             }
             
-            state.timeFormatCache[cacheKey] = formattedTime;
+            state.timeFormatCache.set(cacheKey, formattedTime);
             return formattedTime;
         }
 
         // Actualizar tiempos de todos los mensajes
         function updateAllMessageTimes() {
             // Limpiar caché
-            state.timeFormatCache = {};
+            state.timeFormatCache.clear();
             
             // Actualizar tiempos en todos los mensajes
             state.messages.forEach(msg => {
@@ -2087,7 +2164,7 @@
             renderMessages();
         }
 
-        // Renderizar mensaje
+        // Renderizar mensaje individual
         function renderMessage(message) {
             // Ocultar loading si es el primer mensaje
             if (loadingIndicator.style.display !== 'none') {
@@ -2098,14 +2175,21 @@
             div.className = `message ${message.isOwn ? 'own' : ''}`;
             div.dataset.id = message.id;
             
-            // Formatear texto
+            // Formatear texto con sanitización
             let formattedText = escapeHtml(message.text);
             
-            // Reemplazar enlaces si está habilitado
+            // Reemplazar enlaces si está habilitado (solo http/https)
             if (state.preferences.showLinks) {
                 formattedText = formattedText.replace(
-                    /(https?:\/\/[^\s]+)/g, 
-                    '<a href="$1" target="_blank" style="color: inherit; text-decoration: underline;">$1</a>'
+                    /(https?:\/\/[^\s<]+)/gi, 
+                    (url) => {
+                        // Validar que sea un URL seguro
+                        if (url.startsWith('http://') || url.startsWith('https://')) {
+                            const safeUrl = escapeHtml(url);
+                            return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">${safeUrl}</a>`;
+                        }
+                        return url;
+                    }
                 );
             }
             
@@ -2128,7 +2212,6 @@
             const isAtBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight <= CONFIG.SCROLL_THRESHOLD;
             
             if (isAtBottom && !state.userIsScrolling) {
-                // Scroll suave
                 requestAnimationFrame(() => {
                     messagesContainer.scrollTo({
                         top: messagesContainer.scrollHeight,
@@ -2141,13 +2224,77 @@
             }
         }
 
-        // Agregar mensaje del sistema
-        function addSystemMessage(text) {
-            const div = document.createElement('div');
-            div.className = 'system-message';
-            div.innerHTML = `<i class="fas fa-info-circle"></i> ${text}`;
-            messagesContainer.appendChild(div);
+        // Renderizar mensajes en lote (para historial)
+        function renderMessagesBatch(messages) {
+            const fragment = document.createDocumentFragment();
+            
+            messages.forEach(message => {
+                const div = document.createElement('div');
+                div.className = `message ${message.isOwn ? 'own' : ''}`;
+                div.dataset.id = message.id;
+                
+                let formattedText = escapeHtml(message.text);
+                
+                if (state.preferences.showLinks) {
+                    formattedText = formattedText.replace(
+                        /(https?:\/\/[^\s<]+)/gi, 
+                        (url) => {
+                            if (url.startsWith('http://') || url.startsWith('https://')) {
+                                const safeUrl = escapeHtml(url);
+                                return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">${safeUrl}</a>`;
+                            }
+                            return url;
+                        }
+                    );
+                }
+                
+                formattedText = formattedText.replace(/\n/g, '<br>');
+                
+                div.innerHTML = `
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-username">${escapeHtml(message.username)}</span>
+                            <span class="message-time">${message.time}</span>
+                        </div>
+                        <div class="message-text">${formattedText}</div>
+                    </div>
+                `;
+                
+                fragment.appendChild(div);
+            });
+            
+            // Agregar mensajes de bienvenida si no existen
+            const welcomeMessage = document.querySelector('.system-message');
+            if (!welcomeMessage) {
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = 'system-message';
+                welcomeDiv.innerHTML = '<i class="fas fa-comments"></i> Bienvenido al chat de FoxWeb';
+                messagesContainer.prepend(welcomeDiv);
+            }
+            
+            // Ocultar loading
+            loadingIndicator.style.display = 'none';
+            
+            // Agregar todos los mensajes a la vez
+            messagesContainer.appendChild(fragment);
+            
+            // Limitar mensajes en DOM
+            limitMessagesInDOM();
+            
             scrollToBottom();
+        }
+
+        // Limitar número de mensajes en el DOM para mejor rendimiento
+        function limitMessagesInDOM() {
+            const allMessages = messagesContainer.querySelectorAll('.message');
+            if (allMessages.length > CONFIG.MAX_MESSAGES_IN_DOM) {
+                const toRemove = allMessages.length - CONFIG.MAX_MESSAGES_IN_DOM;
+                for (let i = 0; i < toRemove; i++) {
+                    if (allMessages[i]) {
+                        allMessages[i].remove();
+                    }
+                }
+            }
         }
 
         // Renderizar todos los mensajes
@@ -2161,47 +2308,94 @@
             welcome.innerHTML = '<i class="fas fa-comments"></i> Bienvenido al chat de FoxWeb';
             messagesContainer.appendChild(welcome);
             
-            // Agregar separador de fecha si hay mensajes
-            if (state.messages.length > 0) {
-                const today = new Date().toLocaleDateString('es-ES', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
+            // Agregar mensajes en lote
+            const fragment = document.createDocumentFragment();
+            state.messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = `message ${msg.isOwn ? 'own' : ''}`;
+                div.dataset.id = msg.id;
                 
-                const dateSeparator = document.createElement('div');
-                dateSeparator.className = 'date-separator';
-                dateSeparator.innerHTML = `<span>${today}</span>`;
-                messagesContainer.appendChild(dateSeparator);
-            }
+                let formattedText = escapeHtml(msg.text);
+                
+                if (state.preferences.showLinks) {
+                    formattedText = formattedText.replace(
+                        /(https?:\/\/[^\s<]+)/gi, 
+                        (url) => {
+                            if (url.startsWith('http://') || url.startsWith('https://')) {
+                                const safeUrl = escapeHtml(url);
+                                return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">${safeUrl}</a>`;
+                            }
+                            return url;
+                        }
+                    );
+                }
+                
+                formattedText = formattedText.replace(/\n/g, '<br>');
+                
+                div.innerHTML = `
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-username">${escapeHtml(msg.username)}</span>
+                            <span class="message-time">${msg.time}</span>
+                        </div>
+                        <div class="message-text">${formattedText}</div>
+                    </div>
+                `;
+                
+                fragment.appendChild(div);
+            });
             
-            // Agregar mensajes
-            state.messages.forEach(msg => renderMessage(msg));
-            
+            messagesContainer.appendChild(fragment);
+            scrollToBottom();
+        }
+
+        // Agregar mensaje del sistema
+        function addSystemMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'system-message';
+            div.innerHTML = `<i class="fas fa-info-circle"></i> ${escapeHtml(text)}`;
+            messagesContainer.appendChild(div);
             scrollToBottom();
         }
 
         // Actualizar indicador de escritura
         function updateTypingIndicator() {
+            if (!state.preferences.showTyping) {
+                hideTypingIndicator();
+                return;
+            }
+            
             // Filtrar solo otros usuarios (excluyendo al usuario actual)
             const otherUsers = Array.from(state.typingUsers.keys())
                 .filter(username => username !== state.username);
             
-            if (otherUsers.length === 0 || !state.preferences.showTyping) {
-                typingIndicator.style.display = 'none';
-                typingIndicator.style.opacity = '0';
+            // Limpiar usuarios que llevan más de 5 segundos sin escribir
+            const now = Date.now();
+            otherUsers.forEach(username => {
+                const timestamp = state.typingUsers.get(username);
+                if (now - timestamp > CONFIG.TYPING_TIMEOUT) {
+                    state.typingUsers.delete(username);
+                }
+            });
+            
+            const currentUsers = Array.from(state.typingUsers.keys())
+                .filter(username => username !== state.username);
+            
+            if (currentUsers.length === 0) {
+                hideTypingIndicator();
                 return;
             }
             
             let text = '';
             
-            if (otherUsers.length === 1) {
-                text = `${otherUsers[0]} está escribiendo`;
-            } else if (otherUsers.length === 2) {
-                text = `${otherUsers[0]} y ${otherUsers[1]} están escribiendo`;
+            if (currentUsers.length === 1) {
+                text = `${currentUsers[0]} está escribiendo`;
+            } else if (currentUsers.length === 2) {
+                text = `${currentUsers[0]} y ${currentUsers[1]} están escribiendo`;
+            } else if (currentUsers.length === 3) {
+                text = `${currentUsers[0]}, ${currentUsers[1]} y 1 más están escribiendo`;
             } else {
-                text = `${otherUsers[0]} y ${otherUsers.length - 1} más están escribiendo`;
+                text = `${currentUsers[0]}, ${currentUsers[1]} y ${currentUsers.length - 2} más están escribiendo`;
             }
             
             typingText.textContent = text;
@@ -2211,17 +2405,6 @@
             setTimeout(() => {
                 typingIndicator.style.opacity = '1';
             }, 10);
-            
-            // Limpiar usuarios después del timeout
-            setTimeout(() => {
-                const now = Date.now();
-                for (const [username, timestamp] of state.typingUsers) {
-                    if (username !== state.username && now - timestamp > CONFIG.TYPING_TIMEOUT) {
-                        state.typingUsers.delete(username);
-                    }
-                }
-                updateTypingIndicator();
-            }, CONFIG.TYPING_TIMEOUT);
         }
 
         // Actualizar información del usuario
@@ -2258,8 +2441,11 @@
 
         // Cambiar nombre de usuario
         function changeUsername() {
-            const newName = prompt('Nuevo nombre de usuario:', state.username);
-            if (!newName || newName.trim().length < 2) return;
+            const newName = prompt('Nuevo nombre de usuario (2-20 caracteres):', state.username);
+            if (!newName || newName.trim().length < 2 || newName.trim().length > 20) {
+                alert('El nombre debe tener entre 2 y 20 caracteres');
+                return;
+            }
             
             const oldName = state.username;
             state.username = newName.trim();
@@ -2285,85 +2471,13 @@
 
         // Limpiar chat local
         function clearChat() {
-            if (confirm('¿Limpiar todo el historial local de mensajes?')) {
+            if (confirm('¿Limpiar todo el historial local de mensajes?\nLos mensajes del servidor se volverán a cargar.')) {
                 state.messages = state.messages.filter(m => m.fromServer);
                 messagesContainer.innerHTML = '';
                 saveMessages();
                 renderMessages();
                 addSystemMessage('Historial local limpiado');
             }
-        }
-
-        // Exportar chat
-        function exportChat() {
-            try {
-                const data = {
-                    username: state.username,
-                    userId: state.userId,
-                    exportDate: new Date().toISOString(),
-                    messages: state.messages,
-                    preferences: state.preferences,
-                    stats: {
-                        totalMessages: state.messages.length,
-                        onlineUsers: state.onlineUsers
-                    }
-                };
-                
-                const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `foxweb_chat_${new Date().toISOString().slice(0,10)}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                addSystemMessage('Chat exportado correctamente');
-            } catch (error) {
-                alert('Error al exportar el chat');
-            }
-        }
-
-        // Importar chat
-        function importChat(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    
-                    if (data.messages && Array.isArray(data.messages)) {
-                        // Agregar mensajes importados (solo los que no sean del servidor)
-                        const existingIds = new Set(state.messages.map(m => m.id));
-                        
-                        data.messages.forEach(msg => {
-                            if (!msg.fromServer && !existingIds.has(msg.id)) {
-                                state.messages.push(msg);
-                            }
-                        });
-                        
-                        // Limitar tamaño
-                        if (state.messages.length > CONFIG.MAX_MESSAGES) {
-                            state.messages = state.messages.slice(-CONFIG.MAX_MESSAGES);
-                        }
-                        
-                        // Renderizar
-                        renderMessages();
-                        saveMessages();
-                        addSystemMessage(`Chat importado: ${data.messages.length} mensajes`);
-                    }
-                } catch (error) {
-                    alert('Error al importar el archivo');
-                }
-                
-                // Limpiar input
-                event.target.value = '';
-            };
-            
-            reader.readAsText(file);
         }
 
         // Alternar sidebar
@@ -2416,14 +2530,18 @@
             scrollBottomBtn.classList.add('hidden');
         }
 
-        // Reproducir sonido mejorado para móviles
+        // Reproducir sonido con manejo de permisos de móviles
         function playSound(type) {
             if (!state.preferences.sounds) return;
             
             try {
-                // Crear contexto de audio solo una vez
+                // Intentar usar Web Audio API
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                
+                // Crear contexto solo cuando sea necesario
                 if (!window.audioContext) {
-                    window.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    window.audioContext = new AudioContext();
                 }
                 
                 // Reanudar contexto si está suspendido (necesario en móviles)
@@ -2443,13 +2561,15 @@
                     oscillator.frequency.setValueAtTime(600, window.audioContext.currentTime);
                 }
                 
-                gainNode.gain.setValueAtTime(0.1, window.audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, window.audioContext.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.05, window.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, window.audioContext.currentTime + 0.1);
                 
                 oscillator.start(window.audioContext.currentTime);
                 oscillator.stop(window.audioContext.currentTime + 0.1);
-            } catch (e) {
-                console.warn('Audio no disponible:', e);
+                
+            } catch (error) {
+                // Fallback silencioso si falla el audio
+                console.debug('Audio no disponible:', error.message);
             }
         }
 
@@ -2511,6 +2631,12 @@
                 localStorage.setItem(CONFIG.STORAGE_KEYS.PREFERENCES, JSON.stringify(state.preferences));
             } catch (e) {
                 console.warn('Error guardando preferencias:', e);
+                // Manejar error de cuota
+                if (e.name === 'QuotaExceededError') {
+                    alert('Storage lleno. Se borrarán datos antiguos.');
+                    localStorage.clear();
+                    location.reload();
+                }
             }
         }
 
@@ -2521,6 +2647,11 @@
                 if (saved) {
                     const data = JSON.parse(saved);
                     state.messages = data.messages || [];
+                    
+                    // Limitar tamaño
+                    if (state.messages.length > CONFIG.MAX_MESSAGES) {
+                        state.messages = state.messages.slice(-CONFIG.MAX_MESSAGES);
+                    }
                 }
             } catch (e) {
                 console.warn('Error cargando mensajes:', e);
@@ -2538,6 +2669,21 @@
                 localStorage.setItem(CONFIG.STORAGE_KEYS.MESSAGES, JSON.stringify(data));
             } catch (e) {
                 console.warn('Error guardando mensajes:', e);
+                // Manejar error de cuota
+                if (e.name === 'QuotaExceededError') {
+                    // Eliminar mensajes más antiguos
+                    const oldestMessages = state.messages
+                        .filter(m => !m.fromServer)
+                        .sort((a, b) => new Date(a.date) - new Date(b.date))
+                        .slice(0, Math.floor(state.messages.length * 0.3));
+                    
+                    state.messages = state.messages.filter(msg => 
+                        !oldestMessages.some(old => old.id === msg.id)
+                    );
+                    
+                    // Intentar de nuevo
+                    setTimeout(saveMessages, 100);
+                }
             }
         }
 
